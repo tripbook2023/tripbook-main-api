@@ -1,4 +1,4 @@
-package com.tripbook.tripbookmainapi;
+package com.tripbook.main;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
