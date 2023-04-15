@@ -1,1 +1,27 @@
 
+spring:
+  datasource:
+    url: jdbc:mysql://tripbook-dev.czriggtksvqu.ap-northeast-2.rds.amazonaws.com:3306/tripbook_main?createDatabaseIfNotExist=true
+    username: tripbook
+    password: Tripbookteam07*
+  jpa:
+    hibernate:
+      ddl-auto: create
+  # src/main/resources/application.yml
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-id: UZ7PYWQdxTw85EY1wjUvUXAhNvzJrJER
+            client-secret: vEH4FzhtYbMsqDNIfmm1PjCRs2AEtuwJUcq8v1ifsjF5YCE-mzq_2dRsR4FF4F9T
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://dev-af65lj2887m1kztj.us.auth0.com/
+
