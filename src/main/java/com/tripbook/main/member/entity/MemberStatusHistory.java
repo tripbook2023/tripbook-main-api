@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.tripbook.main.member.enums.MemberStatus;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

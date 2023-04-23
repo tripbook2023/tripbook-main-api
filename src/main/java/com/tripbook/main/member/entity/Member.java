@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.tripbook.main.global.common.BasicEntity;
+
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +45,7 @@ public class Member extends BasicEntity implements Serializable {
 
     @Setter
     @Column(nullable = true)
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -70,7 +73,9 @@ public class Member extends BasicEntity implements Serializable {
     @Setter
     private MemberStatus status;
     @Builder
+
     public Member(String email, String name, Gender gender, MemberRole role,MemberStatus status) {
+
         this.email = email;
         this.name = name;
         this.gender = gender;

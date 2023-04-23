@@ -37,5 +37,6 @@ public class Auth0SecurityCoifng {
 		http.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 
+
 	}
 }

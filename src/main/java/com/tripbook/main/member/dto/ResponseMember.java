@@ -2,8 +2,10 @@ package com.tripbook.main.member.dto;
 
 
 
+
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
+
 
 import lombok.Builder;
 import lombok.Getter;

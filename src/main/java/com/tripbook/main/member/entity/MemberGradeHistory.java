@@ -2,6 +2,7 @@ package com.tripbook.main.member.entity;
 
 import java.util.Date;
 
+
 import com.tripbook.main.member.enums.MemberRole;
 
 import jakarta.persistence.Column;
