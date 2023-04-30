@@ -2,7 +2,6 @@ package com.tripbook.main.member.entity;
 
 import java.util.Date;
 
-
 import com.tripbook.main.member.enums.MemberRole;
 
 import jakarta.persistence.Column;
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "TB_MEMBERGRADE")
+@Table(name = "TB_MEMBER_GRADE")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberGradeHistory {
@@ -29,9 +28,8 @@ public class MemberGradeHistory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-
 	@ManyToOne
-	@JoinColumn(name="member_id")
+	@JoinColumn(name = "member_id")
 	private Member memberId;
 
 	@Setter
@@ -45,6 +43,5 @@ public class MemberGradeHistory {
 	@Setter
 	@Column(nullable = false)
 	private Date createdBy;
-
 
 }

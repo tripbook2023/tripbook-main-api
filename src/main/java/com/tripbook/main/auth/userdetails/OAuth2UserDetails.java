@@ -1,8 +1,6 @@
 package com.tripbook.main.auth.userdetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -19,12 +17,11 @@ import lombok.Builder;
 @Builder
 public class OAuth2UserDetails implements UserDetails {
 
-	// private SocialType socialType;
 	private String username;
 	private String email;
 	private Set<GrantedAuthority> authorities;
 
-	public String getEmail(){
+	public String getEmail() {
 		return this.email;
 	}
 
@@ -32,7 +29,6 @@ public class OAuth2UserDetails implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
 	}
-
 
 	@Override
 	public String getPassword() {
@@ -43,6 +39,7 @@ public class OAuth2UserDetails implements UserDetails {
 	public String getUsername() {
 		return username;
 	}
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return false;

@@ -1,14 +1,9 @@
-
 package com.tripbook.main.security.handler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -20,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Author - 이석운 작성
- * SUccessHandler를 미리 선언해둠.
+ * FailedHandler를 미리 선언해둠.
  * @TODO
  * 실제 로그인 완료 시 진행해야 할 로직 추가 필요.(햔재 임시로직)
  */
@@ -36,8 +31,7 @@ public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
 			response.sendError(HttpStatus.CONFLICT.value(), "USER_ALREADY_exists:::");
 		}
 		log.error("Logind Failed");
-		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"유저정보 획득실패.");
-
+		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "유저정보 획득실패.");
 
 	}
 }

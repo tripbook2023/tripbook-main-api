@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.tripbook.main.member.enums.MemberStatus;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "TB_MEMBERHISTORY")
+@Table(name = "TB_MEMBER_STATUS")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberStatusHistory {
@@ -30,7 +29,7 @@ public class MemberStatusHistory {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name="member_id")
+	@JoinColumn(name = "member_id")
 	private Member memberId;
 
 	@Setter

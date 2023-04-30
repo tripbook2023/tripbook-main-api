@@ -2,6 +2,7 @@ package com.tripbook.main.global.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 /*
  *회원 등급 정책
   - 일반회원: 가입 후 활동하는 회원
@@ -14,10 +15,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum MemberRole {
 
-    ROLE_USER("ROLE_USER"),
-    ROLE_ADMIN("ROLE_ADMIN"),
-    ROLE_EDITOR("ROLE_EDITOR");
+	ROLE_USER("ROLE_USER"), ROLE_ADMIN("ROLE_ADMIN"), ROLE_EDITOR("ROLE_EDITOR");
 
-    private final String value;
+	private final String value;
 
 }

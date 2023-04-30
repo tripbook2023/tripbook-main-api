@@ -1,6 +1,5 @@
 package com.tripbook.main.member.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +25,7 @@ public class Survey {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@OneToOne
-	@JoinColumn(name="member_id")
+	@JoinColumn(name = "member_id")
 	private Member memberId;
 	@Setter
 	@Column(nullable = false)

@@ -1,19 +1,13 @@
-
 package com.tripbook.main.security.handler;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripbook.main.auth.userdetails.OAuth2UserDetails;
 import com.tripbook.main.global.util.CustomJsonUtil;
 
@@ -36,11 +30,10 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication auth) throws IOException, ServletException {
 		log.info("Login Success");
-		OAuth2UserDetails userDetails = (OAuth2UserDetails) auth.getPrincipal();
-		Map<String,Object>resultJson=new HashMap<>();
-		resultJson.put("nickname",userDetails.getUsername());
-		resultJson.put("email",userDetails.getEmail());
-
+		OAuth2UserDetails userDetails = (OAuth2UserDetails)auth.getPrincipal();
+		Map<String, Object> resultJson = new HashMap<>();
+		resultJson.put("nickname", userDetails.getUsername());
+		resultJson.put("email", userDetails.getEmail());
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(CustomJsonUtil.StringToJson(resultJson));

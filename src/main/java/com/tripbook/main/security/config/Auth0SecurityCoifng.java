@@ -27,16 +27,14 @@ public class Auth0SecurityCoifng {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests()
-			.requestMatchers("/login/oauth2/**")
-			.permitAll()
-			.anyRequest().hasRole("USER");
+			.requestMatchers("/**")
+			.permitAll();
 		http
 			.logout()
 			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 			.addLogoutHandler(logoutHandler);
 		http.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
-
 
 	}
 }
