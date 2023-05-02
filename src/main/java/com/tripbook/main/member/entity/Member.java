@@ -20,7 +20,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "TB_MEMBER")
@@ -33,40 +32,62 @@ public class Member extends BasicEntity implements Serializable {
 	private Long id;
 	@Column(nullable = false, unique = true)
 	private String email;
-	@Setter
 	@Column(nullable = false)
 	private String name;
 	@Column(nullable = true)
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
-	@Setter
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MemberRole role;
 	@Column
 	private Date birth;
-	@Setter
 	@Column
 	private String profile;
 	@Column(nullable = false)
-	@Setter
 	private Boolean isMarketing;
 	@Column
-	@Setter
 	private Long point;
 	@Column
-	@Setter
-	private String AppToken;
+	private String appToken;
 	@Column(nullable = false)
-	@Setter
 	private MemberStatus status;
 
+	public void updateName(String name) {
+		this.name = name;
+	}
+
+	public void updateRole(MemberRole role) {
+		this.role = role;
+	}
+
+	public void updateProfile(String profile) {
+		this.profile = profile;
+	}
+
+	public void updateIsMarketing(Boolean isMarketing) {
+		this.isMarketing = isMarketing;
+	}
+
+	public void updateAppToken(String appToken) {
+		this.appToken = appToken;
+	}
+
+	public void updateStatus(MemberStatus status) {
+		this.status = status;
+	}
+
+	public void updatePoint(Long point) {
+		this.point = point;
+	}
+
 	@Builder
-	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status) {
+	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status, Boolean isMarketing) {
 		this.email = email;
 		this.name = name;
 		this.gender = gender;
 		this.role = role;
 		this.status = status;
+		this.isMarketing = isMarketing;
 	}
 }

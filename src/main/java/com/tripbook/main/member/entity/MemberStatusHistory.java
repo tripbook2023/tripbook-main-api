@@ -1,7 +1,6 @@
 package com.tripbook.main.member.entity;
 
-import java.util.Date;
-
+import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.enums.MemberStatus;
 
 import jakarta.persistence.Column;
@@ -17,13 +16,12 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "TB_MEMBER_STATUS")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberStatusHistory {
+public class MemberStatusHistory extends BasicEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -32,15 +30,12 @@ public class MemberStatusHistory {
 	@JoinColumn(name = "member_id")
 	private Member memberId;
 
-	@Setter
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private MemberStatus status;
 
-	@Setter
-	@Column(nullable = false)
-	private Date createdAt;
-	@Setter
-	@Column(nullable = false)
-	private Date createdBy;
+	public void updateStatus(MemberStatus status) {
+		this.status = status;
+	}
+
 }

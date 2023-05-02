@@ -29,7 +29,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication auth) throws IOException, ServletException {
-		log.info("Login Success");
 		OAuth2UserDetails userDetails = (OAuth2UserDetails)auth.getPrincipal();
 		Map<String, Object> resultJson = new HashMap<>();
 		resultJson.put("nickname", userDetails.getUsername());
