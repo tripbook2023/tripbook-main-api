@@ -1,4 +1,4 @@
-package com.tripbook.main.global.enums;
+package com.tripbook.main.member.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
