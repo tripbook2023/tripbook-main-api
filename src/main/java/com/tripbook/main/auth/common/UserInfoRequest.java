@@ -47,13 +47,13 @@ public class UserInfoRequest {
 			return Member.builder()
 				.email(response2.get("email").toString())
 				.name(response2.get("name").toString())
-				.role(MemberRole.ROLE_USER)
+				.role(MemberRole.ROLE_MEMBER)
 				.status(MemberStatus.STATUS_SUSPEND)
 				.isMarketing(false)
 				.build();
 		} catch (HttpClientErrorException.Unauthorized e) {
-			throw new CustomException.InvalidTokenException(ErrorCode.TOKEN_Unauthorized.getMessage(),
-				ErrorCode.TOKEN_Unauthorized);
+			throw new CustomException.InvalidTokenException(ErrorCode.TOKEN_UNAUTHORIZED.getMessage(),
+				ErrorCode.TOKEN_UNAUTHORIZED);
 		}
 	}
 

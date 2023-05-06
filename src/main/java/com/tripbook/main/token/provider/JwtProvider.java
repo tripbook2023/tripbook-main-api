@@ -1,21 +1,16 @@
 package com.tripbook.main.token.provider;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.entity.Member;
+import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.token.dto.TokenInfo;
 
 import io.jsonwebtoken.Claims;
@@ -45,7 +40,7 @@ public class JwtProvider {
 		// Access Token 생성
 		Date accessTokenExpiresIn = new Date(now + 86400000);
 		String accessToken = Jwts.builder()
-			.setSubject(member.getName())
+			.setSubject(member.getEmail())
 			.claim("auth", member.getRole())
 			.setExpiration(accessTokenExpiresIn)
 			.signWith(key, SignatureAlgorithm.HS256)
@@ -60,24 +55,19 @@ public class JwtProvider {
 	}
 
 	// JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-	public Authentication getAuthentication(String accessToken) {
+	public PrincipalMemberDto getAuthentication(String accessToken) {
 		// 토큰 복호화
 		Claims claims = parseClaims(accessToken);
 
 		if (claims.get("auth") == null) {
 			throw new RuntimeException("권한 정보가 없는 토큰입니다.");
 		}
-		// 클레임에서 권한 정보 가져오기
-		Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("auth").toString().split(","))
-			.map(SimpleGrantedAuthority::new)
-			.collect(Collectors.toList());
 
-		// UserDetails 객체를 만들어서 Authentication 리턴
-		//@TODO UserDetails가 아닌 Member 도메인으로 변경필요
-		UserDetails principal = new User(claims.getSubject(), "", authorities);
-		//ResponseMember member = ResponseMember.info.builder()
-		//	.name()
-		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+		// 클레임에서 권한 정보 가져오기
+		return PrincipalMemberDto.builder()
+			.role(MemberRole.valueOf((String)claims.get("auth")))
+			.email(claims.getSubject())
+			.build();
 	}
 
 	// 토큰 정보를 검증하는 메서드
@@ -86,15 +76,22 @@ public class JwtProvider {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-			log.info("Invalid JWT Token", e);
+			log.error("Invalid JWT Token", e);
+			throw new CustomException.SecurityException(ErrorCode.JWT_INVALID_ERROR.getMessage(),
+				ErrorCode.TOKEN_UNAUTHORIZED);
 		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT Token", e);
+			log.error("Expired JWT Token", e);
+			throw new CustomException.ExpiredJwtException(ErrorCode.JWT_EXPIRED_ERROR.getMessage(),
+				ErrorCode.TOKEN_UNAUTHORIZED);
 		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT Token", e);
+			log.error("Unsupported JWT Token", e);
+			throw new CustomException.UnsupportedJwtException(ErrorCode.JWT_UNSUPPORTED_ERROR.getMessage(),
+				ErrorCode.TOKEN_UNAUTHORIZED);
 		} catch (IllegalArgumentException e) {
-			log.info("JWT claims string is empty.", e);
+			log.error("JWT claims string is empty.", e);
+			throw new CustomException.IllegalArgumentException(ErrorCode.JWT_EMPTY_ERROR.getMessage(),
+				ErrorCode.TOKEN_UNAUTHORIZED);
 		}
-		return false;
 	}
 
 	private Claims parseClaims(String accessToken) {

@@ -10,7 +10,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 import com.tripbook.main.auth.provider.AccessTokenAuthenticationProvider;
-import com.tripbook.main.auth.token.CustomAccessToken;
+import com.tripbook.main.auth.token.CustomPlatformAccessToken;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,6 +40,7 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 		AuthenticationException {
 		String accessToken = request.getHeader(ACCESS_TOKEN_HEADER_NAME);
 		log.info("accessToken::", accessToken);
-		return this.getAuthenticationManager().authenticate(new CustomAccessToken(accessToken));
+		//@TODO 세션 미사용으로 변경
+		return this.getAuthenticationManager().authenticate(new CustomPlatformAccessToken(accessToken));
 	}
 }

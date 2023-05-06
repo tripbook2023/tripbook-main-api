@@ -25,4 +25,46 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+
+	public static class AccessDeniedException extends CustomException {
+		public AccessDeniedException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class CsrfException extends CustomException {
+		public CsrfException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class AuthenticationException extends CustomException {
+		public AuthenticationException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class SecurityException extends CustomException {
+		public SecurityException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class ExpiredJwtException extends CustomException {
+		public ExpiredJwtException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class UnsupportedJwtException extends CustomException {
+		public UnsupportedJwtException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class IllegalArgumentException extends CustomException {
+		public IllegalArgumentException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 }
