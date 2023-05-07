@@ -50,6 +50,12 @@ public class CustomException extends RuntimeException {
 		}
 	}
 
+	public static class UnsupportedPlatform extends CustomException {
+		public UnsupportedPlatform(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
 	public static class ExpiredJwtException extends CustomException {
 		public ExpiredJwtException(String message, ErrorCode errorCode) {
 			super(message, errorCode);

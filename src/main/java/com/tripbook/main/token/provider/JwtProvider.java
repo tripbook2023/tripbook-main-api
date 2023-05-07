@@ -34,11 +34,34 @@ public class JwtProvider {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	// 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
-	public TokenInfo generateToken(Member member) {
+	/** 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
+	 * 토큰 유효시간
+	 * WEB - 2시간
+	 * MOBILE - 1일
+	 * APP - 15일 ,
+	 */
+	public TokenInfo generateToken(Member member, String deviceType) {
 		long now = (new Date()).getTime();
 		// Access Token 생성
-		Date accessTokenExpiresIn = new Date(now + 86400000);
+		Date accessTokenExpiresIn = null;
+		Date refreshTokenExpiresIn = null;
+		switch (deviceType) {
+			case "WEB":
+				accessTokenExpiresIn = new Date(now + 7200000); // 2시간
+				refreshTokenExpiresIn = new Date(now + 7200000);
+				break;
+			case "MOBILE":
+				accessTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000)); // 1일
+				refreshTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000));
+				break;
+			case "APP":
+				accessTokenExpiresIn = new Date(now + (15 * 24 * 60 * 60 * 1000)); // 15일
+				refreshTokenExpiresIn = new Date(now + (90 * 24 * 60 * 60 * 1000));// 90일
+				break;
+			default:
+				throw new CustomException.UnsupportedPlatform("Unsupported platform",
+					ErrorCode.JWT_UNSUPPORTED_PLATFORM_ERROR);
+		}
 		String accessToken = Jwts.builder()
 			.setSubject(member.getEmail())
 			.claim("auth", member.getRole())
@@ -47,7 +70,7 @@ public class JwtProvider {
 			.compact();
 		// Refresh Token 생성
 		String refreshToken = Jwts.builder()
-			.setExpiration(new Date(now + 86400000))
+			.setExpiration(refreshTokenExpiresIn)
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 

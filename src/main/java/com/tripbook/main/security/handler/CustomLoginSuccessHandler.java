@@ -34,6 +34,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		resultJson.put("nickname", memberInfo.getName());
 		resultJson.put("email", memberInfo.getEmail());
 		resultJson.put("accesstoken", memberInfo.getAccessToken());
+		resultJson.put("status", memberInfo.getStatus());
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(CustomJsonUtil.StringToJson(resultJson));

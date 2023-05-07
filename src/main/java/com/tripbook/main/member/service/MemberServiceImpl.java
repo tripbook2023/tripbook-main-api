@@ -2,11 +2,14 @@ package com.tripbook.main.member.service;
 
 import org.springframework.stereotype.Service;
 
-import com.tripbook.main.global.enums.ErrorCode;
-import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.entity.Member;
+import com.tripbook.main.member.entity.Survey;
+import com.tripbook.main.member.enums.MemberStatus;
 import com.tripbook.main.member.repository.MemberRepository;
+import com.tripbook.main.member.repository.SurveyRepository;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,18 +18,73 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
+	private final SurveyRepository surveyRepository;
+	private final EntityManager entityManager;
 
 	@Override
-	public Integer memberSave(Member member) {
-		userValidation(member);
-		memberRepository.save(member);
-		return 1;
+	public Member memberSave(Member member) {
+		Member findMember = memberValidation(member);
+		if (findMember == null) {
+			findMember = memberRepository.save(member);
+		}
+		return findMember;
 	}
 
-	private void userValidation(Member member) {
-		if (memberRepository.findByEmail(member.getEmail()) != null) {
-			log.error("Member_Already_Exists.");
-			throw new CustomException.EmailDuplicateException("email duplicated", ErrorCode.EMAIL_DUPLICATION);
+	@Override
+	public Member memberCertification(RequestMember requestMember,
+		String memberEmail) {
+		Member findMember = memberRepository.findByEmail(memberEmail);
+		if (findMember == null) {
+			//@TODO CustomException으로 변경
+			throw new RuntimeException();
+		} else if (findMember.getStatus() != MemberStatus.ADDITIONAL_AUTHENTICATION) {
+			throw new RuntimeException();
 		}
+		memberSurveySave(findMember, requestMember.getSignupSurvey());
+		updateMember(requestMember.getSignupMember(), findMember);
+		return findMember;
+	}
+
+	private void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
+
+		Member member = entityManager.find(Member.class, findMember.getId());
+
+		if (entityManager.contains(member)) {
+			// member는 영속 상태입니다.
+			log.info("영속");
+		} else {
+			log.info("준영속");
+			// member는 준영속 상태입니다.
+		}
+		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
+		findMember.updateProfile(signupMember.getProfile());
+		findMember.updateIsMarketing(signupMember.getIsMarketing());
+		findMember.updateName(signupMember.getName());
+		findMember.updateBirth(signupMember.getBirth());
+		memberRepository.save(findMember);
+	}
+
+	private void memberSurveySave(Member member, RequestMember.SignupSurvey survey) {
+		//@TODO survey내 null 값 체크
+		Survey surveyData = Survey.builder()
+			.memberId(member)
+			.accompany(survey.getAccompany())
+			.purpose(survey.getPurpose())
+			.period(survey.getPeriod())
+			.location(survey.getLocation())
+			.transportation(survey.getTransportation())
+			.build();
+		surveyRepository.save(surveyData);
+	}
+
+	private Member memberValidation(Member member) {
+		Member findMember = memberRepository.findByEmail(member.getEmail());
+		if (findMember != null) {
+			//이미 가입 된 유저
+			log.info("Member_Already_Exists.");
+			return findMember;
+		}
+		return null;
+
 	}
 }

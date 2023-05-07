@@ -44,6 +44,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 			setErrorResponse(response, ErrorCode.JWT_UNSUPPORTED_ERROR);
 		} catch (CustomException.IllegalArgumentException e) {
 			setErrorResponse(response, ErrorCode.JWT_EMPTY_ERROR);
+		} catch (CustomException.UnsupportedPlatform e) {
+			setErrorResponse(response, ErrorCode.JWT_UNSUPPORTED_PLATFORM_ERROR);
 		}
 	}
 

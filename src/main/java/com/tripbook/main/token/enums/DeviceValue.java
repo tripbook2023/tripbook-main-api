@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum DeviceValue {
 
-	TABLET("T"),
+	APP("A"),
 	MOBILE("M"),
 	WEB("W");
 

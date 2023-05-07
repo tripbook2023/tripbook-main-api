@@ -27,27 +27,27 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 	@SneakyThrows
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		Member resultMember = loadUserService.getOAuth2UserDetails((CustomPlatformAccessToken)authentication);
+		Member tmpMember = loadUserService.getOAuth2UserDetails((CustomPlatformAccessToken)authentication);
 		//유저 저장
-		saveMember(resultMember);
-		//ResponseDTO
+		Member resultMember = saveMember(tmpMember);
 		//JWT 토큰 생성
-		String accessToken = savaJwt(resultMember);
+		String accessToken = savaJwt(resultMember, ((CustomPlatformAccessToken)authentication).getDevice());
 		return CustomPlatformAccessToken.builder()
 			.principal(ResponseMember.Info.builder()
 				.accessToken(accessToken)
 				.email(resultMember.getEmail())
 				.name(resultMember.getName())
+				.status(resultMember.getStatus())
 				.build())
 			.build();
 	}
 
-	private String savaJwt(Member saveMember) {
-		return jwtService.saveToken(saveMember);
+	private String savaJwt(Member saveMember, String deviceType) {
+		return jwtService.saveToken(saveMember, deviceType);
 	}
 
-	private void saveMember(Member member) {
-		memberService.memberSave(member);
+	private Member saveMember(Member member) {
+		return memberService.memberSave(member);
 	}
 
 	@Override

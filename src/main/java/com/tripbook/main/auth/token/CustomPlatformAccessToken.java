@@ -7,10 +7,18 @@ import lombok.Builder;
 public class CustomPlatformAccessToken extends AbstractAuthenticationToken {
 	private Object principal;
 	private String accessToken;
+	private String device;
 
 	public CustomPlatformAccessToken(String accessToken) {
 		super(null);
 		this.accessToken = accessToken;
+		setAuthenticated(false);
+	}
+
+	public CustomPlatformAccessToken(String accessToken, String device) {
+		super(null);
+		this.accessToken = accessToken;
+		this.device = device;
 		setAuthenticated(false);
 	}
 
@@ -23,6 +31,10 @@ public class CustomPlatformAccessToken extends AbstractAuthenticationToken {
 
 	public String getAccessToken() {
 		return accessToken;
+	}
+
+	public String getDevice() {
+		return device;
 	}
 
 	@Override

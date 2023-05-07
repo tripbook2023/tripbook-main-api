@@ -6,6 +6,6 @@ import com.tripbook.main.member.entity.Member;
 
 public interface JwtService {
 	@Transactional
-	public String saveToken(Member member);
+	public String saveToken(Member member, String deviceType);
 
 }

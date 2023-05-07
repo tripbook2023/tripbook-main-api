@@ -48,10 +48,11 @@ public class UserInfoRequest {
 				.email(response2.get("email").toString())
 				.name(response2.get("name").toString())
 				.role(MemberRole.ROLE_MEMBER)
-				.status(MemberStatus.STATUS_SUSPEND)
+				.status(MemberStatus.ADDITIONAL_AUTHENTICATION)
 				.isMarketing(false)
 				.build();
 		} catch (HttpClientErrorException.Unauthorized e) {
+			log.error("TOKEN_UNAUTHORIZED ERRROR", e);
 			throw new CustomException.InvalidTokenException(ErrorCode.TOKEN_UNAUTHORIZED.getMessage(),
 				ErrorCode.TOKEN_UNAUTHORIZED);
 		}

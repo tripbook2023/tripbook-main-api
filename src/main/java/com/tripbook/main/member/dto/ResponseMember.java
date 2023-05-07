@@ -2,6 +2,7 @@ package com.tripbook.main.member.dto;
 
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
+import com.tripbook.main.member.enums.MemberStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class ResponseMember {
 		private Gender gender;
 		private MemberRole role;
 		private String accessToken;
+		private MemberStatus status;
 	}
 
 }

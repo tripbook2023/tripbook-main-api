@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "TB_SURVEY")
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Survey {
@@ -37,12 +36,18 @@ public class Survey {
 	@Column(nullable = false)
 	private String accompany;
 	@Column(nullable = false)
-	private Long accompanyCount;
-	@Column(nullable = false)
-	private Integer expense;
-	@Column(nullable = false)
 	private String transportation;
 	@Column(nullable = false)
 	private String purpose;
 
+	@Builder
+	public Survey(Member memberId, String location, String period, String accompany, String transportation,
+		String purpose) {
+		this.memberId = memberId;
+		this.location = location;
+		this.period = period;
+		this.accompany = accompany;
+		this.transportation = transportation;
+		this.purpose = purpose;
+	}
 }

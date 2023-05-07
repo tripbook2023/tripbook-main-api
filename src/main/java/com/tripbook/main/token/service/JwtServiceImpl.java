@@ -23,10 +23,10 @@ public class JwtServiceImpl implements JwtService {
 
 	@Transactional
 	@Override
-	public String saveToken(Member member) {
-		TokenInfo tokenInfo = jwtGenerateToken(member);
+	public String saveToken(Member member, String deviceType) {
+		TokenInfo tokenInfo = jwtGenerateToken(member, deviceType);
 		JwtToken jwtToken = JwtToken.builder()
-			.device(DeviceValue.WEB)
+			.device(DeviceValue.valueOf(deviceType))
 			.token(tokenInfo.getRefreshToken())
 			.memberId(member)
 			.build();
@@ -39,8 +39,8 @@ public class JwtServiceImpl implements JwtService {
 		jwtRepository.deleteByDeviceAndMemberId(jwtToken.getDevice(), jwtToken.getMemberId());
 	}
 
-	private TokenInfo jwtGenerateToken(Member member) {
-		return jwtProvider.generateToken(member);
+	private TokenInfo jwtGenerateToken(Member member, String deviceType) {
+		return jwtProvider.generateToken(member, deviceType);
 	}
 
 }

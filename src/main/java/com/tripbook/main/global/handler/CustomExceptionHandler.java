@@ -1,7 +1,11 @@
 package com.tripbook.main.global.handler;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,6 +30,16 @@ public class CustomExceptionHandler {
 		log.error("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+		//@TODO ErrorReponse 메시지 LIST 형식으로 변경
+		List<String> errors = ex.getBindingResult().getFieldErrors().stream()
+			.map(error -> error.getDefaultMessage())
+			.collect(Collectors.toList());
+		ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
 }

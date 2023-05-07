@@ -3,6 +3,7 @@ package com.tripbook.main.token.entity;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.token.enums.DeviceValue;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class JwtToken {
 
 	@Column(nullable = false)
 	private DeviceValue device;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member memberId;
 

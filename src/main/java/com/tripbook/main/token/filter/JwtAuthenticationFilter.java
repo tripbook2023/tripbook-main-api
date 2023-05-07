@@ -1,5 +1,7 @@
 package com.tripbook.main.token.filter;
 
+import static com.tripbook.main.global.util.CustomTokenUtil.*;
+
 import java.util.Collections;
 import java.util.regex.Pattern;
 
@@ -58,15 +60,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 			Collections.singleton(new SimpleGrantedAuthority(principalMemberDto.getRole().toString())),
 			"auth0");
 		return authentication;
-	}
-
-	// Request Header 에서 토큰 정보 추출
-	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader("Authorization");
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-			return bearerToken.substring(7);
-		}
-		return null;
 	}
 
 	// 권한이 필요한 URI 패턴
