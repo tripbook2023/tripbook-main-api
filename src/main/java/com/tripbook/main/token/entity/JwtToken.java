@@ -1,5 +1,6 @@
 package com.tripbook.main.token.entity;
 
+import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.token.enums.DeviceValue;
 
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class JwtToken {
+public class JwtToken extends BasicEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

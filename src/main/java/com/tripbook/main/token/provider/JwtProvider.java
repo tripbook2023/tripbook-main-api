@@ -37,8 +37,8 @@ public class JwtProvider {
 	/** 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
 	 * 토큰 유효시간
 	 * WEB - 2시간
-	 * MOBILE - 1일
-	 * APP - 15일 ,
+	 * MOBILE - 2시간
+	 * APP - 1일 ,
 	 */
 	public TokenInfo generateToken(Member member, String deviceType) {
 		long now = (new Date()).getTime();
@@ -48,14 +48,14 @@ public class JwtProvider {
 		switch (deviceType) {
 			case "WEB":
 				accessTokenExpiresIn = new Date(now + 7200000); // 2시간
-				refreshTokenExpiresIn = new Date(now + 7200000);
+				// refreshTokenExpiresIn = new Date(now + 7200000);
 				break;
 			case "MOBILE":
-				accessTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000)); // 1일
-				refreshTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000));
+				accessTokenExpiresIn = new Date(now + 7200000); // 2시간
+				// refreshTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000));
 				break;
 			case "APP":
-				accessTokenExpiresIn = new Date(now + (15 * 24 * 60 * 60 * 1000)); // 15일
+				accessTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000)); // 1일
 				refreshTokenExpiresIn = new Date(now + (90 * 24 * 60 * 60 * 1000));// 90일
 				break;
 			default:
@@ -69,18 +69,21 @@ public class JwtProvider {
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 		// Refresh Token 생성
-		String refreshToken = Jwts.builder()
-			.setExpiration(refreshTokenExpiresIn)
-			.signWith(key, SignatureAlgorithm.HS256)
-			.compact();
+		if (deviceType.equals("APP")) {
+			String refreshToken = Jwts.builder()
+				.setExpiration(refreshTokenExpiresIn)
+				.signWith(key, SignatureAlgorithm.HS256)
+				.compact();
+			return TokenInfo.builder().grantType("Bearer").accessToken(accessToken).refreshToken(refreshToken).build();
+		}
 
-		return TokenInfo.builder().grantType("Bearer").accessToken(accessToken).refreshToken(refreshToken).build();
+		return TokenInfo.builder().grantType("Bearer").accessToken(accessToken).build();
 	}
 
 	// JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
 	public PrincipalMemberDto getAuthentication(String accessToken) {
 		// 토큰 복호화
-		Claims claims = parseClaims(accessToken);
+		Claims claims = validateToken(accessToken);
 
 		if (claims.get("auth") == null) {
 			throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -94,10 +97,9 @@ public class JwtProvider {
 	}
 
 	// 토큰 정보를 검증하는 메서드
-	public boolean validateToken(String token) {
+	public Claims validateToken(String token) {
 		try {
-			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			return true;
+			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
 			log.error("Invalid JWT Token", e);
 			throw new CustomException.SecurityException(ErrorCode.JWT_INVALID_ERROR.getMessage(),

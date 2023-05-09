@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.tripbook.main.global.util.CustomJsonUtil;
 import com.tripbook.main.member.dto.ResponseMember;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +27,13 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication auth) throws IOException, ServletException {
+		Authentication auth) throws IOException {
 		ResponseMember.Info memberInfo = (ResponseMember.Info)auth.getPrincipal();
 		Map<String, Object> resultJson = new HashMap<>();
 		resultJson.put("nickname", memberInfo.getName());
 		resultJson.put("email", memberInfo.getEmail());
-		resultJson.put("accesstoken", memberInfo.getAccessToken());
+		resultJson.put("access_token", memberInfo.getAccessToken());
+		resultJson.put("refresh_token", memberInfo.getRefreshToken());
 		resultJson.put("status", memberInfo.getStatus());
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

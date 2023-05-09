@@ -10,6 +10,7 @@ import com.tripbook.main.auth.token.CustomPlatformAccessToken;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.service.MemberService;
+import com.tripbook.main.token.dto.TokenInfo;
 import com.tripbook.main.token.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,11 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 		//유저 저장
 		Member resultMember = saveMember(tmpMember);
 		//JWT 토큰 생성
-		String accessToken = savaJwt(resultMember, ((CustomPlatformAccessToken)authentication).getDevice());
+		TokenInfo tokenInfo = savaJwt(resultMember, ((CustomPlatformAccessToken)authentication).getDevice());
 		return CustomPlatformAccessToken.builder()
 			.principal(ResponseMember.Info.builder()
-				.accessToken(accessToken)
+				.accessToken(tokenInfo.getAccessToken())
+				.refreshToken(tokenInfo.getRefreshToken())
 				.email(resultMember.getEmail())
 				.name(resultMember.getName())
 				.status(resultMember.getStatus())
@@ -42,7 +44,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 			.build();
 	}
 
-	private String savaJwt(Member saveMember, String deviceType) {
+	private TokenInfo savaJwt(Member saveMember, String deviceType) {
 		return jwtService.saveToken(saveMember, deviceType);
 	}
 

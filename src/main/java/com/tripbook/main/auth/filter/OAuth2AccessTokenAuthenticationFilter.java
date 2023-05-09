@@ -26,7 +26,6 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
 	private static final String DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX = "/login/oauth2/";
 	private static final String HTTP_METHOD = "GET";
-	private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";  //Header
 	private static final AntPathRequestMatcher DEFAULT_OAUTH2_LOGIN_PATH_REQUEST_MATCHER = new AntPathRequestMatcher(
 		DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX + "*", HTTP_METHOD);
 

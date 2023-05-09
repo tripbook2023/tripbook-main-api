@@ -23,16 +23,18 @@ public class JwtServiceImpl implements JwtService {
 
 	@Transactional
 	@Override
-	public String saveToken(Member member, String deviceType) {
+	public TokenInfo saveToken(Member member, String deviceType) {
 		TokenInfo tokenInfo = jwtGenerateToken(member, deviceType);
-		JwtToken jwtToken = JwtToken.builder()
-			.device(DeviceValue.valueOf(deviceType))
-			.token(tokenInfo.getRefreshToken())
-			.memberId(member)
-			.build();
-		duplicateTokenRemove(jwtToken);
-		jwtRepository.save(jwtToken);
-		return tokenInfo.getAccessToken();
+		if (deviceType.equals("APP")) {
+			JwtToken jwtToken = JwtToken.builder()
+				.device(DeviceValue.valueOf(deviceType))
+				.token(tokenInfo.getRefreshToken())
+				.memberId(member)
+				.build();
+			duplicateTokenRemove(jwtToken);
+			jwtRepository.save(jwtToken);
+		}
+		return tokenInfo;
 	}
 
 	private void duplicateTokenRemove(JwtToken jwtToken) {
