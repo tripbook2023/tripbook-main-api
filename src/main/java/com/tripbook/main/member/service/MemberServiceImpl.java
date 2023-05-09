@@ -38,6 +38,7 @@ public class MemberServiceImpl implements MemberService {
 			//@TODO CustomException으로 변경
 			throw new RuntimeException();
 		} else if (findMember.getStatus() != MemberStatus.ADDITIONAL_AUTHENTICATION) {
+			//이미 인증완료 된 멤버
 			throw new RuntimeException();
 		}
 		memberSurveySave(findMember, requestMember.getSignupSurvey());
@@ -46,16 +47,6 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	private void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
-
-		Member member = entityManager.find(Member.class, findMember.getId());
-
-		if (entityManager.contains(member)) {
-			// member는 영속 상태입니다.
-			log.info("영속");
-		} else {
-			log.info("준영속");
-			// member는 준영속 상태입니다.
-		}
 		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
 		findMember.updateProfile(signupMember.getProfile());
 		findMember.updateIsMarketing(signupMember.getIsMarketing());

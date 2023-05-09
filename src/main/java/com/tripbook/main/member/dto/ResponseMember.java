@@ -20,7 +20,14 @@ public class ResponseMember {
 		private Gender gender;
 		private MemberRole role;
 		private String accessToken;
+		private String refreshToken;
 		private MemberStatus status;
+	}
+
+	@Builder
+	@Getter
+	public static class resultInfo {
+		private String result;
 	}
 
 }
