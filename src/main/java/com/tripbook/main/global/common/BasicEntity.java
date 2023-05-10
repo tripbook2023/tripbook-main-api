@@ -3,9 +3,7 @@ package com.tripbook.main.global.common;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,12 +27,12 @@ public abstract class BasicEntity implements Serializable {
 	@Column(length = 20)
 	private LocalDateTime updatedAt;
 
-	@CreatedBy
-	@Column(updatable = false)
-	private String createdBy;
-
-	@LastModifiedBy
-	private String lastModifiedBy;
+	// @CreatedBy
+	// @Column(updatable = false)
+	// private String createdBy;
+	//
+	// @LastModifiedBy
+	// private String lastModifiedBy;
 
 	@Setter
 	@Column(nullable = false)

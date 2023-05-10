@@ -1,5 +1,7 @@
 ---
+
 spring:
+  security.debug: false
   jpa:
     properties:
       hibernate:

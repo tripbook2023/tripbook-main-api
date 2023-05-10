@@ -32,8 +32,9 @@ public class Member extends BasicEntity implements Serializable {
 	private Long id;
 	@Column(nullable = false, unique = true)
 	private String email;
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String name;
+
 	@Column(nullable = true)
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
@@ -79,6 +80,10 @@ public class Member extends BasicEntity implements Serializable {
 
 	public void updatePoint(Long point) {
 		this.point = point;
+	}
+
+	public void updateBirth(Date birth) {
+		this.birth = birth;
 	}
 
 	@Builder
