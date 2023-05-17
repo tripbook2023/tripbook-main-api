@@ -1,4 +1,4 @@
-package com.tripbook.main.global.enums;
+package com.tripbook.main.member.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum Gender {
 
-	GENDER_MALE("GENDER_MALE"), GENDER_FEMALE("GENDER_FEMALE");
+	MALE("MALE"),
+	FEMALE("FEMALE");
 
 	private final String value;
 }

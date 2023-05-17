@@ -1,7 +1,5 @@
 package com.tripbook.main.global.entity;
 
-import java.util.Date;
-
 import com.tripbook.main.member.entity.Member;
 
 import jakarta.persistence.Column;
@@ -15,7 +13,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "TB_GIFTSHOP")
@@ -26,9 +23,12 @@ public class GiftShop {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne
-	@JoinColumn(name="member_id")
+	@JoinColumn(name = "member_id")
 	private Member memberId;
 	@Column
-	@Setter
 	private Long targetMemberId;
+
+	public void updateTargetMemberId(Long targetMemberId) {
+		this.targetMemberId = targetMemberId;
+	}
 }
