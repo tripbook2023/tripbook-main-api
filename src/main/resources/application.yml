@@ -8,3 +8,11 @@ spring:
     import: classpath:/application_local.yml
 
 ---
+---
+spring:
+  profiles:
+    active: dev
+  config:
+    import: classpath:/application_dev.yml
+
+---
