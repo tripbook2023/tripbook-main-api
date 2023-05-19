@@ -7,6 +7,6 @@ public interface MemberService {
 	public Member memberSave(Member member);
 
 	// public Integer memberUpdate()
-	public Member memberCertification(RequestMember requestMember, String memberEmail);
+	public Member memberCertification(RequestMember.SignupMember requestMember, String memberEmail);
 
 }

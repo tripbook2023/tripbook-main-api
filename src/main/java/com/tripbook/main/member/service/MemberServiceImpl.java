@@ -31,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member memberCertification(RequestMember requestMember,
+	public Member memberCertification(RequestMember.SignupMember requestMember,
 		String memberEmail) {
 		Member findMember = memberRepository.findByEmail(memberEmail);
 		if (findMember == null) {
@@ -41,8 +41,8 @@ public class MemberServiceImpl implements MemberService {
 			//이미 인증완료 된 멤버
 			throw new RuntimeException();
 		}
-		memberSurveySave(findMember, requestMember.getSignupSurvey());
-		updateMember(requestMember.getSignupMember(), findMember);
+		// memberSurveySave(findMember, requestMember.getSignupSurvey());
+		updateMember(requestMember, findMember);
 		return findMember;
 	}
 
