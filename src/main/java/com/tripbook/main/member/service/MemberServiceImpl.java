@@ -47,6 +47,11 @@ public class MemberServiceImpl implements MemberService {
 		return findMember;
 	}
 
+	@Override
+	public Member memberNameValidation(RequestMember.SignupNameValidator requestMember) {
+		return memberRepository.findByName(requestMember.getName());
+	}
+
 	@Transactional
 	public void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
 		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
