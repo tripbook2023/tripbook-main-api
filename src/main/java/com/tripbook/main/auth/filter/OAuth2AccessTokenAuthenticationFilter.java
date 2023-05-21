@@ -15,6 +15,7 @@ import com.tripbook.main.auth.provider.AccessTokenAuthenticationProvider;
 import com.tripbook.main.auth.token.CustomPlatformAccessToken;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.global.util.CheckDevice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,24 +48,7 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 				ErrorCode.TOKEN_UNAUTHORIZED);
 		}
 		return this.getAuthenticationManager()
-			.authenticate(new CustomPlatformAccessToken(accessToken, checkDevice(request)));
+			.authenticate(new CustomPlatformAccessToken(accessToken, CheckDevice.checkDevice(request)));
 	}
 
-	private String checkDevice(HttpServletRequest request) {
-		// 운영체제 정보
-		String userAgent = request.getHeader("User-Agent");
-
-		// 모바일 기종 체크
-		boolean isMobile = userAgent.matches(
-			".*(iPhone|iPod|iPad|BlackBerry|Android|Windows CE|LG|MOT|SAMSUNG|SonyEricsson).*");
-
-		// IOS_APP, ANDROID_APP 앱 특정 변수(변동)
-		if (userAgent.indexOf("IOS_APP") > -1 || userAgent.indexOf("ANDROID_APP") > -1) {
-			return "APP";
-		} else if (isMobile) {
-			return "MOBILE";
-		} else {
-			return "WEB";
-		}
-	}
 }

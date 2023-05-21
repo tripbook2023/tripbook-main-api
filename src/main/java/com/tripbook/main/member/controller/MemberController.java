@@ -26,7 +26,7 @@ public class MemberController {
 	//@TODO Response JWT 전달 필요
 	//회원 등급, 설문조사, MemberDTO
 	@PostMapping("/signup")
-	public ResponseEntity<Object> memberJoin(@RequestBody @Validated RequestMember requestMember,
+	public ResponseEntity<Object> memberJoin(@RequestBody @Validated RequestMember.SignupMember requestMember,
 		OAuth2AuthenticationToken authentication) {
 		memberService.memberCertification(requestMember, authentication.getPrincipal().getAttribute("email"));
 		ResponseMember.resultInfo success = ResponseMember.resultInfo.builder().result("success").build();

@@ -9,4 +9,5 @@ public interface JwtService {
 	@Transactional
 	public TokenInfo saveToken(Member member, String deviceType);
 
+	public TokenInfo tokenIssue(String token, String device);
 }

@@ -62,6 +62,12 @@ public class CustomException extends RuntimeException {
 		}
 	}
 
+	public static class NotFoundJwtException extends CustomException {
+		public NotFoundJwtException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
 	public static class UnsupportedJwtException extends CustomException {
 		public UnsupportedJwtException(String message, ErrorCode errorCode) {
 			super(message, errorCode);
