@@ -1,6 +1,7 @@
 package com.tripbook.main.member.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.entity.Member;
@@ -46,7 +47,8 @@ public class MemberServiceImpl implements MemberService {
 		return findMember;
 	}
 
-	private void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
+	@Transactional
+	public void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
 		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
 		findMember.updateProfile(signupMember.getProfile());
 		findMember.updateIsMarketing(signupMember.getIsMarketing());

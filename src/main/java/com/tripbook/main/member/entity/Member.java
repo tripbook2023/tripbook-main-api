@@ -3,6 +3,9 @@ package com.tripbook.main.member.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
@@ -24,6 +27,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "TB_MEMBER")
 @Getter
+@DynamicUpdate
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BasicEntity implements Serializable {
 

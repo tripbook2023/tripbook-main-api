@@ -1,7 +1,10 @@
 package com.tripbook.main.token.provider;
 
 import java.security.Key;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,22 +44,22 @@ public class JwtProvider {
 	 * APP - 1일 ,
 	 */
 	public TokenInfo generateToken(Member member, String deviceType) {
-		long now = (new Date()).getTime();
+		LocalDateTime now = LocalDateTime.now();
 		// Access Token 생성
-		Date accessTokenExpiresIn = null;
-		Date refreshTokenExpiresIn = null;
+		LocalDateTime accessTokenExpiresIn = null;
+		LocalDateTime refreshTokenExpiresIn = null;
 		switch (deviceType) {
 			case "WEB":
-				accessTokenExpiresIn = new Date(now + 7200000); // 2시간
+				accessTokenExpiresIn = now.plus(2, ChronoUnit.HOURS); // 2시간
 				// refreshTokenExpiresIn = new Date(now + 7200000);
 				break;
 			case "MOBILE":
-				accessTokenExpiresIn = new Date(now + 7200000); // 2시간
+				accessTokenExpiresIn = now.plus(2, ChronoUnit.HOURS); // 2시간
 				// refreshTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000));
 				break;
 			case "APP":
-				accessTokenExpiresIn = new Date(now + (1 * 24 * 60 * 60 * 1000)); // 1일
-				refreshTokenExpiresIn = new Date(now + (90 * 24 * 60 * 60 * 1000));// 90일
+				accessTokenExpiresIn = now.plusDays(1); // 1일
+				refreshTokenExpiresIn = now.plusMonths(3);// 90일
 				break;
 			default:
 				throw new CustomException.UnsupportedPlatform("Unsupported platform",
@@ -65,13 +68,14 @@ public class JwtProvider {
 		String accessToken = Jwts.builder()
 			.setSubject(member.getEmail())
 			.claim("auth", member.getRole())
-			.setExpiration(accessTokenExpiresIn)
+			.setExpiration(Date.from(accessTokenExpiresIn.atZone(ZoneId.systemDefault()).toInstant()))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 		// Refresh Token 생성
 		if (deviceType.equals("APP")) {
 			String refreshToken = Jwts.builder()
-				.setExpiration(refreshTokenExpiresIn)
+				.setSubject(member.getEmail())
+				.setExpiration(Date.from(refreshTokenExpiresIn.atZone(ZoneId.systemDefault()).toInstant()))
 				.signWith(key, SignatureAlgorithm.HS256)
 				.compact();
 			return TokenInfo.builder().grantType("Bearer").accessToken(accessToken).refreshToken(refreshToken).build();
@@ -80,10 +84,14 @@ public class JwtProvider {
 		return TokenInfo.builder().grantType("Bearer").accessToken(accessToken).build();
 	}
 
+	public String validateRefreshToken(String refreshToken) {
+		return validateToken(refreshToken).getSubject();
+	}
+
 	// JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-	public PrincipalMemberDto getAuthentication(String accessToken) {
+	public PrincipalMemberDto getAuthentication(String token) {
 		// 토큰 복호화
-		Claims claims = validateToken(accessToken);
+		Claims claims = validateToken(token);
 
 		if (claims.get("auth") == null) {
 			throw new RuntimeException("권한 정보가 없는 토큰입니다.");
@@ -94,6 +102,14 @@ public class JwtProvider {
 			.role(MemberRole.valueOf((String)claims.get("auth")))
 			.email(claims.getSubject())
 			.build();
+	}
+
+	// JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
+	public String getRefreshTokenAuthentication(String token) {
+		// 토큰 복호화
+		Claims claims = validateToken(token);
+		// 클레임에서 권한 정보 가져오기
+		return claims.getSubject();
 	}
 
 	// 토큰 정보를 검증하는 메서드
@@ -107,15 +123,15 @@ public class JwtProvider {
 		} catch (ExpiredJwtException e) {
 			log.error("Expired JWT Token", e);
 			throw new CustomException.ExpiredJwtException(ErrorCode.JWT_EXPIRED_ERROR.getMessage(),
-				ErrorCode.TOKEN_UNAUTHORIZED);
+				ErrorCode.JWT_EXPIRED_ERROR);
 		} catch (UnsupportedJwtException e) {
 			log.error("Unsupported JWT Token", e);
 			throw new CustomException.UnsupportedJwtException(ErrorCode.JWT_UNSUPPORTED_ERROR.getMessage(),
-				ErrorCode.TOKEN_UNAUTHORIZED);
+				ErrorCode.JWT_UNSUPPORTED_ERROR);
 		} catch (IllegalArgumentException e) {
 			log.error("JWT claims string is empty.", e);
 			throw new CustomException.IllegalArgumentException(ErrorCode.JWT_EMPTY_ERROR.getMessage(),
-				ErrorCode.TOKEN_UNAUTHORIZED);
+				ErrorCode.JWT_EMPTY_ERROR);
 		}
 	}
 
