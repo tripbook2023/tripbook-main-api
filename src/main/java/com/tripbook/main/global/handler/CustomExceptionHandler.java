@@ -55,12 +55,35 @@ public class CustomExceptionHandler {
 	}
 
 	// -- JWT Exceptions END
+	// -- Member Exceptions
+	@ExceptionHandler(CustomException.MemberAlreadyExist.class)
+	public ResponseEntity<ErrorResponse> MemberAlreadyExist(CustomException.MemberAlreadyExist ex) {
+		log.error("MemberAlreadyExist", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
+	@ExceptionHandler(CustomException.MemberAlreadyAuthenticate.class)
+	public ResponseEntity<ErrorResponse> MemberAlreadyAuthenticate(CustomException.MemberAlreadyAuthenticate ex) {
+		log.error("MemberAlreadyAuthenticate", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
+	@ExceptionHandler(CustomException.MemberNotFound.class)
+	public ResponseEntity<ErrorResponse> MemberNotFound(CustomException.MemberNotFound ex) {
+		log.error("MemberNotFound", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
 	@ExceptionHandler(CustomException.EmailDuplicateException.class)
 	public ResponseEntity<ErrorResponse> handleEmailDuplicateException(CustomException.EmailDuplicateException ex) {
 		log.error("handleEmailDuplicateException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
+	// -- Member Exceptions
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -69,6 +92,7 @@ public class CustomExceptionHandler {
 			.map(error -> error.getDefaultMessage())
 			.collect(Collectors.toList());
 		ErrorResponse response = new ErrorResponse(ErrorCode.BAD_REQUEST);
+		response.setMessage(errors);
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 

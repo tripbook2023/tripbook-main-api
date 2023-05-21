@@ -3,6 +3,8 @@ package com.tripbook.main.member.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.entity.Survey;
@@ -36,11 +38,11 @@ public class MemberServiceImpl implements MemberService {
 		String memberEmail) {
 		Member findMember = memberRepository.findByEmail(memberEmail);
 		if (findMember == null) {
-			//@TODO CustomException으로 변경
-			throw new RuntimeException();
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		} else if (findMember.getStatus() != MemberStatus.ADDITIONAL_AUTHENTICATION) {
 			//이미 인증완료 된 멤버
-			throw new RuntimeException();
+			throw new CustomException.MemberAlreadyAuthenticate(ErrorCode.MEMBER_ALREADY_AUTHENTICATE.getMessage(),
+				ErrorCode.MEMBER_ALREADY_AUTHENTICATE);
 		}
 		// memberSurveySave(findMember, requestMember.getSignupSurvey());
 		updateMember(requestMember, findMember);
@@ -48,8 +50,12 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member memberNameValidation(RequestMember.SignupNameValidator requestMember) {
-		return memberRepository.findByName(requestMember.getName());
+	public boolean memberNameValidation(RequestMember.SignupNameValidator requestMember) {
+		if (memberRepository.findByName(requestMember.getName()) != null) {
+			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+				ErrorCode.MEMBER_NAME_ERROR);
+		}
+		return true;
 	}
 
 	@Transactional
