@@ -1,5 +1,9 @@
 package com.tripbook.main.member.dto;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
@@ -27,7 +31,8 @@ public class ResponseMember {
 	@Builder
 	@Getter
 	public static class resultInfo {
-		private String result;
+		private HttpStatus status;
+		private List<String> message;
 	}
 
 }
