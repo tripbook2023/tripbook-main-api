@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.ServletException;
@@ -21,12 +21,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
+public class CustomLoginFailureHandler implements AuthenticationEntryPoint {
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException exception) throws IOException, ServletException {
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+		AuthenticationException authException) throws IOException, ServletException {
 
-		if (exception instanceof BadCredentialsException) {
+		if (authException instanceof BadCredentialsException) {
 			// 사용 중지된 계정으로 로그인한 경우
 			response.sendError(HttpStatus.CONFLICT.value(), "USER_ALREADY_exists:::");
 		}

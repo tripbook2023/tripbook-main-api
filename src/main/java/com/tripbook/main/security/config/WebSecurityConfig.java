@@ -10,12 +10,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.tripbook.main.auth.filter.OAuth2AccessTokenAuthenticationFilter;
 import com.tripbook.main.member.controller.LogoutHandler;
+import com.tripbook.main.member.repository.MemberRepository;
 import com.tripbook.main.security.filter.ExceptionHandlerFilter;
-import com.tripbook.main.token.filter.JwtAuthenticationFilter;
+import com.tripbook.main.security.filter.JwtTokenFilter;
+import com.tripbook.main.security.handler.CustomLoginFailureHandler;
 import com.tripbook.main.token.provider.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfig {
 
 	private final LogoutHandler logoutHandler;
-	private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
 	private final JwtProvider jwtProvider;
+	private final MemberRepository memberRepository;
 	@Value("${spring.security.debug:false}")
 	boolean securityDebug;
 
@@ -42,27 +42,25 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		//PlatForm 토큰 인증필터
-
-		http
-			.authorizeHttpRequests()
-			.requestMatchers(HttpMethod.POST, "/member/**")
-			.hasRole("MEMBER")
-			.anyRequest().permitAll();
-		http
-			.logout()
-			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-			.addLogoutHandler(logoutHandler);
-		http
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		return http.csrf().disable()
+			.headers().frameOptions().disable()
 			.and()
-			.csrf().disable()
-			.httpBasic().disable();
-		//JWT 인증 필터
-		http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-		//Filter  ExceptionHandling
-		http.addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class);
+			.authorizeHttpRequests()
 
-		return http.build();
+			.anyRequest()
+			.authenticated()
 
+			.and()
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.formLogin().disable()
+			.addFilterBefore(new JwtTokenFilter(memberRepository, jwtProvider),
+				UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new ExceptionHandlerFilter(), JwtTokenFilter.class)
+			.exceptionHandling()
+			.authenticationEntryPoint(new CustomLoginFailureHandler())
+			.and()
+			.build();
 	}
 }
