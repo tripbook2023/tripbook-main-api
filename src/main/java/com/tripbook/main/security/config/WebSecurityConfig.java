@@ -1,6 +1,5 @@
 package com.tripbook.main.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +24,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-	@Autowired
-	private LogoutHandler logoutHandler;
-	@Autowired
+
+	private final LogoutHandler logoutHandler;
 	private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
 	private final JwtProvider jwtProvider;
 	@Value("${spring.security.debug:false}")
@@ -38,17 +36,13 @@ public class WebSecurityConfig {
 		return (web) ->
 			web.debug(securityDebug)
 				.ignoring()
-				.requestMatchers(HttpMethod.GET, "/login/oauth2/**");
+				.requestMatchers(HttpMethod.GET, "/auth/login/oauth2/**");
 	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		//PlatForm 토큰 인증필터
-		http
-			.authorizeHttpRequests()
-			.requestMatchers(HttpMethod.GET, "/login/auth").authenticated()
-			.and()
-			.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 		http
 			.authorizeHttpRequests()
 			.requestMatchers(HttpMethod.POST, "/member/**")

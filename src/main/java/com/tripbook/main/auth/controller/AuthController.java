@@ -2,6 +2,7 @@ package com.tripbook.main.auth.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbook.main.auth.dto.AuthResponse;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
  * Swagger3.0 맵핑을 위한 TempController.
  * 실제 동작하지 않습니다.
  */
+@RequestMapping("/auth")
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Auth", description = "Auth API")

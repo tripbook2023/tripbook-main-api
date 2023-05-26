@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
 	public LoginUserInfo login(final String accessToken) {
 		final Auth0UserInfo userInfo = userInfoRequestV2.getUserInfoFromAuth0Token(accessToken);
 		final Member member = memberRepository.findOptionalByEmail(userInfo.email())
-			.orElse(createNewMemberFrom(userInfo));
+			.orElseGet(() -> createNewMemberFrom(userInfo));
 		final TokenInfo tokenInfo = jwtService.saveToken(member, "WEB");
 
 		return new LoginUserInfo(member, tokenInfo);
