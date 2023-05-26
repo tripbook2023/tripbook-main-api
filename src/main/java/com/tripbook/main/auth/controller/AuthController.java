@@ -8,6 +8,8 @@ import com.tripbook.main.auth.dto.AuthResponse;
 import com.tripbook.main.auth.dto.ResponseAuth;
 import com.tripbook.main.auth.service.AuthService;
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.util.CustomTokenUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +55,11 @@ public class AuthController {
 	@GetMapping("/login/oauth2/temp")
 	public ResponseEntity<AuthResponse> login(HttpServletRequest request) {
 		final String accessToken = CustomTokenUtil.resolveToken(request);
+
+		if (accessToken == null) {
+			throw new CustomException.InvalidTokenException(ErrorCode.TOKEN_UNAUTHORIZED.getMessage(),
+				ErrorCode.TOKEN_UNAUTHORIZED);
+		}
 
 		return ResponseEntity.ok(
 			AuthDtoMapper.of(authService.login(accessToken))

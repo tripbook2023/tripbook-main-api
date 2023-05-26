@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
@@ -19,7 +20,8 @@ class AuthControllerAcceptanceTest {
 
 	@LocalServerPort
 	int port;
-	public static final String ACCESS_TOKEN = "";
+	@Value("${auth.access-token}")
+	public String accessToken;
 
 	@BeforeEach
 	void setUp() {
@@ -33,7 +35,7 @@ class AuthControllerAcceptanceTest {
 
 			given().log().all()
 			.contentType(ContentType.JSON)
-			.header("Authorization", "Bearer " + ACCESS_TOKEN).
+			.header("Authorization", "Bearer " + accessToken).
 
 			when()
 			.get("/login/oauth2/").

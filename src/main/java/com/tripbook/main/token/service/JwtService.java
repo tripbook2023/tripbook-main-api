@@ -1,13 +1,11 @@
 package com.tripbook.main.token.service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.token.dto.TokenInfo;
 
 public interface JwtService {
-	@Transactional
-	public TokenInfo saveToken(Member member, String deviceType);
 
-	public TokenInfo tokenIssue(String token, String device);
+	TokenInfo saveToken(Member member, String deviceType);
+
+	TokenInfo tokenIssue(String token, String device);
 }

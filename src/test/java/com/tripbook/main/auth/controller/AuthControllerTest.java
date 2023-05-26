@@ -1,11 +1,11 @@
 package com.tripbook.main.auth.controller;
 
-import static com.tripbook.main.auth.controller.AuthControllerAcceptanceTest.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -21,10 +21,13 @@ class AuthControllerTest {
 	@Autowired
 	private AuthController sut;
 
+	@Value("${auth.access-token}")
+	public String accessToken;
+
 	void login_with_auth0_accessToken() throws Exception {
 		//given
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addHeader("Authorization", "Bearer " + ACCESS_TOKEN);
+		request.addHeader("Authorization", "Bearer " + accessToken);
 
 		//when
 		final ResponseEntity<AuthResponse> response = sut.login(request);
