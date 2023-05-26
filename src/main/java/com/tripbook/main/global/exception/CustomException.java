@@ -14,6 +14,24 @@ public class CustomException extends RuntimeException {
 		this.errorCode = errorCode;
 	}
 
+	public static class MemberAlreadyExist extends CustomException {
+		public MemberAlreadyExist(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class MemberNotFound extends CustomException {
+		public MemberNotFound(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class MemberAlreadyAuthenticate extends CustomException {
+		public MemberAlreadyAuthenticate(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
 	public static class EmailDuplicateException extends CustomException {
 		public EmailDuplicateException(String message, ErrorCode errorCode) {
 			super(message, errorCode);

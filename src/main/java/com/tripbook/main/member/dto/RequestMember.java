@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.tripbook.main.member.enums.Gender;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,12 +30,17 @@ public class RequestMember {
 		@NotBlank(message = "name is required")
 		@Size(min = 1, max = 9, message = "이름은 1 ~ 9자 이여야 합니다!")
 		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
+		@Schema(title = "닉네임")
 		private String name;
+		@Schema(title = "프로필 이미지 URL", example = "https://IMAGEURL")
 		private String profile;
+		@Schema(title = "마케팅 수신 허용여부")
 		@NotNull(message = "isMarketing is required")
 		private Boolean isMarketing;
+		@Schema(title = "성별", example = "MALE||FEMALE")
 		@NotNull(message = "gender is required")
 		private Gender gender;
+		@Schema(title = "생일", description = "yyyy-mm-dd", type = "LocalDate", example = "1996-07-13")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
 		private Date birth;
 	}

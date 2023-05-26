@@ -9,6 +9,6 @@ public interface MemberService {
 	// public Integer memberUpdate()
 	public Member memberCertification(RequestMember.SignupMember requestMember, String memberEmail);
 
-	public Member memberNameValidation(RequestMember.SignupNameValidator requestMember);
+	public boolean memberNameValidation(RequestMember.SignupNameValidator requestMember);
 
 }

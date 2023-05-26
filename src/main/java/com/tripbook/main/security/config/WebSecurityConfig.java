@@ -41,7 +41,12 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+		//PlatForm 토큰 인증필터
+		http
+			.authorizeHttpRequests()
+			.requestMatchers(HttpMethod.GET, "/login/auth").authenticated()
+			.and()
+			.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		http
 			.authorizeHttpRequests()
 			.requestMatchers(HttpMethod.POST, "/member/**")
@@ -56,8 +61,6 @@ public class WebSecurityConfig {
 			.and()
 			.csrf().disable()
 			.httpBasic().disable();
-		//PlatForm 토큰 인증필터
-		http.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		//JWT 인증 필터
 		http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 		//Filter  ExceptionHandling

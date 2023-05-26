@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+// Swagger 설명
 public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	private static final String DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX = "/login/oauth2/";
