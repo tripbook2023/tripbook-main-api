@@ -1,0 +1,46 @@
+jwt:
+  secret: 32543a4271369f9b539d9824b98ba055629a69f6f278a24cd6f36a63d0fc282986965bcb0a56cf9d1b2cb50c9c91003a5982c3db9d60d58c205e3373aa0bae68
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: create
+  logging:
+    level:
+      org:
+        hibernate:
+          type:
+            descriptor:
+              sql: trace
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-id: UZ7PYWQdxTw85EY1wjUvUXAhNvzJrJER
+            client-secret: vEH4FzhtYbMsqDNIfmm1PjCRs2AEtuwJUcq8v1ifsjF5YCE-mzq_2dRsR4FF4F9T
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://dev-af65lj2887m1kztj.us.auth0.com/
+            token-uri: https://dev-z2b4bazfo6o536tj.us.auth0.com/userinfo/
+
+auth:
+  access-token: eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaHR0cHM6Ly9kZXYtejJiNGJhemZvNm81MzZ0ai51cy5hdXRoMC5jb20vIn0..zxmFYZl5j1FGA40l.pP20AF6LvGcJkm5iK3NEJocAFc-nxj3nZpKNfFKynuqQS5d9nwkuZcLqL6GQz439UppdZpKrY6ZJsUgO8Pl7DlUkrpQdAVHvkYPmhMaoQe-HRAUuVTF9lGJgHAq_QQd92m6qhunaKnpUOTdjoHPQO1R5DD5rkTwqOdFHnPGeXGDJTI6s0CZNA7M5Jc6O1rOSZGXTmvdBn1jDK7fS3OAcWrdC2vsXFtU5k9-4DKAtEDe-p1ZH7UTd4OogtRURZKGMfk4xQ_5kdZdOLi3iyRZrn53gJyPXtLT0Ml0Ydld0nrWjmAdcnXi-tMRWWblL3FHWGxcsafJo-jnaiJrOi0bZ8CWiaMAWXjo.eWd1exf4eFw3iE74TOw4Gw

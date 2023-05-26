@@ -9,6 +9,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 	@Override
 	public LoginUserInfo login(final String accessToken) {
-		throw new UnsupportedOperationException("Not Implemented");
+		return null;
 	}
 }

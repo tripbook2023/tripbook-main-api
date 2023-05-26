@@ -19,7 +19,7 @@ class AuthControllerAcceptanceTest {
 
 	@LocalServerPort
 	int port;
-	public static final String ACCESS_TOKEN = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwiaXNzIjoiaHR0cHM6Ly9kZXYtejJiNGJhemZvNm81MzZ0ai51cy5hdXRoMC5jb20vIn0..zxmFYZl5j1FGA40l.pP20AF6LvGcJkm5iK3NEJocAFc-nxj3nZpKNfFKynuqQS5d9nwkuZcLqL6GQz439UppdZpKrY6ZJsUgO8Pl7DlUkrpQdAVHvkYPmhMaoQe-HRAUuVTF9lGJgHAq_QQd92m6qhunaKnpUOTdjoHPQO1R5DD5rkTwqOdFHnPGeXGDJTI6s0CZNA7M5Jc6O1rOSZGXTmvdBn1jDK7fS3OAcWrdC2vsXFtU5k9-4DKAtEDe-p1ZH7UTd4OogtRURZKGMfk4xQ_5kdZdOLi3iyRZrn53gJyPXtLT0Ml0Ydld0nrWjmAdcnXi-tMRWWblL3FHWGxcsafJo-jnaiJrOi0bZ8CWiaMAWXjo.eWd1exf4eFw3iE74TOw4Gw";
+	public static final String ACCESS_TOKEN = "";
 
 	@BeforeEach
 	void setUp() {
