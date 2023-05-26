@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tripbook.main.auth.dto.ResponseAuth;
+import com.tripbook.main.auth.dto.AuthResponse;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @Transactional
@@ -27,15 +27,15 @@ class AuthControllerTest {
 		request.addHeader("Authorization", "Bearer " + ACCESS_TOKEN);
 
 		//when
-		final ResponseEntity<ResponseAuth.resultInfo> response = sut.login(request);
+		final ResponseEntity<AuthResponse> response = sut.login(request);
 
 		//then
-		final ResponseAuth.resultInfo responseBody = response.getBody();
-		assertThat(responseBody.getNickname()).isEqualTo("jay park");
-		assertThat(responseBody.getEmail()).isEqualTo("pjhyun7821@gmail.com");
-		assertThat(responseBody.getStatus()).isEqualTo("ADDITIONAL_AUTHENTICATION");
-		assertThat(responseBody.getRefreshToken()).isNull();
-		assertThat(responseBody.getAccessToken()).isNotNull();
+		final AuthResponse responseBody = response.getBody();
+		assertThat(responseBody.nickname()).isEqualTo("jay park");
+		assertThat(responseBody.email()).isEqualTo("pjhyun7821@gmail.com");
+		assertThat(responseBody.status()).isEqualTo("ADDITIONAL_AUTHENTICATION");
+		assertThat(responseBody.refreshToken()).isNull();
+		assertThat(responseBody.accessToken()).isNotNull();
 	}
 
 }

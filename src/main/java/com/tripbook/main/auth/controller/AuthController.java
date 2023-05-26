@@ -4,8 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tripbook.main.auth.dto.AuthResponse;
 import com.tripbook.main.auth.dto.ResponseAuth;
+import com.tripbook.main.auth.service.AuthService;
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.util.CustomTokenUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Auth", description = "Auth API")
 public class AuthController {
 
+	private final AuthService authService;
+
 	@Operation(security = {
 		@SecurityRequirement(name = "OAUTH")}, summary = "간편로그인 토큰인증", description = "Auth0에서 발급받은 토큰을 Header에 전달한다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseAuth.resultInfo.class))),
@@ -46,8 +51,12 @@ public class AuthController {
 	}
 
 	@GetMapping("/login/oauth2/temp")
-	public ResponseEntity<ResponseAuth.resultInfo> login(HttpServletRequest request) {
-		throw new UnsupportedOperationException("not implemented");
+	public ResponseEntity<AuthResponse> login(HttpServletRequest request) {
+		final String accessToken = CustomTokenUtil.resolveToken(request);
+
+		return ResponseEntity.ok(
+			AuthDtoMapper.of(authService.login(accessToken))
+		);
 	}
 
 }
