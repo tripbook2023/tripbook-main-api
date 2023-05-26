@@ -36,7 +36,9 @@ public class WebSecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) ->
-			web.debug(securityDebug);
+			web.debug(securityDebug)
+				.ignoring()
+				.requestMatchers(HttpMethod.GET, "/login/oauth2/**");
 	}
 
 	@Bean

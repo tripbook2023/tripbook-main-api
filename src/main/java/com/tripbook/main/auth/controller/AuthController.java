@@ -1,5 +1,6 @@
 package com.tripbook.main.auth.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,12 +15,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Swagger3.0 맵핑을 위한 TempController.
  * 실제 동작하지 않습니다.
  */
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "Auth", description = "Auth API")
 public class AuthController {
 
@@ -30,7 +34,7 @@ public class AuthController {
 		@ApiResponse(responseCode = "401", description = "유효하지 않은 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "403", description = "CSRF 또는 권한문제로 관리자 문의 필요", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
-	@GetMapping("/login/oauth2/")
+	@GetMapping("/login/oauth2/test")
 	public String tmpAuthReq(
 		@Parameter(description =
 			"1.iPhone|iPod|iPad|BlackBerry|Android|Windows CE|LG|MOT|SAMSUNG|SonyEricsson-> 모바일 웹 \n\n"
@@ -39,6 +43,11 @@ public class AuthController {
 			, required = true, name = "User-Agent", in = ParameterIn.HEADER)
 		String userAgent) {
 		return "Test";
+	}
+
+	@GetMapping("/login/oauth2/temp")
+	public ResponseEntity<ResponseAuth.resultInfo> login(HttpServletRequest request) {
+		throw new UnsupportedOperationException("not implemented");
 	}
 
 }
