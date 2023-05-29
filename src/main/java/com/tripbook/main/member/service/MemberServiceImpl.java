@@ -7,14 +7,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.global.util.CheckDevice;
 import com.tripbook.main.member.dto.RequestMember;
+import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
-import com.tripbook.main.member.entity.Survey;
 import com.tripbook.main.member.enums.MemberStatus;
 import com.tripbook.main.member.repository.MemberRepository;
-import com.tripbook.main.member.repository.SurveyRepository;
 import com.tripbook.main.member.vo.MemberVO;
+import com.tripbook.main.token.dto.TokenInfo;
+import com.tripbook.main.token.service.JwtService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,15 +26,20 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
-	private final SurveyRepository surveyRepository;
+	private final JwtService jwtService;
 
 	@Override
-	public Member memberSave(Member member) {
-		Member findMember = memberValidation(member);
-		if (findMember == null) {
-			findMember = memberRepository.save(member);
-		}
-		return findMember;
+	public ResponseMember.Info memberSave(MemberVO member, HttpServletRequest request) {
+		//중복가입 검사
+		memberValidation(member);
+
+		//가입진행
+		Member saveMember = memberRepository.save(new Member(member));
+		TokenInfo tokenInfo = jwtService.saveToken(saveMember, CheckDevice.checkDevice(request));
+		return ResponseMember.Info.builder()
+			.message("success")
+			.refreshToken(tokenInfo.getRefreshToken())
+			.accessToken(tokenInfo.getAccessToken()).build();
 	}
 
 	@Override
@@ -40,8 +48,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public boolean memberNameValidation(RequestMember.SignupNameValidator requestMember) {
-		if (memberRepository.findByName(requestMember.getName()) != null) {
+	public boolean memberNameValidation(MemberVO member) {
+		if (memberRepository.findByName(member.getName()) != null) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
 		}
@@ -58,27 +66,13 @@ public class MemberServiceImpl implements MemberService {
 		memberRepository.save(findMember);
 	}
 
-	private void memberSurveySave(Member member, RequestMember.SignupSurvey survey) {
-		//@TODO survey내 null 값 체크
-		Survey surveyData = Survey.builder()
-			.memberId(member)
-			.accompany(survey.getAccompany())
-			.purpose(survey.getPurpose())
-			.period(survey.getPeriod())
-			.location(survey.getLocation())
-			.transportation(survey.getTransportation())
-			.build();
-		surveyRepository.save(surveyData);
-	}
-
-	private Member memberValidation(Member member) {
-		Member findMember = memberRepository.findByEmail(member.getEmail());
-		if (findMember != null) {
-			//이미 가입 된 유저
+	private boolean memberValidation(MemberVO member) {
+		if (memberRepository.findByEmailOrName(member.getEmail(), member.getName()) != null) {
 			log.info("Member_Already_Exists.");
-			return findMember;
+			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
+				ErrorCode.EMAIL_DUPLICATION);
 		}
-		return null;
+		return true;
 
 	}
 }
