@@ -32,6 +32,10 @@ public class RequestMember {
 		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
 		@Schema(title = "닉네임")
 		private String name;
+		@Schema(title = "사용자 이메일", example = "lso5507@gmail.com")
+		@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "이메일 형식에 맞지 않습니다.")
+		@NotNull(message = "email is required")
+		private String email;
 		@Schema(title = "프로필 이미지 URL", example = "https://IMAGEURL")
 		private String profile;
 		@Schema(title = "마케팅 수신 허용여부")
