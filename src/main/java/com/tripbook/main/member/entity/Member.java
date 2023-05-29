@@ -11,6 +11,7 @@ import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
+import com.tripbook.main.member.vo.MemberVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -103,5 +104,15 @@ public class Member extends BasicEntity implements Serializable {
 		this.role = role;
 		this.status = status;
 		this.isMarketing = isMarketing;
+	}
+
+	public Member(MemberVO memberVO) {
+		this.status = memberVO.getStatus();
+		this.email = memberVO.getEmail();
+		this.role = memberVO.getRole();
+		this.profile = memberVO.getProfile();
+		this.birth = memberVO.getBirth();
+		this.name = memberVO.getName();
+		this.isMarketing = memberVO.isMarketing();
 	}
 }

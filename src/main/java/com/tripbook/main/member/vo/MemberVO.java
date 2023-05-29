@@ -3,6 +3,8 @@ package com.tripbook.main.member.vo;
 import java.sql.Date;
 
 import com.tripbook.main.member.enums.Gender;
+import com.tripbook.main.member.enums.MemberRole;
+import com.tripbook.main.member.enums.MemberStatus;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -16,11 +18,16 @@ public class MemberVO {
 	private boolean isMarketing;
 	private Gender gender;
 	private String profile;
+	private MemberRole role;
 	private Date birth;
+	private MemberStatus status;
 
 	@Builder
-	public MemberVO(String name, String email, boolean isMarketing, Gender gender, String profile, Date birth) {
+	public MemberVO(String name, MemberRole role, String email, boolean isMarketing, Gender gender, String profile,
+		Date birth, MemberStatus status) {
 		this.name = name;
+		this.status = status;
+		this.role = role;
 		this.email = email;
 		this.isMarketing = isMarketing;
 		this.gender = gender;
