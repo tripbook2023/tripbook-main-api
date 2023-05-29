@@ -1,5 +1,7 @@
 package com.tripbook.main.member.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,8 +13,8 @@ import com.tripbook.main.member.entity.Survey;
 import com.tripbook.main.member.enums.MemberStatus;
 import com.tripbook.main.member.repository.MemberRepository;
 import com.tripbook.main.member.repository.SurveyRepository;
+import com.tripbook.main.member.vo.MemberVO;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final SurveyRepository surveyRepository;
-	private final EntityManager entityManager;
 
 	@Override
 	public Member memberSave(Member member) {
@@ -34,19 +35,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member memberCertification(RequestMember.SignupMember requestMember,
-		String memberEmail) {
-		Member findMember = memberRepository.findByEmail(memberEmail);
-		if (findMember == null) {
-			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
-		} else if (findMember.getStatus() != MemberStatus.ADDITIONAL_AUTHENTICATION) {
-			//이미 인증완료 된 멤버
-			throw new CustomException.MemberAlreadyAuthenticate(ErrorCode.MEMBER_ALREADY_AUTHENTICATE.getMessage(),
-				ErrorCode.MEMBER_ALREADY_AUTHENTICATE);
-		}
-		// memberSurveySave(findMember, requestMember.getSignupSurvey());
-		updateMember(requestMember, findMember);
-		return findMember;
+	public Optional<Member> memberCertification(MemberVO memberVO) {
+		return Optional.ofNullable(memberRepository.findByEmail(memberVO.getEmail()));
 	}
 
 	@Override

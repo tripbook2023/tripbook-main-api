@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.enums.Gender;
@@ -47,6 +48,7 @@ public class Member extends BasicEntity implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private MemberRole role;
 	@Column
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birth;
 	@Column
 	private String profile;
@@ -92,8 +94,10 @@ public class Member extends BasicEntity implements Serializable {
 	}
 
 	@Builder
-	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status, Boolean isMarketing) {
+	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status, Boolean isMarketing,
+		String profile) {
 		this.email = email;
+		this.profile = profile;
 		this.name = name;
 		this.gender = gender;
 		this.role = role;

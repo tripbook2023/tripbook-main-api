@@ -15,6 +15,7 @@ import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.service.MemberService;
+import com.tripbook.main.member.vo.MemberVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,7 +44,16 @@ public class MemberController {
 	@PostMapping("/signup")
 	public ResponseEntity<Object> memberJoin(@RequestBody @Validated RequestMember.SignupMember requestMember,
 		OAuth2AuthenticationToken authentication) {
-		memberService.memberCertification(requestMember, authentication.getPrincipal().getAttribute("email"));
+		MemberVO memberVO = MemberVO.builder()
+			.birth(requestMember.getBirth())
+			.profile(requestMember.getProfile())
+			.isMarketing(requestMember.getIsMarketing())
+			.name(requestMember.getName())
+			.gender(requestMember.getGender())
+			.email(authentication.getPrincipal().getAttribute("email"))
+			.build();
+
+		memberService.memberCertification(memberVO);
 		ResponseMember.resultInfo result = ResponseMember.resultInfo.builder().status(HttpStatus.OK)
 			.message(Arrays.asList("success"))
 			.build();
