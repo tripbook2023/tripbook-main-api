@@ -36,7 +36,8 @@ public class JwtController {
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")}, summary = "토큰 재발급", description = "Header(Authorization) 액세스토큰 재발급을 위한 리프레시토큰 입력", responses = {
 		@ApiResponse(responseCode = "200", description = "성공시에 액세스토큰, 리프레시토큰 재발급", content = @Content(schema = @Schema(implementation = TokenInfo.class))),
-		@ApiResponse(responseCode = "400", description = "토큰을 찾을 수 없거나, 유효하지 않습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+		@ApiResponse(responseCode = "500", description = "토큰을 찾을 수 없습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "401", description = "토큰이 유효하지 않습니다.", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	})
 	@PostMapping("/issue")
 	public ResponseEntity<Object> tokenReissue(HttpServletRequest request,
