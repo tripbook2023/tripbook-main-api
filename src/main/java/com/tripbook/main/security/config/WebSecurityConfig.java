@@ -44,14 +44,18 @@ public class WebSecurityConfig {
 		//PlatForm 토큰 인증필터
 		http
 			.authorizeHttpRequests()
-			.requestMatchers(HttpMethod.GET, "/login/auth").authenticated()
+			.requestMatchers(HttpMethod.GET, "/login/oauth2").authenticated()
 			.and()
 			.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		http
 			.authorizeHttpRequests()
+			.requestMatchers(HttpMethod.POST, "/member/signup")
+			.permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/**")
 			.hasRole("MEMBER")
-			.anyRequest().permitAll();
+			.anyRequest()
+			.permitAll();
+
 		http
 			.logout()
 			.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
