@@ -18,9 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
-import com.tripbook.main.member.entity.Member;
-import com.tripbook.main.member.enums.MemberRole;
-import com.tripbook.main.member.enums.MemberStatus;
+import com.tripbook.main.member.vo.MemberVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +31,7 @@ public class UserInfoRequest {
 	@Value("${spring.security.oauth2.client.provider.auth0.token-uri}")
 	private String issuerUri;
 
-	public Member getSocialEmail(String accessToken) {
+	public MemberVO getSocialEmail(String accessToken) {
 
 		HttpHeaders headers = createHeaders(accessToken);
 
@@ -44,12 +42,9 @@ public class UserInfoRequest {
 			ResponseEntity<Map<String, Object>> response = restTemplate.exchange(issuerUri, HttpMethod.GET, request,
 				RESPONSE_TYPE);
 			Map<String, Object> response2 = (Map<String, Object>)response.getBody();
-			return Member.builder()
+			return MemberVO.builder()
 				.email(response2.get("email").toString())
 				.name(response2.get("name").toString())
-				.role(MemberRole.ROLE_MEMBER)
-				.status(MemberStatus.ADDITIONAL_AUTHENTICATION)
-				.isMarketing(false)
 				.build();
 		} catch (HttpClientErrorException.Unauthorized e) {
 			log.error("TOKEN_UNAUTHORIZED ERRROR", e);

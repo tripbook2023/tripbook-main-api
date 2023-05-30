@@ -5,11 +5,13 @@ import java.util.Date;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
+import com.tripbook.main.member.vo.MemberVO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,6 +49,7 @@ public class Member extends BasicEntity implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private MemberRole role;
 	@Column
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birth;
 	@Column
 	private String profile;
@@ -92,12 +95,24 @@ public class Member extends BasicEntity implements Serializable {
 	}
 
 	@Builder
-	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status, Boolean isMarketing) {
+	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status, Boolean isMarketing,
+		String profile) {
 		this.email = email;
+		this.profile = profile;
 		this.name = name;
 		this.gender = gender;
 		this.role = role;
 		this.status = status;
 		this.isMarketing = isMarketing;
+	}
+
+	public Member(MemberVO memberVO) {
+		this.status = memberVO.getStatus();
+		this.email = memberVO.getEmail();
+		this.role = memberVO.getRole();
+		this.profile = memberVO.getProfile();
+		this.birth = memberVO.getBirth();
+		this.name = memberVO.getName();
+		this.isMarketing = memberVO.isMarketing();
 	}
 }

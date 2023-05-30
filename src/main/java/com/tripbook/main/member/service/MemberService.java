@@ -1,14 +1,17 @@
 package com.tripbook.main.member.service;
 
-import com.tripbook.main.member.dto.RequestMember;
+import java.util.Optional;
+
+import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
+import com.tripbook.main.member.vo.MemberVO;
 
 public interface MemberService {
-	public Member memberSave(Member member);
+	public ResponseMember.Info memberSave(MemberVO member, String deviceValue);
 
 	// public Integer memberUpdate()
-	public Member memberCertification(RequestMember.SignupMember requestMember, String memberEmail);
+	public Optional<Member> memberCertification(MemberVO memberVO);
 
-	public boolean memberNameValidation(RequestMember.SignupNameValidator requestMember);
+	public boolean memberNameValidation(MemberVO memberVO);
 
 }

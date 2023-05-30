@@ -9,12 +9,6 @@ public class CustomPlatformAccessToken extends AbstractAuthenticationToken {
 	private String accessToken;
 	private String device;
 
-	public CustomPlatformAccessToken(String accessToken) {
-		super(null);
-		this.accessToken = accessToken;
-		setAuthenticated(false);
-	}
-
 	public CustomPlatformAccessToken(String accessToken, String device) {
 		super(null);
 		this.accessToken = accessToken;

@@ -15,8 +15,8 @@ public enum MemberStatus {
 	STATUS_WITHDRAWAL("STATUS_WITHDRAWAL"),
 	@Schema(title = "휴면계정")
 	STATUS_SLEEP("STATUS_SLEEP"),
-	@Schema(title = "추가인증필요 계정")
-	ADDITIONAL_AUTHENTICATION("ADDITIONAL_AUTHENTICATION");
+	@Schema(title = "회원가입필요 계정")
+	STATUS_REQUIRED_AUTH("STATUS_REQUIRED_AUTH");
 	private final String value;
 
 }

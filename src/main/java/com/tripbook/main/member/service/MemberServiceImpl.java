@@ -1,18 +1,21 @@
 package com.tripbook.main.member.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.RequestMember;
+import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
-import com.tripbook.main.member.entity.Survey;
 import com.tripbook.main.member.enums.MemberStatus;
 import com.tripbook.main.member.repository.MemberRepository;
-import com.tripbook.main.member.repository.SurveyRepository;
+import com.tripbook.main.member.vo.MemberVO;
+import com.tripbook.main.token.dto.TokenInfo;
+import com.tripbook.main.token.service.JwtService;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,39 +24,33 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
-	private final SurveyRepository surveyRepository;
-	private final EntityManager entityManager;
+	private final JwtService jwtService;
 
 	@Override
-	public Member memberSave(Member member) {
-		Member findMember = memberValidation(member);
-		if (findMember == null) {
-			findMember = memberRepository.save(member);
-		}
-		return findMember;
-	}
-
-	@Override
-	public Member memberCertification(RequestMember.SignupMember requestMember,
-		String memberEmail) {
-		Member findMember = memberRepository.findByEmail(memberEmail);
-		if (findMember == null) {
-			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
-		} else if (findMember.getStatus() != MemberStatus.ADDITIONAL_AUTHENTICATION) {
-			//이미 인증완료 된 멤버
-			throw new CustomException.MemberAlreadyAuthenticate(ErrorCode.MEMBER_ALREADY_AUTHENTICATE.getMessage(),
-				ErrorCode.MEMBER_ALREADY_AUTHENTICATE);
-		}
-		// memberSurveySave(findMember, requestMember.getSignupSurvey());
-		updateMember(requestMember, findMember);
-		return findMember;
-	}
-
-	@Override
-	public boolean memberNameValidation(RequestMember.SignupNameValidator requestMember) {
-		if (memberRepository.findByName(requestMember.getName()) != null) {
+	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
+		//중복가입 검사
+		if (!memberValidation(member)) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
+		}
+		//가입진행
+		Member saveMember = memberRepository.save(new Member(member));
+		TokenInfo tokenInfo = jwtService.saveToken(saveMember, deviceValue);
+		return ResponseMember.Info.builder()
+			.message("success")
+			.refreshToken(tokenInfo.getRefreshToken())
+			.accessToken(tokenInfo.getAccessToken()).build();
+	}
+
+	@Override
+	public Optional<Member> memberCertification(MemberVO memberVO) {
+		return Optional.ofNullable(memberRepository.findByEmail(memberVO.getEmail()));
+	}
+
+	@Override
+	public boolean memberNameValidation(MemberVO member) {
+		if (memberRepository.findByName(member.getName()) != null) {
+			return false;
 		}
 		return true;
 	}
@@ -68,27 +65,13 @@ public class MemberServiceImpl implements MemberService {
 		memberRepository.save(findMember);
 	}
 
-	private void memberSurveySave(Member member, RequestMember.SignupSurvey survey) {
-		//@TODO survey내 null 값 체크
-		Survey surveyData = Survey.builder()
-			.memberId(member)
-			.accompany(survey.getAccompany())
-			.purpose(survey.getPurpose())
-			.period(survey.getPeriod())
-			.location(survey.getLocation())
-			.transportation(survey.getTransportation())
-			.build();
-		surveyRepository.save(surveyData);
-	}
-
-	private Member memberValidation(Member member) {
-		Member findMember = memberRepository.findByEmail(member.getEmail());
-		if (findMember != null) {
-			//이미 가입 된 유저
+	private boolean memberValidation(MemberVO member) {
+		if (memberRepository.findByEmailOrName(member.getEmail(), member.getName()) != null) {
 			log.info("Member_Already_Exists.");
-			return findMember;
+			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
+				ErrorCode.EMAIL_DUPLICATION);
 		}
-		return null;
+		return true;
 
 	}
 }
