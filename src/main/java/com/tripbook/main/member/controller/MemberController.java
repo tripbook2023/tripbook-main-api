@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.util.CheckDevice;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.enums.MemberRole;
@@ -53,7 +54,8 @@ public class MemberController {
 			.role(MemberRole.ROLE_MEMBER)
 			.status(MemberStatus.STATUS_NORMAL)
 			.build();
-		ResponseMember.Info info = memberService.memberSave(memberVO, request);
+		String deviceValue = CheckDevice.checkDevice(request);
+		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
 		return ResponseEntity.status(HttpStatus.OK).body(info);
 	}
 

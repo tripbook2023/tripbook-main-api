@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
-import com.tripbook.main.global.util.CheckDevice;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
@@ -17,7 +16,6 @@ import com.tripbook.main.member.vo.MemberVO;
 import com.tripbook.main.token.dto.TokenInfo;
 import com.tripbook.main.token.service.JwtService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,13 +27,15 @@ public class MemberServiceImpl implements MemberService {
 	private final JwtService jwtService;
 
 	@Override
-	public ResponseMember.Info memberSave(MemberVO member, HttpServletRequest request) {
+	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
 		//중복가입 검사
-		memberValidation(member);
-
+		if (!memberValidation(member)) {
+			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+				ErrorCode.MEMBER_NAME_ERROR);
+		}
 		//가입진행
 		Member saveMember = memberRepository.save(new Member(member));
-		TokenInfo tokenInfo = jwtService.saveToken(saveMember, CheckDevice.checkDevice(request));
+		TokenInfo tokenInfo = jwtService.saveToken(saveMember, deviceValue);
 		return ResponseMember.Info.builder()
 			.message("success")
 			.refreshToken(tokenInfo.getRefreshToken())
@@ -50,8 +50,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public boolean memberNameValidation(MemberVO member) {
 		if (memberRepository.findByName(member.getName()) != null) {
-			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
-				ErrorCode.MEMBER_NAME_ERROR);
+			return false;
 		}
 		return true;
 	}
