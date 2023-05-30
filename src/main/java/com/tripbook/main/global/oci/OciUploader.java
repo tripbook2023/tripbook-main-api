@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,8 +19,8 @@ public class OciUploader {
     private final ObjectStorageClient objectStorageClient;
     @Value("${cloud.oci.bucket}")
     private String bucket;
-    @Value("${cloud.oci.tenancy}")
-    private String tenancy;
+    @Value("${cloud.oci.namespace}")
+    private String namespace;
 
     public String uploadFiles(MultipartFile multipartFile, String dirName) throws IOException {
         File uploadFile = convert(multipartFile)
@@ -31,27 +28,26 @@ public class OciUploader {
         return upload(uploadFile, dirName);
     }
 
-    public String upload(File uploadFile, String filePath) {
+    public String upload(File uploadFile, String filePath) throws IOException {
         String fileName = filePath + "/" + UUID.randomUUID() + uploadFile.getName();
         String uploadImageUrl = putObjectStorage(uploadFile, fileName);
         removeNewFile(uploadFile);
         return uploadImageUrl;
     }
 
-    private String putObjectStorage(File uploadFile, String fileName) {
+    private String putObjectStorage(File uploadFile, String fileName) throws IOException {
 
-        // Request 수정필요
         PutObjectRequest request = PutObjectRequest.builder()
-                .namespaceName(tenancy)
+                .namespaceName(namespace)
                 .bucketName(bucket)
                 .objectName(fileName)
-                .putObjectBody(InputStream.nullInputStream())
+                .putObjectBody(new FileInputStream(uploadFile))
                 .build();
 
         PutObjectResponse response = objectStorageClient.putObject(request);
 
         // 저장된 object의 url 주소 반환하도록 수정 필요
-        return objectStorageClient.getEndpoint();
+        return response.getETag();
     }
 
     private void removeNewFile(File targetFile) {
