@@ -20,7 +20,7 @@ public class OciController {
     public ResponseEntity<?> upload(@RequestPart(value = "file")MultipartFile multipartFile) {
         String res = null;
         try {
-            res = ociUploader.uploadFiles(multipartFile, "test");
+            res = ociUploader.uploadFile(multipartFile, "test");
         } catch (Exception e) {
             log.error("-----------------------------");
             log.error(e.getMessage());

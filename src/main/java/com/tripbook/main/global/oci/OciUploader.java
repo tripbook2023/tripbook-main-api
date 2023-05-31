@@ -1,6 +1,7 @@
 package com.tripbook.main.global.oci;
 
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
+import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,33 +22,39 @@ public class OciUploader {
     private String bucket;
     @Value("${cloud.oci.namespace}")
     private String namespace;
+    @Value("${cloud.oci.preAuthenticatedUrl}")
+    private String authenticatedUrl;
 
-    public String uploadFiles(MultipartFile multipartFile, String dirName) throws IOException {
+    public String uploadFile(MultipartFile multipartFile, String dirName) throws IOException {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-        return upload(uploadFile, dirName);
-    }
 
-    public String upload(File uploadFile, String filePath) throws IOException {
-        String fileName = filePath + "/" + UUID.randomUUID() + uploadFile.getName();
-        String uploadImageUrl = putObjectStorage(uploadFile, fileName);
+        InputStream objectBody = new FileInputStream(uploadFile);
+        String contentType = multipartFile.getContentType();
+        String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
+
+        String url = putObjectStorage(objectBody, contentType, fileName);
+
         removeNewFile(uploadFile);
-        return uploadImageUrl;
+
+        return url;
     }
 
-    private String putObjectStorage(File uploadFile, String fileName) throws IOException {
+    private String putObjectStorage(InputStream objectBody, String contentType, String fileName) throws IOException {
 
         PutObjectRequest request = PutObjectRequest.builder()
                 .namespaceName(namespace)
                 .bucketName(bucket)
                 .objectName(fileName)
-                .putObjectBody(new FileInputStream(uploadFile))
+                .contentType(contentType)
+                .putObjectBody(objectBody)
                 .build();
 
         PutObjectResponse response = objectStorageClient.putObject(request);
+        assert response.get__httpStatusCode__() == 200 : "error: putObject()";
 
-        // 저장된 object의 url 주소 반환하도록 수정 필요
-        return response.getETag();
+        // 수정필요
+        return authenticatedUrl + fileName;
     }
 
     private void removeNewFile(File targetFile) {
