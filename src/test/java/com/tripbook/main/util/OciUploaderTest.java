@@ -28,7 +28,7 @@ public class OciUploaderTest {
     void upload_file_to_OCI() throws Exception {
         //given
         String dirName = "test";
-        File inputFile = new File("C:\\Users\\구본주\\Desktop\\aaaa.png");
+        File inputFile = new File("src/main/resources/images/aaaa.png");
         MultipartFile multipartFile = new MockMultipartFile("aaaa.png","aaaa.png", "image/png", new FileInputStream(inputFile));
 
         //when
