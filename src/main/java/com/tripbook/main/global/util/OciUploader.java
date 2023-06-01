@@ -24,18 +24,12 @@ public class OciUploader {
     private String authenticatedUrl;
 
     public String uploadFile(MultipartFile multipartFile, String dirName) throws IOException {
-        File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
 
-        InputStream objectBody = new FileInputStream(uploadFile);
+        InputStream objectBody = multipartFile.getInputStream();
         String contentType = multipartFile.getContentType();
-        String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
+        String fileName = dirName + "/" + UUID.randomUUID() + multipartFile.getName();
 
-        String url = putObjectStorage(objectBody, contentType, fileName);
-
-        removeNewFile(uploadFile);
-
-        return url;
+        return putObjectStorage(objectBody, contentType, fileName);
     }
 
     private String putObjectStorage(InputStream objectBody, String contentType, String fileName) {
@@ -52,25 +46,5 @@ public class OciUploader {
 
         return authenticatedUrl + fileName.replaceAll("/", "%2F");
     }
-
-    private void removeNewFile(File targetFile) {
-        if (targetFile.delete()) {
-            System.out.println("File delete success");
-            return;
-        }
-        System.out.println("File delete fail");
-    }
-
-    private Optional<File> convert(MultipartFile file) throws IOException {
-        File convertFile = new File(System.getProperty("user.dir") + "/" + file.getOriginalFilename());
-        if (convertFile.createNewFile()) {
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                fos.write(file.getBytes());
-            }
-            return Optional.of(convertFile);
-        }
-        return Optional.empty();
-    }
-
 
 }
