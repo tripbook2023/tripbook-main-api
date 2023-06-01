@@ -1,12 +1,10 @@
-package com.tripbook.main.global.oci;
+package com.tripbook.main.global.util;
 
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
-import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,8 +38,7 @@ public class OciUploader {
         return url;
     }
 
-    private String putObjectStorage(InputStream objectBody, String contentType, String fileName) throws IOException {
-
+    private String putObjectStorage(InputStream objectBody, String contentType, String fileName) {
         PutObjectRequest request = PutObjectRequest.builder()
                 .namespaceName(namespace)
                 .bucketName(bucket)
@@ -53,8 +50,7 @@ public class OciUploader {
         PutObjectResponse response = objectStorageClient.putObject(request);
         assert response.get__httpStatusCode__() == 200 : "error: putObject()";
 
-        // 수정필요
-        return authenticatedUrl + fileName;
+        return authenticatedUrl + fileName.replaceAll("/", "%2F");
     }
 
     private void removeNewFile(File targetFile) {
