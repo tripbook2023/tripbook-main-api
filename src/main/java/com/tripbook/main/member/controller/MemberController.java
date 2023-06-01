@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,9 +64,9 @@ public class MemberController {
 		@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
 		@ApiResponse(responseCode = "400", description = "중복된 닉네임이거나, 유효성검사 실패", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	})
-	@PostMapping("/nickname/validate")
+	@GetMapping("/nickname/validate")
 	public ResponseEntity<Object> memberNameCheck(
-		@RequestBody @Validated RequestMember.SignupNameValidator requestMember) {
+		@Validated RequestMember.SignupNameValidator requestMember) {
 		memberService.memberNameValidation(MemberVO.builder().name(requestMember.getName()).build());
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
 			.message(Arrays.asList("success"))
