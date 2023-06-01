@@ -39,4 +39,10 @@ spring:
             # trailing slash is important!
             issuer-uri: https://dev-af65lj2887m1kztj.us.auth0.com/
             token-uri: https://dev-z2b4bazfo6o536tj.us.auth0.com/userinfo/
+cloud:
+  oci:
+    bucket: tripbook
+    namespace: axxqmwxdbwz5
+    preAuthenticatedUrl: https://objectstorage.ap-chuncheon-1.oraclecloud.com/p/ea-1Bvx4xgjJafTXZT20GQPP-hjf6GWTgJ3O2qOmkNP89dxvn-aakbnwVpbWtnE_/n/axxqmwxdbwz5/b/tripbook/o/
+    configFilePath: ~/ocikey/config
 ---
