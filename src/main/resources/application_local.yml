@@ -44,5 +44,5 @@ cloud:
     bucket: tripbook
     namespace: axxqmwxdbwz5
     preAuthenticatedUrl: https://objectstorage.ap-chuncheon-1.oraclecloud.com/p/ea-1Bvx4xgjJafTXZT20GQPP-hjf6GWTgJ3O2qOmkNP89dxvn-aakbnwVpbWtnE_/n/axxqmwxdbwz5/b/tripbook/o/
-    configFilePath: ~/ocikey/config
+    configFilePath: src/main/resources/config
 ---
