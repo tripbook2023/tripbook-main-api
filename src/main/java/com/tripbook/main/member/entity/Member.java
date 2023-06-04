@@ -42,7 +42,7 @@ public class Member extends BasicEntity implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String name;
 
-	@Column(nullable = true)
+	@Column
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 	@Column(nullable = false)
@@ -53,8 +53,19 @@ public class Member extends BasicEntity implements Serializable {
 	private Date birth;
 	@Column
 	private String profile;
+
 	@Column(nullable = false)
-	private Boolean isMarketing;
+	private Boolean termsOfService;
+
+	@Column(nullable = false)
+	private Boolean termsOfPrivacy;
+
+	@Column(nullable = false)
+	private Boolean termsOfLocation;
+
+	@Column
+	private Boolean marketingConsent;
+
 	@Column
 	private Long point;
 	@Column
@@ -74,8 +85,19 @@ public class Member extends BasicEntity implements Serializable {
 		this.profile = profile;
 	}
 
-	public void updateIsMarketing(Boolean isMarketing) {
-		this.isMarketing = isMarketing;
+	public void updateTermsOfService(Boolean termsOfService) {
+		this.termsOfService = termsOfService;
+	}
+	public void updateTermsOfPrivacy(Boolean termsOfPrivacy) {
+		this.termsOfPrivacy = termsOfPrivacy;
+	}
+
+	public void updateTermsOfLocation(Boolean termsOfLocation) {
+		this.termsOfLocation = termsOfLocation;
+	}
+
+	public void updateMarketingConsent(Boolean marketingConsent) {
+		this.marketingConsent = marketingConsent;
 	}
 
 	public void updateAppToken(String appToken) {
@@ -95,15 +117,18 @@ public class Member extends BasicEntity implements Serializable {
 	}
 
 	@Builder
-	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status, Boolean isMarketing,
-		String profile) {
+	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status,
+			Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation, Boolean marketingConsent, String profile) {
 		this.email = email;
 		this.profile = profile;
 		this.name = name;
 		this.gender = gender;
 		this.role = role;
 		this.status = status;
-		this.isMarketing = isMarketing;
+		this.termsOfService = termsOfService;
+		this.termsOfPrivacy = termsOfPrivacy;
+		this.termsOfLocation = termsOfLocation;
+		this.marketingConsent = marketingConsent;
 	}
 
 	public Member(MemberVO memberVO) {
@@ -113,6 +138,9 @@ public class Member extends BasicEntity implements Serializable {
 		this.profile = memberVO.getProfile();
 		this.birth = memberVO.getBirth();
 		this.name = memberVO.getName();
-		this.isMarketing = memberVO.isMarketing();
+		this.termsOfService = memberVO.getTermsOfService();
+		this.termsOfPrivacy = memberVO.getTermsOfPrivacy();
+		this.termsOfLocation = memberVO.getTermsOfLocation();
+		this.marketingConsent = memberVO.getMarketingConsent();
 	}
 }

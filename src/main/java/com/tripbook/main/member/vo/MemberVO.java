@@ -15,7 +15,10 @@ import lombok.Getter;
 public class MemberVO {
 	private String name;
 	private String email;
-	private boolean isMarketing;
+	private Boolean termsOfService;
+	private Boolean termsOfPrivacy;
+	private Boolean termsOfLocation;
+	private Boolean marketingConsent;
 	private Gender gender;
 	private String profile;
 	private MemberRole role;
@@ -23,13 +26,16 @@ public class MemberVO {
 	private MemberStatus status;
 
 	@Builder
-	public MemberVO(String name, MemberRole role, String email, boolean isMarketing, Gender gender, String profile,
-		Date birth, MemberStatus status) {
+	public MemberVO(String name, MemberRole role, String email, Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation,
+		Boolean marketingContent, Gender gender, String profile, Date birth, MemberStatus status) {
 		this.name = name;
 		this.status = status;
 		this.role = role;
 		this.email = email;
-		this.isMarketing = isMarketing;
+		this.termsOfService = termsOfService;
+		this.termsOfPrivacy = termsOfPrivacy;
+		this.termsOfLocation = termsOfLocation;
+		this.marketingConsent = marketingContent;
 		this.gender = gender;
 		this.profile = profile;
 		this.birth = birth;

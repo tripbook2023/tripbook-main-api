@@ -59,7 +59,7 @@ public class MemberServiceImpl implements MemberService {
 	public void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
 		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
 		findMember.updateProfile(signupMember.getProfile());
-		findMember.updateIsMarketing(signupMember.getIsMarketing());
+		findMember.updateMarketingConsent(signupMember.getMarketingConsent());
 		findMember.updateName(signupMember.getName());
 		findMember.updateBirth(signupMember.getBirth());
 		memberRepository.save(findMember);
