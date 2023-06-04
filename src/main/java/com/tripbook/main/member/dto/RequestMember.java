@@ -38,9 +38,18 @@ public class RequestMember {
 		private String email;
 		@Schema(title = "프로필 이미지 URL", example = "https://IMAGEURL")
 		private String profile;
+		@Schema(title = "서비스 이용 약관 동의 여부")
+		@NotNull(message = "termsOfService is required")
+		private Boolean termsOfService;
+		@Schema(title = "개인정보 수집 및 이용 동의 여부")
+		@NotNull(message = "termsOfPrivacy is required")
+		private Boolean termsOfPrivacy;
+		@Schema(title = "위치정보 수집 및 이용 동의 여부")
+		@NotNull(message = "termsOfLocation is required")
+		private Boolean termsOfLocation;
 		@Schema(title = "마케팅 수신 허용여부")
-		@NotNull(message = "isMarketing is required")
-		private Boolean isMarketing;
+		@NotNull(message = "marketingConsent is required")
+		private Boolean marketingConsent;
 		@Schema(title = "성별", example = "MALE||FEMALE")
 		@NotNull(message = "gender is required")
 		private Gender gender;
