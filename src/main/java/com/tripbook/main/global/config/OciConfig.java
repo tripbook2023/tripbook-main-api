@@ -1,6 +1,7 @@
 package com.tripbook.main.global.config;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.ResourceUtils;
 
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.ConfigFileReader.ConfigFile;
@@ -27,8 +27,8 @@ public class OciConfig {
 	@Bean
 	public ObjectStorageClient ObjectStorageClient() throws IOException {
 		Resource resource = resourceLoader.getResource(configFilePath);
-		String absolutePath = ResourceUtils.getFile(resource.getURL()).getAbsolutePath();
-		ConfigFile config = ConfigFileReader.parse(absolutePath, "DEFAULT");
+		InputStream inputStream = resource.getInputStream();
+		ConfigFile config = ConfigFileReader.parse(inputStream, "DEFAULT");
 		AuthenticationDetailsProvider provider = new ConfigFileAuthenticationDetailsProvider(config);
 
 		return ObjectStorageClient.builder()
