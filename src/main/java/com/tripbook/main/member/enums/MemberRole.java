@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 public enum MemberRole {
 	ROLE_MEMBER("ROLE_MEMBER"),
 	ROLE_ADMIN("ROLE_ADMIN"),
-	ROLE_EDITOR("ROLE_EDITOR");
+	ROLE_EDITOR("ROLE_EDITOR"),
+	ROLE_NAMED_EDITOR("ROLE_NAMED_EDITOR");
 
 	private final String value;
 
