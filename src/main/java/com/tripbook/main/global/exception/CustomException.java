@@ -97,4 +97,11 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+
+	// File Exception
+	public static class UnsupportedImageFileException extends CustomException {
+		public UnsupportedImageFileException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 }

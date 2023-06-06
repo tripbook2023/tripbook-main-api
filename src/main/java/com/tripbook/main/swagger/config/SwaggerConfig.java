@@ -41,6 +41,13 @@ public class SwaggerConfig {
 			.build();
 	}
 
+	@Bean
+	public GroupedOpenApi FileGroup() {
+		return GroupedOpenApi.builder()
+			.group("FILE업로드 API")
+			.packagesToScan("com.tripbook.main.file.controller")
+			.build();
+	}
 	// @Bean
 	// public Docket api() {
 	// 	return new Docket(DocumentationType.OAS_30)

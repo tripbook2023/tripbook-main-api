@@ -26,6 +26,14 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@ExceptionHandler(CustomException.UnsupportedImageFileException.class)
+	public ResponseEntity<ErrorResponse> UnsupportedImageFileException(
+		CustomException.UnsupportedImageFileException ex) {
+		log.error("UnsupportedImageFileException", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
 	@ExceptionHandler(CustomException.NotFoundJwtException.class)
 	public ResponseEntity<ErrorResponse> handleTokenNotFoundException(CustomException.NotFoundJwtException ex) {
 		log.error("NotFoundJwtException", ex);
