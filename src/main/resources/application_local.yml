@@ -1,15 +1,14 @@
 ---
-
 spring:
   security.debug: false
   jpa:
+    #    generate-ddl: false
     properties:
+      hibernate.hbm2ddl.auto: update
       hibernate:
         show_sql: true
         format_sql: true
         use_sql_comments: true
-    hibernate:
-      ddl-auto: none
   logging:
     level:
       org:
