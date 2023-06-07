@@ -45,7 +45,7 @@ public class UploadController {
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> imageUpload(
 		@ModelAttribute RequestImageDto.ImageDto imageFile) {
-		if (imageFile.isDisable()) {
+		if (imageFile == null) {
 			throw new CustomException.UnsupportedImageFileException(ErrorCode.FILE_UNSUPPORTED_ERROR.getMessage(),
 				ErrorCode.FILE_UNSUPPORTED_ERROR);
 		}
