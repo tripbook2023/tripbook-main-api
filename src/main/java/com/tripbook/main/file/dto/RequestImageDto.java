@@ -6,14 +6,10 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
 public class RequestImageDto {
 	ImageDto imageDto;
 
@@ -27,13 +23,11 @@ public class RequestImageDto {
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 		@Schema(title = "이미지 파일", example = "가능확장자 : jpg, jpeg, png, gif \n\n 파일용량 : 5MB")
 		private MultipartFile imageFile;
-		@JsonIgnore
-		private boolean isDisable = false;
 
 		public void setImageFile(MultipartFile imageFile) {
 			//이미지파일 유효성 검사
 			if (!isImageFileValid(imageFile)) {
-				this.isDisable = true;
+				this.imageFile = null;
 			}
 			this.imageFile = imageFile;
 		}
