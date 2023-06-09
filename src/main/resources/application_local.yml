@@ -18,8 +18,9 @@ spring:
               sql: trace
 
   datasource:
-    url: jdbc:mysql://tripbook-dev.czriggtksvqu.ap-northeast-2.rds.amazonaws.com:3306/tripbook_main?createDatabaseIfNotExist=true
-    username: tripbook
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g0c683083de637b_tripbookdev_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+    username: ADMIN
     password: Tripbookteam07*
   security:
     oauth2:
