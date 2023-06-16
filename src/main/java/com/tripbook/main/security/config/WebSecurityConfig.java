@@ -20,16 +20,17 @@ import com.tripbook.main.token.filter.JwtAuthenticationFilter;
 import com.tripbook.main.token.provider.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-	@Autowired
-	private LogoutHandler logoutHandler;
-	@Autowired
+
+	private final LogoutHandler logoutHandler;
 	private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
 	private final JwtProvider jwtProvider;
+	private final CorsConfigurationSource corsConfigurationSource;
 	@Value("${spring.security.debug:false}")
 	boolean securityDebug;
 
@@ -64,7 +65,8 @@ public class WebSecurityConfig {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.csrf().disable()
-			.httpBasic().disable();
+			.httpBasic().disable()
+			.cors().configurationSource(corsConfigurationSource);
 		//JWT 인증 필터
 		http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 		//Filter  ExceptionHandling
