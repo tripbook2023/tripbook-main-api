@@ -18,26 +18,11 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 public class SwaggerConfig {
 
 	@Bean
-	public GroupedOpenApi authGroup() {
-		return GroupedOpenApi.builder()
-			.group("간편로그인 인증")
-			.packagesToScan("com.tripbook.main.auth.controller")
-			.build();
-	}
-
-	@Bean
 	public GroupedOpenApi MemberGroup() {
 		return GroupedOpenApi.builder()
 			.group("멤버API")
-			.packagesToScan("com.tripbook.main.member.controller")
-			.build();
-	}
-
-	@Bean
-	public GroupedOpenApi JwtGroup() {
-		return GroupedOpenApi.builder()
-			.group("JWTAPI")
-			.packagesToScan("com.tripbook.main.token.controller")
+			.packagesToScan("com.tripbook.main.member.controller", "com.tripbook.main.auth.controller",
+				"com.tripbook.main.token.controller")
 			.build();
 	}
 
