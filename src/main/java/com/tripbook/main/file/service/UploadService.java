@@ -1,7 +1,7 @@
 package com.tripbook.main.file.service;
 
-import com.tripbook.main.file.dto.RequestImageDto;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UploadService {
-	public String imageUpload(RequestImageDto.ImageDto file);
+	public String imageUpload(MultipartFile file, String path);
 }

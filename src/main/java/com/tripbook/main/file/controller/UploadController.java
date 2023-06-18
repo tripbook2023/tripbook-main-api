@@ -49,13 +49,13 @@ public class UploadController {
 			throw new CustomException.UnsupportedImageFileException(ErrorCode.FILE_UNSUPPORTED_ERROR.getMessage(),
 				ErrorCode.FILE_UNSUPPORTED_ERROR);
 		}
-		String resultUrl = uploadService.imageUpload(imageFile);
-		ResponseImageDto.ImageInfo result = ResponseImageDto.ImageInfo.builder()
-			.fileUrl(resultUrl)
-			.status(HttpStatus.OK)
-			.build();
-		log.info("ImageUploadSuccess!");
-		return ResponseEntity.status(HttpStatus.OK).body(result);
+		// String resultUrl = uploadService.imageUpload(imageFile);
+		// ResponseImageDto.ImageInfo result = ResponseImageDto.ImageInfo.builder()
+		// 	.fileUrl(resultUrl)
+		// 	.status(HttpStatus.OK)
+		// 	.build();
+		// log.info("ImageUploadSuccess!");
+		return ResponseEntity.status(HttpStatus.OK).body("test");
 	}
 
 }

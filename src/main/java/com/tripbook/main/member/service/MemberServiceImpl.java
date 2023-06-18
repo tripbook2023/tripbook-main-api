@@ -2,9 +2,11 @@ package com.tripbook.main.member.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.RequestMember;
@@ -25,6 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final JwtService jwtService;
+	private final UploadService uploadService;
+	@Value("${file.upload_path.signup}")
+	private String path;
 
 	@Override
 	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
@@ -34,6 +39,12 @@ public class MemberServiceImpl implements MemberService {
 				ErrorCode.MEMBER_NAME_ERROR);
 		}
 		//가입진행
+		String profileURL = "";
+		//프로필 이미지 저장
+		if (member.getImageFile() != null) {
+			profileURL = uploadService.imageUpload(member.getImageFile(), path);
+			member.setProfile(profileURL);
+		}
 		Member saveMember = memberRepository.save(new Member(member));
 		TokenInfo tokenInfo = jwtService.saveToken(saveMember, deviceValue);
 		return ResponseMember.Info.builder()
@@ -57,11 +68,15 @@ public class MemberServiceImpl implements MemberService {
 
 	@Transactional
 	public void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
+		if (signupMember.getImageFile() != null) {
+			String profileURL = uploadService.imageUpload(signupMember.getImageFile(), path);
+			findMember.updateProfile(profileURL);
+
+		}
 		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
-		findMember.updateProfile(signupMember.getProfile());
 		findMember.updateMarketingConsent(signupMember.getMarketingConsent());
 		findMember.updateName(signupMember.getName());
-		findMember.updateBirth(signupMember.getBirth());
+		// findMember.updateBirth(signupMember.getBirth());
 		memberRepository.save(findMember);
 	}
 

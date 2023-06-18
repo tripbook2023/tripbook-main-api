@@ -1,7 +1,7 @@
 package com.tripbook.main.member.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -50,7 +50,7 @@ public class Member extends BasicEntity implements Serializable {
 	private MemberRole role;
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date birth;
+	private LocalDate birth;
 	@Column
 	private String profile;
 
@@ -88,6 +88,7 @@ public class Member extends BasicEntity implements Serializable {
 	public void updateTermsOfService(Boolean termsOfService) {
 		this.termsOfService = termsOfService;
 	}
+
 	public void updateTermsOfPrivacy(Boolean termsOfPrivacy) {
 		this.termsOfPrivacy = termsOfPrivacy;
 	}
@@ -112,13 +113,14 @@ public class Member extends BasicEntity implements Serializable {
 		this.point = point;
 	}
 
-	public void updateBirth(Date birth) {
+	public void updateBirth(LocalDate birth) {
 		this.birth = birth;
 	}
 
 	@Builder
 	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status,
-			Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation, Boolean marketingConsent, String profile) {
+		Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation, Boolean marketingConsent,
+		String profile) {
 		this.email = email;
 		this.profile = profile;
 		this.name = name;
