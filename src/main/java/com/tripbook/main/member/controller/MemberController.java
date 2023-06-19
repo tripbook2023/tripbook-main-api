@@ -2,12 +2,13 @@ package com.tripbook.main.member.controller;
 
 import java.util.Arrays;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,12 +43,12 @@ public class MemberController {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.Info.class))),
 		@ApiResponse(responseCode = "400", description = "이미 인증되었거나, 유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
-	@PostMapping("/signup")
+	@PostMapping(value = "/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberJoin(HttpServletRequest request,
-		@RequestBody @Validated RequestMember.SignupMember requestMember) {
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.SignupMember requestMember) {
 		MemberVO memberVO = MemberVO.builder()
 			.birth(requestMember.getBirth())
-			.profile(requestMember.getProfile())
+			.imageFile(requestMember.getImageFile())
 			.termsOfService(requestMember.getTermsOfService())
 			.termsOfPrivacy(requestMember.getTermsOfPrivacy())
 			.termsOfLocation(requestMember.getTermsOfLocation())
