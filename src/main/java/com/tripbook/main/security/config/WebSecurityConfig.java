@@ -45,7 +45,7 @@ public class WebSecurityConfig {
 		//PlatForm 토큰 인증필터
 		http
 			.authorizeHttpRequests()
-			.requestMatchers(HttpMethod.GET, "/login/oauth2").authenticated()
+			.requestMatchers(HttpMethod.GET, "/login/oauth2").permitAll()
 			.and()
 			.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		http
