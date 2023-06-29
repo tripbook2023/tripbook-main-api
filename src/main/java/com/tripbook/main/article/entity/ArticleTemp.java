@@ -31,7 +31,7 @@ public class ArticleTemp extends BasicEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String content;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "articleTemp")
