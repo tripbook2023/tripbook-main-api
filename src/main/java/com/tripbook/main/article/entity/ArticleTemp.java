@@ -1,6 +1,7 @@
 package com.tripbook.main.article.entity;
 
 import com.tripbook.main.global.common.BasicEntity;
+import com.tripbook.main.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,6 +24,10 @@ public class ArticleTemp extends BasicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Column(nullable = false)
     private String title;
 
@@ -33,9 +38,10 @@ public class ArticleTemp extends BasicEntity {
     private List<ArticleTempImage> imageList = new ArrayList<>();
 
     @Builder
-    public ArticleTemp(String title, String content, List<ArticleTempImage> imageList) {
+    public ArticleTemp(String title, String content, Member member, List<ArticleTempImage> imageList) {
         this.title = title;
         this.content = content;
+        this.member = member;
         this.imageList = imageList;
     }
 }

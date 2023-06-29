@@ -2,6 +2,7 @@ package com.tripbook.main.article.entity;
 
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.global.common.BasicEntity;
+import com.tripbook.main.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -23,6 +24,10 @@ public class Article extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(nullable = false)
     private String title;
@@ -47,12 +52,13 @@ public class Article extends BasicEntity {
     private List<ArticleImage> imageList = new ArrayList<>();
 
     @Builder
-    public Article(String title, String content, ArticleStatus status,
+    public Article(String title, String content, ArticleStatus status, Member member,
                    List<ArticleHeart> heartList, List<ArticleBookmark> bookmarkList,
                    List<ArticleComment> commentList, List<ArticleImage> imageList) {
         this.title = title;
         this.content = content;
         this.status = status;
+        this.member = member;
         this.heartList = heartList;
         this.bookmarkList = bookmarkList;
         this.commentList = commentList;
