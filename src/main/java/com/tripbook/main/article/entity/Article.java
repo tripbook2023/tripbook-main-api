@@ -41,16 +41,16 @@ public class Article extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private ArticleStatus status;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @OneToMany(mappedBy = "article")
     private List<ArticleHeart> heartList = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @OneToMany(mappedBy = "article")
     private List<ArticleBookmark> bookmarkList = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @OneToMany(mappedBy = "article")
     private List<ArticleComment> commentList = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @OneToMany(mappedBy = "article")
     private List<ArticleImage> imageList = new ArrayList<>();
 
     @Builder

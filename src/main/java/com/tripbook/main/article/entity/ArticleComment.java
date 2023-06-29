@@ -39,7 +39,7 @@ public class ArticleComment extends BasicEntity {
     @JoinColumn(name = "parent_id")
     private ArticleComment parent;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    @OneToMany(mappedBy = "parent")
     private List<ArticleComment> childList = new ArrayList<>();
 
     @Builder

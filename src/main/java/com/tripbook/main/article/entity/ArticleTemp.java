@@ -34,7 +34,7 @@ public class ArticleTemp extends BasicEntity {
     @Column
     private String content;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "articleTemp")
+    @OneToMany(mappedBy = "articleTemp")
     private List<ArticleTempImage> imageList = new ArrayList<>();
 
     @Builder
