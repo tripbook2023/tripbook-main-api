@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,8 @@ public class Article extends BasicEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
+    @Length(min = 800, max = 10000)
     private String content;
 
     @Column(nullable = false)
