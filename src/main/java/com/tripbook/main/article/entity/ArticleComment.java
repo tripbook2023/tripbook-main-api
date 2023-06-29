@@ -32,14 +32,15 @@ public class ArticleComment extends BasicEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private long ref_id = -1L;
+    @OneToOne
+    @JoinColumn(name = "ref_id")
+    private ArticleComment refComment;
 
     @Builder
-    public ArticleComment(Member member, Article article, String content, long ref_id) {
+    public ArticleComment(Member member, Article article, String content, ArticleComment refComment) {
         this.member = member;
         this.article = article;
         this.content = content;
-        this.ref_id = ref_id;
+        this.refComment = refComment;
     }
 }
