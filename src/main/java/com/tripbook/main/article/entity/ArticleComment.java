@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "TB_ARTICLE_COMMENT")
 @Getter
@@ -32,15 +35,18 @@ public class ArticleComment extends BasicEntity {
     @Column(nullable = false)
     private String content;
 
-    @OneToOne
-    @JoinColumn(name = "ref_id")
-    private ArticleComment refComment;
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private ArticleComment parent;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    private List<ArticleComment> childList = new ArrayList<>();
 
     @Builder
-    public ArticleComment(Member member, Article article, String content, ArticleComment refComment) {
+    public ArticleComment(Member member, Article article, String content, ArticleComment parent) {
         this.member = member;
         this.article = article;
         this.content = content;
-        this.refComment = refComment;
+        this.parent = parent;
     }
 }
