@@ -4,9 +4,7 @@ import lombok.Getter;
 
 public enum ArticleStatus {
     ACTIVE("활성"),
-    DELETED("삭제"),
-    TEMP("임시저장");
-
+    DELETED("삭제");
     @Getter
     private String desc;
 
