@@ -73,8 +73,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional
 	public void memberDelete(MemberVO bindMemberVo) {
-
+		/*
+		 임시 Delete Member Service
+		 @TODO - 후에는 실제 삭제가 아닌 MemberStatus 탈퇴처리 진행 (현재는 편의상 실제 DB데이터삭제)
+		 */
+		memberRepository.deleteByEmail(bindMemberVo.getEmail());
 	}
 
 	@Override

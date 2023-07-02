@@ -54,6 +54,8 @@ public class WebSecurityConfig {
 			.requestMatchers("/h2-console/**").permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/signup")
 			.permitAll()
+			.requestMatchers(HttpMethod.POST, "/member/delete")
+			.permitAll()
 			.requestMatchers("/member/**")
 			.hasRole("MEMBER")
 			.anyRequest()
