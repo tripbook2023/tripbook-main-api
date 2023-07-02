@@ -1,5 +1,6 @@
 package com.tripbook.main.member.controller;
 
+import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -10,10 +11,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.util.CheckDevice;
@@ -131,5 +135,18 @@ public class MemberController {
 			.status(MemberStatus.STATUS_NORMAL)
 			.build();
 		return memberVO;
+	}
+
+	@InitBinder
+	public void initBinder(WebDataBinder binder) throws Exception {
+		binder.registerCustomEditor(MultipartFile.class, new PropertyEditorSupport() {
+
+			@Override
+			public void setAsText(String text) {
+				log.debug("initBinder MultipartFile.class: {}; set null;", text);
+				setValue(null);
+			}
+
+		});
 	}
 }
