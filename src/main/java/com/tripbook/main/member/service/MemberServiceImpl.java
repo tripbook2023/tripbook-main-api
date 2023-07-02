@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
@@ -66,8 +67,24 @@ public class MemberServiceImpl implements MemberService {
 		return true;
 	}
 
+	@Override
+	public void memberUpdate(MemberVO updateMember) {
+		new Member(updateMember);
+	}
+
+	@Override
+	public void memberDelete(MemberVO bindMemberVo) {
+
+	}
+
+	@Override
+	public ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto) {
+		Member member = memberRepository.findByEmail(principalMemberDto.getEmail());
+		return new ResponseMember.MemberInfo(member);
+	}
+
 	@Transactional
-	public void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
+	public void updateMember(RequestMember.MemberInfo signupMember, Member findMember) {
 		if (signupMember.getImageFile() != null) {
 			String profileURL = uploadService.imageUpload(signupMember.getImageFile(), path);
 			findMember.updateProfile(profileURL);
@@ -81,6 +98,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	private boolean memberValidation(MemberVO member) {
+		//@TODO 분리 필요
 		if (memberRepository.findByEmailOrName(member.getEmail(), member.getName()) != null) {
 			log.info("Member_Already_Exists.");
 			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),

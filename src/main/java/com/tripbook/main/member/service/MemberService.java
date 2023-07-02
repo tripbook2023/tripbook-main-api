@@ -2,6 +2,7 @@ package com.tripbook.main.member.service;
 
 import java.util.Optional;
 
+import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.vo.MemberVO;
@@ -14,4 +15,9 @@ public interface MemberService {
 
 	public boolean memberNameValidation(MemberVO memberVO);
 
+	void memberUpdate(MemberVO updateMember);
+
+	void memberDelete(MemberVO bindMemberVo);
+
+	ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto);
 }

@@ -5,7 +5,6 @@ import static com.tripbook.main.global.util.CustomTokenUtil.*;
 import java.util.Collections;
 import java.util.regex.Pattern;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -53,11 +52,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	private OAuth2AuthenticationToken getAuthentication(String accessToken) throws Exception {
 		PrincipalMemberDto principalMemberDto = jwtProvider.getAuthentication(accessToken);
 		OAuth2User principal = new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority(principalMemberDto.getRole().toString())),
+			Collections.singleton(principalMemberDto.getRole()),
 			Collections.singletonMap("email", principalMemberDto.getEmail()),
 			"email");
 		OAuth2AuthenticationToken authentication = new OAuth2AuthenticationToken(principal,
-			Collections.singleton(new SimpleGrantedAuthority(principalMemberDto.getRole().toString())),
+			Collections.singleton(principalMemberDto.getRole()),
 			"auth0");
 		return authentication;
 	}

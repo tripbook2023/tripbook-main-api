@@ -6,6 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.util.CheckDevice;
+import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.enums.MemberRole;
@@ -25,6 +29,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +43,22 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 	private final MemberService memberService;
 
+	@Operation(security = {
+		@SecurityRequirement(name = "JWT")},
+		summary = "멤버단건조회", description = "JWT를 사용하여 멤버조회.\n\n birth:yyyy-mm-dd", responses = {
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.MemberInfo.class))),
+		@ApiResponse(responseCode = "400", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+	})
+	@GetMapping("/select")
+	public ResponseEntity<Object> member(Authentication authentication) {
+		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
+		PrincipalMemberDto principalMemberDto = PrincipalMemberDto.builder().email(authUser.getAttribute("email"))
+			.role(new SimpleGrantedAuthority(authentication.getAuthorities().toArray()[0].toString()))
+			.build();
+		ResponseMember.MemberInfo memberInfo = memberService.memberSelect(principalMemberDto);
+		return ResponseEntity.status(HttpStatus.OK).body(memberInfo);
+	}
+
 	@Operation(
 		summary = "회원가입", description = "프로필 정보를 입력한다.\n\n birth:yyyy-mm-dd", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.Info.class))),
@@ -45,23 +66,40 @@ public class MemberController {
 	})
 	@PostMapping(value = "/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberJoin(HttpServletRequest request,
-		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.SignupMember requestMember) {
-		MemberVO memberVO = MemberVO.builder()
-			.birth(requestMember.getBirth())
-			.imageFile(requestMember.getImageFile())
-			.termsOfService(requestMember.getTermsOfService())
-			.termsOfPrivacy(requestMember.getTermsOfPrivacy())
-			.termsOfLocation(requestMember.getTermsOfLocation())
-			.marketingContent(requestMember.getMarketingConsent())
-			.email(requestMember.getEmail())
-			.name(requestMember.getName())
-			.gender(requestMember.getGender())
-			.role(MemberRole.ROLE_MEMBER)
-			.status(MemberStatus.STATUS_NORMAL)
-			.build();
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.MemberInfo requestMember) {
+		MemberVO memberVO = bindMemberVo(requestMember);
 		String deviceValue = CheckDevice.checkDevice(request);
 		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
 		return ResponseEntity.status(HttpStatus.OK).body(info);
+	}
+
+	/**
+	 * 멤버 수정 로직
+	 * @param updateMember
+	 * @return 결과 값
+	 */
+	@Operation(security = {
+		@SecurityRequirement(name = "JWT")}, summary = "멤버 업데이트", description = "Member 수정을 위한 JWT 토큰 입력",
+		responses = {
+			@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
+			@ApiResponse(responseCode = "400", description = "Nickname 중복 \n\n 아매알 중복 "
+				+ "\n\n 유효하지 않는 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+		})
+	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberInfo updateMember,
+		Authentication authUser) {
+		memberService.memberUpdate(bindMemberVo(updateMember));
+		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+
+	@PostMapping("/delete")
+	public ResponseEntity<Object> memberDelete(RequestMember.MemberInfo deleteMember) {
+		memberService.memberDelete(bindMemberVo(deleteMember));
+		return ResponseEntity.status(HttpStatus.OK).build();
+
 	}
 
 	@Operation(responses = {
@@ -76,5 +114,22 @@ public class MemberController {
 			.message(Arrays.asList("success"))
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+
+	private static MemberVO bindMemberVo(RequestMember.MemberInfo requestMember) {
+		MemberVO memberVO = MemberVO.builder()
+			.birth(requestMember.getBirth())
+			.imageFile(requestMember.getImageFile())
+			.termsOfService(requestMember.getTermsOfService())
+			.termsOfPrivacy(requestMember.getTermsOfPrivacy())
+			.termsOfLocation(requestMember.getTermsOfLocation())
+			.marketingContent(requestMember.getMarketingConsent())
+			.email(requestMember.getEmail())
+			.name(requestMember.getName())
+			.gender(requestMember.getGender())
+			.role(MemberRole.ROLE_MEMBER)
+			.status(MemberStatus.STATUS_NORMAL)
+			.build();
+		return memberVO;
 	}
 }

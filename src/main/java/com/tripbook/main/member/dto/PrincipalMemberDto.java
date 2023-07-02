@@ -1,6 +1,6 @@
 package com.tripbook.main.member.dto;
 
-import com.tripbook.main.member.enums.MemberRole;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,5 +9,5 @@ import lombok.Getter;
 @Getter
 public class PrincipalMemberDto {
 	private String email;
-	private MemberRole role;
+	private SimpleGrantedAuthority role;
 }
