@@ -41,6 +41,8 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.headers().frameOptions().disable();
+
 		//PlatForm 토큰 인증필터
 		http
 			.authorizeHttpRequests()
@@ -49,8 +51,7 @@ public class WebSecurityConfig {
 			.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		http
 			.authorizeHttpRequests()
-			.requestMatchers(HttpMethod.GET, "/member/nickname/validate")
-			.permitAll()
+			.requestMatchers("/h2-console/**").permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/signup")
 			.permitAll()
 			.requestMatchers("/member/**")
