@@ -84,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Transactional
-	public void updateMember(RequestMember.MemberInfo signupMember, Member findMember) {
+	public void updateMember(RequestMember.MemberReqInfo signupMember, Member findMember) {
 		if (signupMember.getImageFile() != null) {
 			String profileURL = uploadService.imageUpload(signupMember.getImageFile(), path);
 			findMember.updateProfile(profileURL);

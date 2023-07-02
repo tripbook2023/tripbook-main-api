@@ -66,7 +66,7 @@ public class MemberController {
 	})
 	@PostMapping(value = "/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberJoin(HttpServletRequest request,
-		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.MemberInfo requestMember) {
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = bindMemberVo(requestMember);
 		String deviceValue = CheckDevice.checkDevice(request);
 		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
@@ -86,7 +86,7 @@ public class MemberController {
 				+ "\n\n 유효하지 않는 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 		})
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberInfo updateMember,
+	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberReqInfo updateMember,
 		Authentication authUser) {
 		memberService.memberUpdate(bindMemberVo(updateMember));
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
@@ -96,7 +96,7 @@ public class MemberController {
 	}
 
 	@PostMapping("/delete")
-	public ResponseEntity<Object> memberDelete(RequestMember.MemberInfo deleteMember) {
+	public ResponseEntity<Object> memberDelete(RequestMember.MemberReqInfo deleteMember) {
 		memberService.memberDelete(bindMemberVo(deleteMember));
 		return ResponseEntity.status(HttpStatus.OK).build();
 
@@ -116,7 +116,7 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
-	private static MemberVO bindMemberVo(RequestMember.MemberInfo requestMember) {
+	private static MemberVO bindMemberVo(RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = MemberVO.builder()
 			.birth(requestMember.getBirth())
 			.imageFile(requestMember.getImageFile())
