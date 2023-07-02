@@ -12,19 +12,20 @@ file:
     signup: member/profile
 jwt:
   secret: 32543a4271369f9b539d9824b98ba055629a69f6f278a24cd6f36a63d0fc282986965bcb0a56cf9d1b2cb50c9c91003a5982c3db9d60d58c205e3373aa0bae68
----
+# default
 spring:
   profiles:
     active: local
-  config:
-    import: classpath:/application_local.yml
-
----
 ---
 spring:
-  profiles:
-    active: dev
   config:
+    activate:
+      on-profile: local
+    import: classpath:/application_local.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
     import: classpath:/application_dev.yml
-
 ---
