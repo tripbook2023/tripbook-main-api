@@ -104,4 +104,10 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+
+	public static class MEMBER_NAME_ERROR extends CustomException {
+		public MEMBER_NAME_ERROR(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 }

@@ -7,7 +7,7 @@ import com.tripbook.main.member.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Member findByEmail(String email);
 
-	Member findByEmailOrName(String email, String name);
+	// Member findByEmailOrName(String email, String name);
 
 	Member findByName(String name);
 

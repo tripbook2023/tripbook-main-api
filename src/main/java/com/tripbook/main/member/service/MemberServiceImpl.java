@@ -99,10 +99,15 @@ public class MemberServiceImpl implements MemberService {
 
 	private boolean memberValidation(MemberVO member) {
 		//@TODO 분리 필요
-		if (memberRepository.findByEmailOrName(member.getEmail(), member.getName()) != null) {
-			log.info("Member_Already_Exists.");
+		if (memberRepository.findByEmail(member.getEmail()) != null) {
+			log.info("Member_EMAIL_Already_Exists.");
 			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
 				ErrorCode.EMAIL_DUPLICATION);
+		}
+		if (memberRepository.findByName(member.getName()) != null) {
+			log.info("Member_NICKNAME_Already_Exists.");
+			throw new CustomException.MEMBER_NAME_ERROR(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+				ErrorCode.MEMBER_NAME_ERROR);
 		}
 		return true;
 
