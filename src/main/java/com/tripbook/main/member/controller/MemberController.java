@@ -50,7 +50,7 @@ public class MemberController {
 
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
-		summary = "멤버단건조회", description = "JWT를 사용하여 멤버조회.\n\n birth:yyyy-mm-dd", responses = {
+		summary = "멤버조회", description = "JWT를 사용하여 멤버조회.\n\n birth:yyyy-mm-dd", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.MemberInfo.class))),
 		@ApiResponse(responseCode = "400", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
@@ -87,8 +87,8 @@ public class MemberController {
 		@SecurityRequirement(name = "JWT")}, summary = "멤버 업데이트", description = "Member 수정을 위한 JWT 토큰 입력",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
-			@ApiResponse(responseCode = "400", description = "Nickname 중복 \n\n 아매알 중복 "
-				+ "\n\n 유효하지 않는 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+			@ApiResponse(responseCode = "400", description = "Nickname 중복 \n\n 이메일 중복 "
+				+ "\n\n 유효하지 않 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 		})
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberReqInfo updateMember,
