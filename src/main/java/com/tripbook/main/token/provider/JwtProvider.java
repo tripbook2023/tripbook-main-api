@@ -7,13 +7,13 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.entity.Member;
-import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.token.dto.TokenInfo;
 
 import io.jsonwebtoken.Claims;
@@ -48,9 +48,11 @@ public class JwtProvider {
 		// Access Token 생성
 		LocalDateTime accessTokenExpiresIn = null;
 		LocalDateTime refreshTokenExpiresIn = null;
+		//backdoor
 		switch (deviceType) {
 			case "WEB":
 				accessTokenExpiresIn = now.plus(2, ChronoUnit.HOURS); // 2시간
+				// accessTokenExpiresIn = now.plusMonths(3);
 				// refreshTokenExpiresIn = new Date(now + 7200000);
 				break;
 			case "MOBILE":
@@ -99,7 +101,7 @@ public class JwtProvider {
 
 		// 클레임에서 권한 정보 가져오기
 		return PrincipalMemberDto.builder()
-			.role(MemberRole.valueOf((String)claims.get("auth")))
+			.role(new SimpleGrantedAuthority(claims.get("auth").toString()))
 			.email(claims.getSubject())
 			.build();
 	}

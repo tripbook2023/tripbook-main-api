@@ -1,6 +1,5 @@
 package com.tripbook.main.security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.tripbook.main.auth.filter.OAuth2AccessTokenAuthenticationFilter;
 import com.tripbook.main.member.controller.LogoutHandler;
@@ -20,7 +20,6 @@ import com.tripbook.main.token.filter.JwtAuthenticationFilter;
 import com.tripbook.main.token.provider.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -55,7 +54,9 @@ public class WebSecurityConfig {
 			.requestMatchers("/h2-console/**").permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/signup")
 			.permitAll()
-			.requestMatchers(HttpMethod.POST, "/member/**")
+			.requestMatchers(HttpMethod.POST, "/member/delete")
+			.permitAll()
+			.requestMatchers("/member/**")
 			.hasRole("MEMBER")
 			.anyRequest()
 			.permitAll();

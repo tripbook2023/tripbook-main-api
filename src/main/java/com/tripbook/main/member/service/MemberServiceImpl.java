@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
@@ -66,8 +67,34 @@ public class MemberServiceImpl implements MemberService {
 		return true;
 	}
 
+	@Override
+	public void memberUpdate(MemberVO updateMember) {
+		if (memberRepository.findByName(updateMember.getName()) != null) {
+			log.error("Already Exis Nickname");
+			throw new CustomException(ErrorCode.MEMBER_NAME_ERROR.getErrorCode(), ErrorCode.MEMBER_NAME_ERROR);
+		} else {
+			new Member(updateMember);
+		}
+	}
+
+	@Override
 	@Transactional
-	public void updateMember(RequestMember.SignupMember signupMember, Member findMember) {
+	public void memberDelete(MemberVO bindMemberVo) {
+		/*
+		 임시 Delete Member Service
+		 @TODO - 후에는 실제 삭제가 아닌 MemberStatus 탈퇴처리 진행 (현재는 편의상 실제 DB데이터삭제)
+		 */
+		memberRepository.deleteByEmail(bindMemberVo.getEmail());
+	}
+
+	@Override
+	public ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto) {
+		Member member = memberRepository.findByEmail(principalMemberDto.getEmail());
+		return new ResponseMember.MemberInfo(member);
+	}
+
+	@Transactional
+	public void updateMember(RequestMember.MemberReqInfo signupMember, Member findMember) {
 		if (signupMember.getImageFile() != null) {
 			String profileURL = uploadService.imageUpload(signupMember.getImageFile(), path);
 			findMember.updateProfile(profileURL);
@@ -81,10 +108,16 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	private boolean memberValidation(MemberVO member) {
-		if (memberRepository.findByEmailOrName(member.getEmail(), member.getName()) != null) {
-			log.info("Member_Already_Exists.");
+		//@TODO 분리 필요
+		if (memberRepository.findByEmail(member.getEmail()) != null) {
+			log.info("Member_EMAIL_Already_Exists.");
 			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
 				ErrorCode.EMAIL_DUPLICATION);
+		}
+		if (memberRepository.findByName(member.getName()) != null) {
+			log.info("Member_NICKNAME_Already_Exists.");
+			throw new CustomException.MEMBER_NAME_ERROR(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+				ErrorCode.MEMBER_NAME_ERROR);
 		}
 		return true;
 
