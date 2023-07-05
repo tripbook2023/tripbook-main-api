@@ -56,6 +56,8 @@ public class WebSecurityConfig {
 			.permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/delete")
 			.permitAll()
+			.requestMatchers(HttpMethod.GET, "/member/nickname/validate")
+			.permitAll()
 			.requestMatchers("/member/**")
 			.hasRole("MEMBER")
 			.anyRequest()
