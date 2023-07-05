@@ -3,6 +3,7 @@ package com.tripbook.main.member.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import lombok.*;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,9 +13,6 @@ import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter
@@ -95,6 +93,17 @@ public class ResponseMember {
 		private Long point;
 		@Schema(description = "계정상태")
 		private MemberStatus status;
+	}
+
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class MemberSimpleDto {
+		private long id;
+		private String name;
+		private String profileUrl;
+		private MemberRole role;
 	}
 
 }
