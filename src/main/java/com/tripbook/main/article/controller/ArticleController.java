@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ArticleController {
 
-    // 북마크 목록, 임시저장 목록
 
     @Operation(security = {
             @SecurityRequirement(name = "JWT")},
@@ -100,18 +99,6 @@ public class ArticleController {
         return ResponseEntity.ok("ok");
     }
 
-//    @Operation(summary = "여행소식 삭제", description = "여행소식을 삭제합니다.",
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.MemberInfo.class))),
-//                    @ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-//            })
-//    @Parameters(value = {
-//            @Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
-//    })
-//    @GetMapping("/{articleId}/comment")
-//    public ResponseEntity<?> getComments() {
-//        return ResponseEntity.ok("ok");
-//    }
 
     @Operation(summary = "댓글 삭제", security = {@SecurityRequirement(name = "JWT")},
             responses = {
