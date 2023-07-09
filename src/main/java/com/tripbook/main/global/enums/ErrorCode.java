@@ -24,7 +24,7 @@ public enum ErrorCode {
 	MEMBER_NOTFOUND(400, "MEMBER-ERR-400", "MEMBER_NOTFOUND"),
 	MEMBER_ALREADY_AUTHENTICATE(400, "MEMBER-ERR-400", "MEMBER_ALREADY_AUTHENTICATE"),
 	FILE_UNSUPPORTED_ERROR(500, "FILE-ERR-500", "Unsupported_UPLOAD_FILE"),
-	FILE_MAXIMUM_ERROR(500, "FILE-ERR-500", "Maximum_Upload_Size_Exceeded");
+	FILE_MAXIMUM_ERROR(400, "FILE-ERR-400", "Maximum_Upload_Size_Exceeded");
 	private int status;
 	private String errorCode;
 	private String message;
