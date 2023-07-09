@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
@@ -108,6 +109,13 @@ public class CustomExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
 		log.error("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
+		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ErrorResponse> MultipartHandleException(Exception ex) {
+		log.error("handleException", ex);
+		ErrorResponse response = new ErrorResponse(ErrorCode.FILE_MAXIMUM_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 

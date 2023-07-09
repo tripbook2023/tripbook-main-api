@@ -52,7 +52,7 @@ public class WebSecurityConfig {
 		http
 			.authorizeHttpRequests()
 			.requestMatchers("/h2-console/**").permitAll()
-			.requestMatchers(HttpMethod.POST, "/member/signup")
+			.requestMatchers(HttpMethod.POST, "ㅜ/member/signup")
 			.permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/delete")
 			.permitAll()
