@@ -14,7 +14,7 @@ public class DiscordMessageGenerator {
 
     private static final String EXTRACTION_ERROR_MESSAGE = "메세지를 추출하는데 오류가 생겼습니다.\nmessagee : %s";
     private static final String EXCEPTION_MESSAGE_FORMAT = "_%s_ %s.%s:%d - %s";
-    private static final String SLACK_MESSAGE_FORMAT = "*[%s]* %s\n\n*[ERROR LOG]*\n%s\n\n*[REQUEST_INFORMATION]*\n%s %s\n%s\n\n%s";
+    private static final String SLACK_MESSAGE_FORMAT = "*[%s]* %s\n\n*[ERROR LOG]*\n%s\n\n*[REQUEST_INFORMATION]*\n%s %s\n%s\n\n*[REQUEST_BODY]*\n%s\n\n*[REQUEST_PARMETER]*\n%s";
     private static final String EMPTY_BODY_MESSAGE = "{BODY IS EMPTY}";
 
     private final Environment environment;
@@ -32,9 +32,10 @@ public class DiscordMessageGenerator {
             String requestURI = request.getRequestURI();
             String headers = extractHeaders(request);
             String body = getBody(request);
+            String param = getParameter(request);
             String exceptionMessage = extractExceptionMessage(exception);
 
-            return toMessage(profile, currentTime, exceptionMessage, method, requestURI, headers, body);
+            return toMessage(profile, currentTime, exceptionMessage, method, requestURI, headers, body, param);
         } catch (Exception e) {
             return String.format(EXTRACTION_ERROR_MESSAGE, e.getMessage());
         }
@@ -48,6 +49,12 @@ public class DiscordMessageGenerator {
         return LocalDateTime.now().toString();
     }
 
+    private String getParameter(ContentCachingRequestWrapper request) {
+        Map<String, String[]> values = request.getParameterMap();
+        return values.entrySet().stream()
+                .map(e -> e.getKey() + ":" + Arrays.toString(e.getValue()))
+                .collect(joining("\n"));
+    }
 
     private String extractHeaders(ContentCachingRequestWrapper request) {
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -73,7 +80,6 @@ public class DiscordMessageGenerator {
     }
 
     private String extractExceptionMessage(Exception e) {
-        System.out.println("adsfadsfasfdsfsdfdsfsdfsdfsd" + e.getStackTrace().length);
         StackTraceElement stackTrace = e.getStackTrace()[0];
         String className = stackTrace.getClassName();
         int lineNumber = stackTrace.getLineNumber();
@@ -94,10 +100,10 @@ public class DiscordMessageGenerator {
 
 
     private String toMessage(String profile, String currentTime, String errorMessage,
-                             String method, String requestURI, String headers, String body) {
+                             String method, String requestURI, String headers, String body, String param) {
         return String.format(
                 SLACK_MESSAGE_FORMAT, profile, currentTime,
-                errorMessage, method, requestURI, headers, body
+                errorMessage, method, requestURI, headers, body, param
         );
     }
 }
