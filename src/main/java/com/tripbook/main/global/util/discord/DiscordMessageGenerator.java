@@ -14,7 +14,7 @@ public class DiscordMessageGenerator {
 
     private static final String EXTRACTION_ERROR_MESSAGE = "메세지를 추출하는데 오류가 생겼습니다.\nmessagee : %s";
     private static final String EXCEPTION_MESSAGE_FORMAT = "_%s_ %s.%s:%d - %s";
-    private static final String SLACK_MESSAGE_FORMAT = "*[%s]* %s\n\n*[ERROR LOG]*\n%s\n\n*[REQUEST_INFORMATION]*\n%s %s\n%s\n\n*[REQUEST_BODY]*\n%s\n\n*[REQUEST_PARMETER]*\n%s";
+    private static final String DISCORD_MESSAGE_FORMAT = "*[%s]* %s\n\n*[ERROR LOG]*\n%s\n\n*[REQUEST_INFORMATION]*\n%s %s\n%s\n\n*[REQUEST_BODY]*\n%s\n\n*[REQUEST_PARMETER]*\n%s";
     private static final String EMPTY_BODY_MESSAGE = "{BODY IS EMPTY}";
 
     private final Environment environment;
@@ -102,7 +102,7 @@ public class DiscordMessageGenerator {
     private String toMessage(String profile, String currentTime, String errorMessage,
                              String method, String requestURI, String headers, String body, String param) {
         return String.format(
-                SLACK_MESSAGE_FORMAT, profile, currentTime,
+                DISCORD_MESSAGE_FORMAT, profile, currentTime,
                 errorMessage, method, requestURI, headers, body, param
         );
     }
