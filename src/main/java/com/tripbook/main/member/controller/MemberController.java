@@ -3,6 +3,8 @@ package com.tripbook.main.member.controller;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -121,6 +123,16 @@ public class MemberController {
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
+
+	@GetMapping("/discord")
+	public ResponseEntity<?> discord() {
+		if (true) {
+			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+					ErrorCode.MEMBER_NAME_ERROR);
+		}
+		return ResponseEntity.ok("d");
+	}
+
 
 	private static MemberVO bindMemberVo(RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = MemberVO.builder()

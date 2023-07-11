@@ -1,8 +1,11 @@
 package com.tripbook.main.security.config;
 
+import com.tripbook.main.global.util.discord.RequestStorage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,6 +43,12 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
+	@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+	public RequestStorage requestStorage() {
+		return new RequestStorage();
+	}
+
+	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.headers().frameOptions().disable();
 
@@ -57,6 +66,8 @@ public class WebSecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/member/delete")
 			.permitAll()
 			.requestMatchers(HttpMethod.GET, "/member/nickname/validate")
+			.permitAll()
+			.requestMatchers(HttpMethod.GET, "member/discord")
 			.permitAll()
 			.requestMatchers("/member/**")
 			.hasRole("MEMBER")

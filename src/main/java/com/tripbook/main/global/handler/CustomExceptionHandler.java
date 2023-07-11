@@ -3,6 +3,7 @@ package com.tripbook.main.global.handler;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.tripbook.main.global.util.discord.DiscordAlarm;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomExceptionHandler {
 	//----------JWT Exceptions
 	@ExceptionHandler(CustomException.SecurityException.class)
+	@DiscordAlarm
 	public ResponseEntity<ErrorResponse> handleSecurityException(CustomException.SecurityException ex) {
 		log.error("SecurityException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
@@ -66,6 +68,7 @@ public class CustomExceptionHandler {
 	// -- JWT Exceptions END
 	// -- Member Exceptions
 	@ExceptionHandler(CustomException.MemberAlreadyExist.class)
+	@DiscordAlarm
 	public ResponseEntity<ErrorResponse> MemberAlreadyExist(CustomException.MemberAlreadyExist ex) {
 		log.error("MemberAlreadyExist", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
@@ -73,6 +76,7 @@ public class CustomExceptionHandler {
 	}
 
 	@ExceptionHandler(CustomException.MemberAlreadyAuthenticate.class)
+	@DiscordAlarm
 	public ResponseEntity<ErrorResponse> MemberAlreadyAuthenticate(CustomException.MemberAlreadyAuthenticate ex) {
 		log.error("MemberAlreadyAuthenticate", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
@@ -87,6 +91,7 @@ public class CustomExceptionHandler {
 	}
 
 	@ExceptionHandler(CustomException.EmailDuplicateException.class)
+	@DiscordAlarm
 	public ResponseEntity<ErrorResponse> handleEmailDuplicateException(CustomException.EmailDuplicateException ex) {
 		log.error("handleEmailDuplicateException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
@@ -106,6 +111,7 @@ public class CustomExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
+	@DiscordAlarm
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
 		log.error("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
