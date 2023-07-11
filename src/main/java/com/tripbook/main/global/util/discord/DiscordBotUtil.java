@@ -7,20 +7,15 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class DiscordBotUtil {
-    private final DiscordBotToken discordBotToken;
     private final JDA jda;
-    @Value("${discord.bot.token}")
-    private String token;
 
     public DiscordBotUtil(DiscordBotToken discordBotToken) {
-        this.discordBotToken = discordBotToken;
         String k = discordBotToken.getDiscordBotToken();
         this.jda = JDABuilder.createDefault(k)
                 .setActivity(Activity.playing("메세지 기다리기"))
