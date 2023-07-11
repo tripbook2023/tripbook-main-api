@@ -5,12 +5,14 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
 @Component
 @AutoConfigurationPackage
+@Profile({"prod", "dev"})
 public class ExceptionAppender {
 
     private static final String DISCORD_ALARM_FORMAT = "[DiscordAlarm] %s";
