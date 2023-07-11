@@ -62,9 +62,9 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public boolean memberNameValidation(MemberVO member) {
 		if (memberRepository.findByName(member.getName()) != null) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
