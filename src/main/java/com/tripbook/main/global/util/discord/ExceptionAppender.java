@@ -30,7 +30,6 @@ public class ExceptionAppender {
     @Before("@annotation(com.tripbook.main.global.util.discord.DiscordAlarm)")
     public void appendExceptionToResponseBody(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
-        System.out.println("Asdfasdf asdfsadfasd"+args.length);
         if (!validateHasOneArgument(args)) {
             return;
         }
