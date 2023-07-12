@@ -18,7 +18,7 @@ public class DiscordBotUtil {
     public DiscordBotUtil(DiscordBotToken discordBotToken) {
         String k = discordBotToken.getDiscordBotToken();
         this.jda = JDABuilder.createDefault(k)
-                .setActivity(Activity.playing("메세지 기다리기"))
+                .setActivity(Activity.playing("에러 안 나길 기도"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(new DiscordListener())
                 .build();
@@ -28,7 +28,7 @@ public class DiscordBotUtil {
         System.out.println(jda.getGuilds());
         Guild guild = jda.getGuilds().get(0);
         List<GuildChannel> channels = guild.getChannels();
-        TextChannel tc = (TextChannel) channels.stream().filter(c -> c.getName().equals("일반")).toList().get(0);
+        TextChannel tc = (TextChannel) channels.stream().filter(c -> c.getName().equals("서버에러-발생이슈")).toList().get(0);
 
         tc.sendMessage(object).queue();
     }

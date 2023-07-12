@@ -14,7 +14,7 @@ jwt:
   secret: 32543a4271369f9b539d9824b98ba055629a69f6f278a24cd6f36a63d0fc282986965bcb0a56cf9d1b2cb50c9c91003a5982c3db9d60d58c205e3373aa0bae68
 discord:
   bot:
-    token: MTEyNzc5ODI3MDA5ODQxMTU5MA.Gbs5wi.-VPkRyWwRtPwVY016-OsWpuPzrnYCIukbpv_rw
+    token: MTEyODMyNjA0Mzc4NzMzMzcwNA.G9bKRZ.HaJYR1C2wiI5GhPqfdRScXEykB768frOLioUK0
 # default
 spring:
   servlet:
