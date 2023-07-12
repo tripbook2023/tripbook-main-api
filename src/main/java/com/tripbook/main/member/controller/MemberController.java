@@ -124,15 +124,6 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
-	@GetMapping("/discord")
-	public ResponseEntity<?> discord() {
-		if (true) {
-			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
-					ErrorCode.MEMBER_NAME_ERROR);
-		}
-		return ResponseEntity.ok("d");
-	}
-
 
 	private static MemberVO bindMemberVo(RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = MemberVO.builder()
