@@ -3,6 +3,8 @@ package com.tripbook.main.member.controller;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -115,7 +117,14 @@ public class MemberController {
 	@GetMapping("/nickname/validate")
 	public ResponseEntity<Object> memberNameCheck(
 		@Validated RequestMember.SignupNameValidator requestMember) {
-		memberService.memberNameValidation(MemberVO.builder().name(requestMember.getName()).build());
+		
+		boolean isDuplicated = memberService.memberNameValidation(MemberVO.builder().name(requestMember.getName()).build());
+
+		if (isDuplicated) {
+			throw new CustomException.MEMBER_NAME_ERROR(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+					ErrorCode.MEMBER_NAME_ERROR);
+		}
+
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
 			.message(Arrays.asList("success"))
 			.build();
