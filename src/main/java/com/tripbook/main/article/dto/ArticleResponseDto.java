@@ -49,6 +49,9 @@ public class ArticleResponseDto {
         @Schema(description = "생성일")
         private LocalDateTime createdAt;
 
+        @Schema(description = "수정일")
+        private LocalDateTime updatedAt;
+
     }
 
     @Getter
@@ -71,6 +74,9 @@ public class ArticleResponseDto {
 
         @Schema(description = "생성일")
         private LocalDateTime createdAt;
+
+        @Schema(description = "수정일")
+        private LocalDateTime updatedAt;
     }
 
 }
