@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/articles")
 @Tag(name = "Articles", description = "Article API")
 @Slf4j
 public class ArticleController {
@@ -47,7 +47,8 @@ public class ArticleController {
             @Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY),
             @Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
             @Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
-            @Parameter(name = "sort", description = "정렬 기준 (Default : [created-DESC])", example = "[createdAt-DESC, heartNum-ASC]", in = ParameterIn.QUERY)
+            @Parameter(name = "sort", description = "정렬 기준 (Default : [createdAt-DESC])",
+                        example = "[createdAt-DESC, popularity-ASC]", in = ParameterIn.QUERY)
     })
     @GetMapping()
     public ResponseEntity<?> getArticles(
@@ -134,7 +135,7 @@ public class ArticleController {
     @Parameters(value = {
             @Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
     })
-    @PostMapping("/{articleId}/archive")
+    @PostMapping("/{articleId}/bookmark")
     public ResponseEntity<?> bookmarkArticle(@PathVariable long articleId) {
         return ResponseEntity.ok("ok");
     }
