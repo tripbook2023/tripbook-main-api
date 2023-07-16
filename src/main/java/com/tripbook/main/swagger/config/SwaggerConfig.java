@@ -26,15 +26,13 @@ public class SwaggerConfig {
 			.build();
 	}
 
-	// @Bean
-	// public Docket api() {
-	// 	return new Docket(DocumentationType.OAS_30)
-	// 		.groupName("01.멤버관련 명세서")
-	// 		.select()
-	// 		.apis(RequestHandlerSelectors.any())
-	// 		.paths(PathSelectors.any()) // AntPathRequestMatcher에 사용한 패턴 지정
-	// 		.build();
-	// }
+	@Bean
+	public GroupedOpenApi ArticleGroup() {
+		return GroupedOpenApi.builder()
+				.group("여행소식API")
+				.packagesToScan("com.tripbook.main.article.controller")
+				.build();
+	}
 
 	@Bean
 	public OpenAPI JwtOpenAPI() {
