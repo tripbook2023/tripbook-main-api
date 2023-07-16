@@ -83,8 +83,7 @@ public class ArticleController {
             @Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
     })
     @DeleteMapping("/{articleId}")
-    public ResponseEntity<?> deleteArticle(@PathVariable long articleId) {
-        return ResponseEntity.ok("ok");
+    public void deleteArticle(@PathVariable long articleId) {
     }
 
     @Operation(summary = "댓글 작성", security = {@SecurityRequirement(name = "JWT")},
@@ -110,8 +109,7 @@ public class ArticleController {
             @Parameter(name = "commentId", description = "댓글 ID", in = ParameterIn.PATH),
     })
     @DeleteMapping("/comment/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable long commentId) {
-        return ResponseEntity.ok("ok");
+    public void deleteComment(@PathVariable long commentId) {
     }
 
     @Operation(summary = "여행소식 좋아요", security = {@SecurityRequirement(name = "JWT")},
