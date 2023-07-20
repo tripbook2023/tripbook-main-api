@@ -122,4 +122,15 @@ public class MemberServiceImpl implements MemberService {
 		return true;
 
 	}
+
+	@Override
+	public Member getMemberByEmail(String email) {
+		Member member = memberRepository.findByEmail(email);
+
+		if (member == null) {
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(),ErrorCode.MEMBER_NOTFOUND);
+		}
+
+		return member;
+	}
 }

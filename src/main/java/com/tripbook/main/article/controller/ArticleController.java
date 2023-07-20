@@ -2,6 +2,7 @@ package com.tripbook.main.article.controller;
 
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
+import com.tripbook.main.article.service.ArticleService;
 import com.tripbook.main.global.common.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,18 +14,25 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/articles")
 @Tag(name = "Articles", description = "Article API")
 @Slf4j
+@RequiredArgsConstructor
 public class ArticleController {
 
+    private final ArticleService articleService;
 
     @Operation(security = {
             @SecurityRequirement(name = "JWT")},
@@ -34,7 +42,8 @@ public class ArticleController {
     })
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> saveArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto) {
-        return ResponseEntity.ok("ok");
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(articleService.saveArticle(requestDto, (OAuth2User) principal));
     }
 
     @Operation(summary = "여행소식 목록 조회 및 검색",

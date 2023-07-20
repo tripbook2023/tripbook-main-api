@@ -117,6 +117,10 @@ public class Member extends BasicEntity implements Serializable {
 		this.birth = birth;
 	}
 
+	public boolean isNotEditor() {
+		return !(role.equals(MemberRole.ROLE_ADMIN) || role.equals(MemberRole.ROLE_EDITOR) || role.equals(MemberRole.ROLE_NAMED_EDITOR));
+	}
+
 	@Builder
 	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status,
 		Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation, Boolean marketingConsent,
