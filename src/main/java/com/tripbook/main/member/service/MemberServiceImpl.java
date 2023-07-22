@@ -39,11 +39,9 @@ public class MemberServiceImpl implements MemberService {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
 		}
-		//가입진행
-		String profileURL = "";
 		//프로필 이미지 저장
 		if (member.getImageFile() != null) {
-			profileURL = uploadService.imageUpload(member.getImageFile(), path);
+			String profileURL = uploadService.imageUpload(member.getImageFile(), path);
 			member.setProfile(profileURL);
 		}
 		Member saveMember = memberRepository.save(new Member(member));
@@ -61,10 +59,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public boolean memberNameValidation(MemberVO member) {
-		if (memberRepository.findByName(member.getName()) != null) {
-			return true;
-		}
-		return false;
+		return memberRepository.findByName(member.getName()) != null;
 	}
 
 	@Override
@@ -108,15 +103,12 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	private boolean memberValidation(MemberVO member) {
-		//@TODO 분리 필요
 		if (memberRepository.findByEmail(member.getEmail()) != null) {
-			log.info("Member_EMAIL_Already_Exists.");
 			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
 				ErrorCode.EMAIL_DUPLICATION);
 		}
 		if (memberRepository.findByName(member.getName()) != null) {
-			log.info("Member_NICKNAME_Already_Exists.");
-			throw new CustomException.MEMBER_NAME_ERROR(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+			throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
 		}
 		return true;

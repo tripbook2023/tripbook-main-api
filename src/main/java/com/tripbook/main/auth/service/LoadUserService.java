@@ -31,22 +31,30 @@ public class LoadUserService {
 
 		if (!resultMember.isPresent()) {
 			//회원가입 필요
-			return ResultInfo.builder()
-				.email(memberVO.getEmail())
-				.nickname(memberVO.getName())
-				.status(MemberStatus.STATUS_REQUIRED_AUTH)
-				.build();
+			return getSignUpMessage(memberVO);
 		} else {
 			Member member = resultMember.get();
 			TokenInfo tokenInfo = savaJwt(member, ((CustomPlatformAccessToken)authentication).getDevice());
-			return ResultInfo.builder()
-				.status(member.getStatus())
-				.nickname(member.getName())
-				.email(member.getEmail())
-				.refreshToken(tokenInfo.getRefreshToken())
-				.accessToken(tokenInfo.getAccessToken())
-				.build();
+			return getSingInMessage(member, tokenInfo);
 		}
+	}
+
+	private static ResultInfo getSingInMessage(Member member, TokenInfo tokenInfo) {
+		return ResultInfo.builder()
+			.status(member.getStatus())
+			.nickname(member.getName())
+			.email(member.getEmail())
+			.refreshToken(tokenInfo.getRefreshToken())
+			.accessToken(tokenInfo.getAccessToken())
+			.build();
+	}
+
+	private static ResultInfo getSignUpMessage(MemberVO memberVO) {
+		return ResultInfo.builder()
+			.email(memberVO.getEmail())
+			.nickname(memberVO.getName())
+			.status(MemberStatus.STATUS_REQUIRED_AUTH)
+			.build();
 	}
 
 	private TokenInfo savaJwt(Member saveMember, String deviceType) {

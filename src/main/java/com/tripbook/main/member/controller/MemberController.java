@@ -3,8 +3,6 @@ package com.tripbook.main.member.controller;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
-import com.tripbook.main.global.enums.ErrorCode;
-import com.tripbook.main.global.exception.CustomException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.util.CheckDevice;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.RequestMember;
@@ -117,12 +117,13 @@ public class MemberController {
 	@GetMapping("/nickname/validate")
 	public ResponseEntity<Object> memberNameCheck(
 		@Validated RequestMember.SignupNameValidator requestMember) {
-		
-		boolean isDuplicated = memberService.memberNameValidation(MemberVO.builder().name(requestMember.getName()).build());
+
+		boolean isDuplicated = memberService.memberNameValidation(
+			MemberVO.builder().name(requestMember.getName()).build());
 
 		if (isDuplicated) {
-			throw new CustomException.MEMBER_NAME_ERROR(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
-					ErrorCode.MEMBER_NAME_ERROR);
+			throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+				ErrorCode.MEMBER_NAME_ERROR);
 		}
 
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
@@ -149,7 +150,7 @@ public class MemberController {
 	}
 
 	@InitBinder
-	public void initBinder(WebDataBinder binder) throws Exception {
+	public void initBinder(WebDataBinder binder) {
 		binder.registerCustomEditor(MultipartFile.class, new PropertyEditorSupport() {
 
 			@Override

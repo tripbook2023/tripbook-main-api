@@ -39,18 +39,22 @@ public class UserInfoRequest {
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 		try {
-			ResponseEntity<Map<String, Object>> response = restTemplate.exchange(issuerUri, HttpMethod.GET, request,
-				RESPONSE_TYPE);
-			Map<String, Object> response2 = (Map<String, Object>)response.getBody();
-			return MemberVO.builder()
-				.email(response2.get("email").toString())
-				.name(response2.get("name").toString())
-				.build();
+			//@TODO 에러 핸들링 재검토
+			return responseDataBinding(restTemplate.exchange(issuerUri, HttpMethod.GET, request,
+				RESPONSE_TYPE));
 		} catch (HttpClientErrorException.Unauthorized e) {
-			log.error("TOKEN_UNAUTHORIZED ERRROR", e);
+			log.error("TOKEN_UNAUTHORIZED ERROR", e);
 			throw new CustomException.InvalidTokenException(ErrorCode.TOKEN_UNAUTHORIZED.getMessage(),
 				ErrorCode.TOKEN_UNAUTHORIZED);
 		}
+	}
+
+	private static MemberVO responseDataBinding(ResponseEntity<Map<String, Object>> response) {
+		Map<String, Object> responseBody = (Map<String, Object>)response.getBody();
+		return MemberVO.builder()
+			.email(responseBody.get("email").toString())
+			.name(responseBody.get("name").toString())
+			.build();
 	}
 
 	public HttpHeaders createHeaders(String accessToken) {

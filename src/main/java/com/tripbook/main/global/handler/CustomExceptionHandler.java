@@ -16,13 +16,14 @@ import com.tripbook.main.global.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
 
+//@TODO - 가독성 향상을 위한 Handler 도메인 별 관리
 @Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler {
 	//----------JWT Exceptions
 	@ExceptionHandler(CustomException.SecurityException.class)
 	public ResponseEntity<ErrorResponse> handleSecurityException(CustomException.SecurityException ex) {
-		log.error("SecurityException", ex);
+		log.info("SecurityException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -30,35 +31,35 @@ public class CustomExceptionHandler {
 	@ExceptionHandler(CustomException.UnsupportedImageFileException.class)
 	public ResponseEntity<ErrorResponse> UnsupportedImageFileException(
 		CustomException.UnsupportedImageFileException ex) {
-		log.error("UnsupportedImageFileException", ex);
+		log.info("UnsupportedImageFileException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.NotFoundJwtException.class)
 	public ResponseEntity<ErrorResponse> handleTokenNotFoundException(CustomException.NotFoundJwtException ex) {
-		log.error("NotFoundJwtException", ex);
+		log.info("NotFoundJwtException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.ExpiredJwtException.class)
 	public ResponseEntity<ErrorResponse> handleExpiredJwtException(CustomException.ExpiredJwtException ex) {
-		log.error("ExpiredJwtException", ex);
+		log.info("ExpiredJwtException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.UnsupportedJwtException.class)
 	public ResponseEntity<ErrorResponse> handleUnsupportedJwtException(CustomException.UnsupportedJwtException ex) {
-		log.error("UnsupportedJwtException", ex);
+		log.info("UnsupportedJwtException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(CustomException.IllegalArgumentException ex) {
-		log.error("IllegalArgumentException", ex);
+		log.info("IllegalArgumentException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -67,28 +68,35 @@ public class CustomExceptionHandler {
 	// -- Member Exceptions
 	@ExceptionHandler(CustomException.MemberAlreadyExist.class)
 	public ResponseEntity<ErrorResponse> MemberAlreadyExist(CustomException.MemberAlreadyExist ex) {
-		log.error("MemberAlreadyExist", ex);
+		log.info("MemberAlreadyExist", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
+	@ExceptionHandler(CustomException.MemberNameAlreadyException.class)
+	public ResponseEntity<ErrorResponse> MemberNameAlreadyException(CustomException.MemberNameAlreadyException ex) {
+		log.info("MemberNameAlreadyExist", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.MemberAlreadyAuthenticate.class)
 	public ResponseEntity<ErrorResponse> MemberAlreadyAuthenticate(CustomException.MemberAlreadyAuthenticate ex) {
-		log.error("MemberAlreadyAuthenticate", ex);
+		log.info("MemberAlreadyAuthenticate", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.MemberNotFound.class)
 	public ResponseEntity<ErrorResponse> MemberNotFound(CustomException.MemberNotFound ex) {
-		log.error("MemberNotFound", ex);
+		log.info("MemberNotFound", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.EmailDuplicateException.class)
 	public ResponseEntity<ErrorResponse> handleEmailDuplicateException(CustomException.EmailDuplicateException ex) {
-		log.error("handleEmailDuplicateException", ex);
+		log.info("handleEmailDuplicateException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -107,14 +115,14 @@ public class CustomExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-		log.error("handleException", ex);
+		log.info("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<ErrorResponse> MultipartHandleException(Exception ex) {
-		log.error("handleException", ex);
+		log.info("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.FILE_MAXIMUM_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
