@@ -3,6 +3,7 @@ package com.tripbook.main.member.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.tripbook.main.member.dto.ResponseMember;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -148,5 +149,14 @@ public class Member extends BasicEntity implements Serializable {
 		this.termsOfPrivacy = memberVO.getTermsOfPrivacy();
 		this.termsOfLocation = memberVO.getTermsOfLocation();
 		this.marketingConsent = memberVO.getMarketingConsent();
+	}
+
+	public ResponseMember.MemberSimpleDto toSimpleDto() {
+		return ResponseMember.MemberSimpleDto.builder()
+				.id(this.id)
+				.name(this.name)
+				.profileUrl(this.profile)
+				.role(role)
+				.build();
 	}
 }
