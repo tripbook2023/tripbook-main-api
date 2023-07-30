@@ -9,6 +9,7 @@ import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.entity.Image;
+import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.repository.ImageRepository;
 import com.tripbook.main.member.entity.Member;
@@ -42,8 +43,7 @@ public class ArticleServiceImpl implements ArticleService{
         Member loginMember = memberService.getMemberByEmail(email);
 
         if (loginMember.isNotEditor()) {
-            //TODO 권한없음 에러로 처리하기
-            throw new RuntimeException();
+            throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
         }
 
         Article article = articleRepository.save(Article.builder()
@@ -53,15 +53,17 @@ public class ArticleServiceImpl implements ArticleService{
                                                         .status(ArticleStatus.ACTIVE)
                                                         .build());
 
+        ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
+
         //TODO file path, Image name, article imageList 추가
         List<ArticleImage> imageList = requestDto.getImageList().stream()
                 .map(file -> uploadService.imageUpload(file, "article"))
-                .map(url -> imageRepository.save(Image.builder().url(url).name("").build()))
+                .map(url -> imageRepository.save(Image.builder().url(url).build()))
                 .map(image -> articleImageRepository.save(ArticleImage.builder().image(image).article(article).build()))
                 .toList();
 
-        //TODO ResponseDto로 변환
-        return null;
+        response.setImageList(imageList);
+        return response;
     }
 
 }
