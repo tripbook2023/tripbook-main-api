@@ -35,11 +35,11 @@ public class LoadUserService {
 		} else {
 			Member member = resultMember.get();
 			TokenInfo tokenInfo = savaJwt(member, ((CustomPlatformAccessToken)authentication).getDevice());
-			return getSingInMessage(member, tokenInfo);
+			return getSignInMessage(member, tokenInfo);
 		}
 	}
 
-	private static ResultInfo getSingInMessage(Member member, TokenInfo tokenInfo) {
+	private static ResultInfo getSignInMessage(Member member, TokenInfo tokenInfo) {
 		return ResultInfo.builder()
 			.status(member.getStatus())
 			.nickname(member.getName())
