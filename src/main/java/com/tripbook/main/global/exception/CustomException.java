@@ -110,4 +110,10 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+
+	public static class MemberNotPermittedException extends  CustomException {
+		public MemberNotPermittedException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 }
