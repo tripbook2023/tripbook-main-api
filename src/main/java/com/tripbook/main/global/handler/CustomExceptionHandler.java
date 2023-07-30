@@ -3,6 +3,7 @@ package com.tripbook.main.global.handler;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.tripbook.main.global.util.discord.DiscordAlarm;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 	//----------JWT Exceptions
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.SecurityException.class)
 	public ResponseEntity<ErrorResponse> handleSecurityException(CustomException.SecurityException ex) {
 		log.error("SecurityException", ex);
@@ -27,6 +29,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.UnsupportedImageFileException.class)
 	public ResponseEntity<ErrorResponse> UnsupportedImageFileException(
 		CustomException.UnsupportedImageFileException ex) {
@@ -35,6 +38,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.NotFoundJwtException.class)
 	public ResponseEntity<ErrorResponse> handleTokenNotFoundException(CustomException.NotFoundJwtException ex) {
 		log.error("NotFoundJwtException", ex);
@@ -42,6 +46,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.ExpiredJwtException.class)
 	public ResponseEntity<ErrorResponse> handleExpiredJwtException(CustomException.ExpiredJwtException ex) {
 		log.error("ExpiredJwtException", ex);
@@ -49,6 +54,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.UnsupportedJwtException.class)
 	public ResponseEntity<ErrorResponse> handleUnsupportedJwtException(CustomException.UnsupportedJwtException ex) {
 		log.error("UnsupportedJwtException", ex);
@@ -56,6 +62,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(CustomException.IllegalArgumentException ex) {
 		log.error("IllegalArgumentException", ex);
@@ -65,6 +72,7 @@ public class CustomExceptionHandler {
 
 	// -- JWT Exceptions END
 	// -- Member Exceptions
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.MemberAlreadyExist.class)
 	public ResponseEntity<ErrorResponse> MemberAlreadyExist(CustomException.MemberAlreadyExist ex) {
 		log.error("MemberAlreadyExist", ex);
@@ -72,6 +80,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.MemberAlreadyAuthenticate.class)
 	public ResponseEntity<ErrorResponse> MemberAlreadyAuthenticate(CustomException.MemberAlreadyAuthenticate ex) {
 		log.error("MemberAlreadyAuthenticate", ex);
@@ -86,6 +95,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(CustomException.EmailDuplicateException.class)
 	public ResponseEntity<ErrorResponse> handleEmailDuplicateException(CustomException.EmailDuplicateException ex) {
 		log.error("handleEmailDuplicateException", ex);
@@ -94,6 +104,7 @@ public class CustomExceptionHandler {
 	}
 	// -- Member Exceptions
 
+	@DiscordAlarm
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		//@TODO ErrorReponse 메시지 LIST 형식으로 변경
@@ -105,6 +116,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
 		log.error("handleException", ex);
@@ -112,6 +124,7 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@DiscordAlarm
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<ErrorResponse> MultipartHandleException(Exception ex) {
 		log.error("handleException", ex);

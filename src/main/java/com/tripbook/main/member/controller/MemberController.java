@@ -131,6 +131,7 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
+
 	private static MemberVO bindMemberVo(RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = MemberVO.builder()
 			.birth(requestMember.getBirth())
