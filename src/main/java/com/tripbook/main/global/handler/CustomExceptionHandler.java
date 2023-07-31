@@ -23,7 +23,7 @@ public class CustomExceptionHandler {
 	//----------JWT Exceptions
 	@ExceptionHandler(CustomException.SecurityException.class)
 	public ResponseEntity<ErrorResponse> handleSecurityException(CustomException.SecurityException ex) {
-		log.info("SecurityException", ex);
+		log.error("SecurityException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -38,7 +38,7 @@ public class CustomExceptionHandler {
 
 	@ExceptionHandler(CustomException.NotFoundJwtException.class)
 	public ResponseEntity<ErrorResponse> handleTokenNotFoundException(CustomException.NotFoundJwtException ex) {
-		log.info("NotFoundJwtException", ex);
+		log.error("NotFoundJwtException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -52,14 +52,14 @@ public class CustomExceptionHandler {
 
 	@ExceptionHandler(CustomException.UnsupportedJwtException.class)
 	public ResponseEntity<ErrorResponse> handleUnsupportedJwtException(CustomException.UnsupportedJwtException ex) {
-		log.info("UnsupportedJwtException", ex);
+		log.error("UnsupportedJwtException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.IllegalArgumentException.class)
 	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(CustomException.IllegalArgumentException ex) {
-		log.info("IllegalArgumentException", ex);
+		log.error("IllegalArgumentException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -115,14 +115,14 @@ public class CustomExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-		log.info("handleException", ex);
+		log.error("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<ErrorResponse> MultipartHandleException(Exception ex) {
-		log.info("handleException", ex);
+		log.error("handleException", ex);
 		ErrorResponse response = new ErrorResponse(ErrorCode.FILE_MAXIMUM_ERROR);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
