@@ -42,8 +42,8 @@ public class ArticleController {
     })
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> saveArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(articleService.saveArticle(requestDto, (OAuth2User) principal));
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(articleService.saveArticle(requestDto, principal));
     }
 
     @Operation(summary = "여행소식 목록 조회 및 검색",
