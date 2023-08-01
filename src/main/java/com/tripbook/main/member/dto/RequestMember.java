@@ -25,8 +25,6 @@ public class RequestMember {
 
 	@Valid
 	MemberReqInfo memberInfo;
-	@Valid
-	SignupSurvey signupSurvey;
 
 	@Getter
 	@Setter
@@ -106,22 +104,6 @@ public class RequestMember {
 		@Size(min = 1, max = 9, message = "이름은 1 ~ 9자 이여야 합니다!")
 		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
 		private String name;
-	}
-
-	@Getter
-	@Setter
-	public static class SignupSurvey {
-		@NotBlank(message = "location is required")
-		private String location;
-		@NotBlank(message = "period is required")
-		private String period;
-		@NotBlank(message = "accompany is required")
-		private String accompany;
-		@NotBlank(message = "transportation is required")
-		private String transportation;
-		@NotBlank(message = "purpose is required")
-		private String purpose;
-
 	}
 
 }

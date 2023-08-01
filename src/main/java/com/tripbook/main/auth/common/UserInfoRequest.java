@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -39,15 +37,14 @@ public class UserInfoRequest {
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 		try {
-			ResponseEntity<Map<String, Object>> response = restTemplate.exchange(issuerUri, HttpMethod.GET, request,
-				RESPONSE_TYPE);
-			Map<String, Object> response2 = (Map<String, Object>)response.getBody();
+			//@TODO 에러 핸들링 재검토
+			Map<String, Object> responseBody = (Map<String, Object>)response.getBody();
 			return MemberVO.builder()
-				.email(response2.get("email").toString())
-				.name(response2.get("name").toString())
+				.email(responseBody.get("email").toString())
+				.name(responseBody.get("name").toString())
 				.build();
 		} catch (HttpClientErrorException.Unauthorized e) {
-			log.error("TOKEN_UNAUTHORIZED ERRROR", e);
+			log.error("TOKEN_UNAUTHORIZED ERROR", e);
 			throw new CustomException.InvalidTokenException(ErrorCode.TOKEN_UNAUTHORIZED.getMessage(),
 				ErrorCode.TOKEN_UNAUTHORIZED);
 		}

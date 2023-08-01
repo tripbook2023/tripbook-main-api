@@ -3,7 +3,9 @@ package com.tripbook.main.auth.token;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class CustomPlatformAccessToken extends AbstractAuthenticationToken {
 	private Object principal;
 	private String accessToken;
@@ -21,19 +23,6 @@ public class CustomPlatformAccessToken extends AbstractAuthenticationToken {
 		super(null);
 		this.principal = principal;
 		super.setAuthenticated(true); // must use super, as we override
-	}
-
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public String getDevice() {
-		return device;
-	}
-
-	@Override
-	public Object getPrincipal() {
-		return this.principal;
 	}
 
 	@Override

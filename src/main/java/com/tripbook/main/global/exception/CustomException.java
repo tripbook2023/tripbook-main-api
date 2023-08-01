@@ -105,8 +105,8 @@ public class CustomException extends RuntimeException {
 		}
 	}
 
-	public static class MEMBER_NAME_ERROR extends CustomException {
-		public MEMBER_NAME_ERROR(String message, ErrorCode errorCode) {
+	public static class MemberNameAlreadyException extends CustomException {
+		public MemberNameAlreadyException(String message, ErrorCode errorCode) {
 			super(message, errorCode);
 		}
 	}

@@ -17,6 +17,7 @@ import com.tripbook.main.global.exception.CustomException;
 
 import lombok.extern.slf4j.Slf4j;
 
+//@TODO - 가독성 향상을 위한 Handler 도메인 별 관리
 @Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler {
@@ -33,7 +34,7 @@ public class CustomExceptionHandler {
 	@ExceptionHandler(CustomException.UnsupportedImageFileException.class)
 	public ResponseEntity<ErrorResponse> UnsupportedImageFileException(
 		CustomException.UnsupportedImageFileException ex) {
-		log.error("UnsupportedImageFileException", ex);
+		log.info("UnsupportedImageFileException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -49,7 +50,7 @@ public class CustomExceptionHandler {
 	@DiscordAlarm
 	@ExceptionHandler(CustomException.ExpiredJwtException.class)
 	public ResponseEntity<ErrorResponse> handleExpiredJwtException(CustomException.ExpiredJwtException ex) {
-		log.error("ExpiredJwtException", ex);
+		log.info("ExpiredJwtException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -75,7 +76,14 @@ public class CustomExceptionHandler {
 	@DiscordAlarm
 	@ExceptionHandler(CustomException.MemberAlreadyExist.class)
 	public ResponseEntity<ErrorResponse> MemberAlreadyExist(CustomException.MemberAlreadyExist ex) {
-		log.error("MemberAlreadyExist", ex);
+		log.info("MemberAlreadyExist", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
+	@ExceptionHandler(CustomException.MemberNameAlreadyException.class)
+	public ResponseEntity<ErrorResponse> MemberNameAlreadyException(CustomException.MemberNameAlreadyException ex) {
+		log.info("MemberNameAlreadyExist", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -83,14 +91,14 @@ public class CustomExceptionHandler {
 	@DiscordAlarm
 	@ExceptionHandler(CustomException.MemberAlreadyAuthenticate.class)
 	public ResponseEntity<ErrorResponse> MemberAlreadyAuthenticate(CustomException.MemberAlreadyAuthenticate ex) {
-		log.error("MemberAlreadyAuthenticate", ex);
+		log.info("MemberAlreadyAuthenticate", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
 	@ExceptionHandler(CustomException.MemberNotFound.class)
 	public ResponseEntity<ErrorResponse> MemberNotFound(CustomException.MemberNotFound ex) {
-		log.error("MemberNotFound", ex);
+		log.info("MemberNotFound", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
@@ -98,7 +106,7 @@ public class CustomExceptionHandler {
 	@DiscordAlarm
 	@ExceptionHandler(CustomException.EmailDuplicateException.class)
 	public ResponseEntity<ErrorResponse> handleEmailDuplicateException(CustomException.EmailDuplicateException ex) {
-		log.error("handleEmailDuplicateException", ex);
+		log.info("handleEmailDuplicateException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
