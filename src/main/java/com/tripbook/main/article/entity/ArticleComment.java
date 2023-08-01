@@ -1,5 +1,6 @@
 package com.tripbook.main.article.entity;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
 import jakarta.persistence.*;
@@ -48,5 +49,16 @@ public class ArticleComment extends BasicEntity {
         this.article = article;
         this.content = content;
         this.parent = parent;
+    }
+
+    public ArticleResponseDto.CommentResponse toDto() {
+        return ArticleResponseDto.CommentResponse.builder()
+                .id(this.id)
+                .content(this.content)
+                .author(this.member.toSimpleDto())
+                .childList(this.childList.stream().map(ArticleComment::toDto).toList())
+                .createdAt(this.getCreatedAt())
+                .updatedAt(this.getUpdatedAt())
+                .build();
     }
 }

@@ -1,12 +1,10 @@
 package com.tripbook.main.article.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tripbook.main.article.entity.ArticleImage;
 import com.tripbook.main.member.dto.ResponseMember;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.List;
 public class ArticleResponseDto {
 
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -30,6 +29,9 @@ public class ArticleResponseDto {
 
         @Schema(description = "작성자")
         private ResponseMember.MemberSimpleDto author;
+
+        @Schema(description = "이미지")
+        private List<ArticleImage> imageList;
 
         @Schema(description = "좋아요 수")
         private long heartNum;

@@ -1,5 +1,6 @@
 package com.tripbook.main.article.entity;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
@@ -65,5 +66,24 @@ public class Article extends BasicEntity {
         this.bookmarkList = bookmarkList;
         this.commentList = commentList;
         this.imageList = imageList;
+    }
+
+    public ArticleResponseDto.ArticleResponse toDto(Member member) {
+
+        return ArticleResponseDto.ArticleResponse.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.content)
+                .author(this.member.toSimpleDto())
+                .heartNum(this.heartList.size())
+                .isHeart(this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+                .bookmarkNum(this.bookmarkList.size())
+                .isBookmark(this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+                .commentList(this.commentList.stream().map(ArticleComment::toDto).toList())
+                .createdAt(this.getCreatedAt())
+                .updatedAt(this.getUpdatedAt())
+                .imageList(this.imageList)
+                .build();
+
     }
 }
