@@ -3,6 +3,7 @@ package com.tripbook.main.article.controller;
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.service.ArticleService;
+import com.tripbook.main.article.service.ArticleServiceImpl;
 import com.tripbook.main.global.common.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,7 +17,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +30,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/articles")
@@ -50,23 +58,24 @@ public class ArticleController {
             responses = {
             @ApiResponse(responseCode = "200", description = "성공 \n\n 'content'배열 내의 값은 여행소식 저장API 성공시 반환하는 값을 참고해주세요.",
                          content = @Content(schema = @Schema(implementation = Slice.class))),
-            @ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @Parameters(value = {
             @Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY),
             @Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
             @Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
-            @Parameter(name = "sort", description = "정렬 기준 (Default : [createdAt-DESC])",
-                        example = "[createdAt-DESC, popularity-ASC]", in = ParameterIn.QUERY)
+            @Parameter(name = "sort", description = "정렬 기준 (Default : createdAt-DESC)",
+                        example = "createdAt-DESC, popularity-ASC", in = ParameterIn.QUERY)
     })
     @GetMapping()
-    public ResponseEntity<?> getArticles(
-            @RequestParam String word,
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestParam String sort) {
+    public ResponseEntity<?> searchArticle(@RequestParam String word,
+                                            @RequestParam int page,
+                                            @RequestParam int size,
+                                            @RequestParam List<String> sort) {
 
-        return ResponseEntity.ok("ok");
+        //TODO page,size default값 설정하기? queryDSL?
+        Sort pageSort = getPageSort(sort);
+        Pageable pageable = PageRequest.of(page, size, pageSort);
+        return ResponseEntity.ok(articleService.searchArticle(word, pageable));
     }
 
     @Operation(summary = "여행소식 상세 조회",
@@ -155,6 +164,30 @@ public class ArticleController {
     @PostMapping("/temp")
     public ResponseEntity<?> saveTempArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto) {
         return ResponseEntity.ok("ok");
+    }
+
+    private Sort getPageSort(List<String> sortParam) {
+        Sort pageSort = Sort.unsorted();
+
+        if (sortParam.isEmpty()) {
+            sortParam.add("createdAt-DESC");
+        }
+
+        for (String sort : sortParam) {
+            String field = sort.split("-")[0];
+            String direction = sort.split("-")[1];
+
+            pageSort.and(getSortByOption(field, direction));
+        }
+
+        return pageSort;
+    }
+
+    private Sort getSortByOption(String field, String direction) {
+        if (direction.equals("DESC")) {
+            return Sort.by(field).descending();
+        }
+        return Sort.by(field).ascending();
     }
 
 }

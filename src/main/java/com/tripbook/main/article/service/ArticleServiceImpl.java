@@ -17,6 +17,8 @@ import com.tripbook.main.member.repository.MemberRepository;
 import com.tripbook.main.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -66,4 +68,11 @@ public class ArticleServiceImpl implements ArticleService{
         return response;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable) {
+        Slice<Article> searchResult = articleRepository.findAllByTitleContainsAndContentContains(word, word, pageable);
+
+        return searchResult.stream().map(article -> article.toDto()).toList();
+    }
 }
