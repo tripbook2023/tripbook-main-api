@@ -32,6 +32,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/articles")
@@ -72,10 +73,18 @@ public class ArticleController {
                                             @RequestParam int size,
                                             @RequestParam List<String> sort) {
 
-        //TODO page,size default값 설정하기? queryDSL?
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         Sort pageSort = getPageSort(sort);
+        if (Objects.isNull(page)){
+            page = 0;
+        }
+        if (Objects.isNull(size)){
+            size = 10;
+        }
+
         Pageable pageable = PageRequest.of(page, size, pageSort);
-        return ResponseEntity.ok(articleService.searchArticle(word, pageable));
+        return ResponseEntity.ok(articleService.searchArticle(word, pageable, principal));
     }
 
     @Operation(summary = "여행소식 상세 조회",
@@ -177,7 +186,7 @@ public class ArticleController {
             String field = sort.split("-")[0];
             String direction = sort.split("-")[1];
 
-            pageSort.and(getSortByOption(field, direction));
+            pageSort = pageSort.and(getSortByOption(field, direction));
         }
 
         return pageSort;
