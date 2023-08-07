@@ -31,7 +31,7 @@ public class ArticleResponseDto {
         private ResponseMember.MemberSimpleDto author;
 
         @Schema(description = "이미지")
-        private List<ArticleImage> imageList;
+        private List<ImageResponse> imageList;
 
         @Schema(description = "좋아요 수")
         private long heartNum;
@@ -79,6 +79,19 @@ public class ArticleResponseDto {
 
         @Schema(description = "수정일")
         private LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ImageResponse {
+        @Schema(description = "이미지 ID")
+        private long id;
+
+        @Schema(description = "이미지 URL")
+        private String url;
     }
 
 }

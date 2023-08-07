@@ -82,7 +82,7 @@ public class Article extends BasicEntity {
                 .commentList(this.commentList.stream().map(ArticleComment::toDto).toList())
                 .createdAt(this.getCreatedAt())
                 .updatedAt(this.getUpdatedAt())
-                .imageList(this.imageList)
+                .imageList(this.imageList.stream().map(ArticleImage::toDto).toList())
                 .build();
 
     }
