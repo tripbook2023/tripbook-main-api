@@ -78,14 +78,14 @@ public class ArticleServiceImpl implements ArticleService{
         String email = principal.getName();
         Member loginMember = memberService.getMemberByEmail(email);
 
-        Slice<Article> searchResult = null;
-
         if (word == null || word.equals("")){
-            searchResult = articleRepository.findAllByStatus(ArticleStatus.ACTIVE, pageable);
-        } else {
-            searchResult = articleRepository.findAllByTitleContainingAndContentContainingAndStatus(word, word,ArticleStatus.ACTIVE, pageable);
+            return articleRepository
+                    .findAllByStatus(ArticleStatus.ACTIVE, pageable)
+                    .map(article -> article.toDto(loginMember));
         }
-
-        return searchResult.map(article -> article.toDto(loginMember));
+        
+        return articleRepository
+                .findAllByTitleContainingAndContentContainingAndStatus(word, word,ArticleStatus.ACTIVE, pageable)
+                .map(article -> article.toDto(loginMember));
     }
 }
