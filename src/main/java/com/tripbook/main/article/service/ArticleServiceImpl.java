@@ -44,6 +44,10 @@ public class ArticleServiceImpl implements ArticleService{
         String email = principal.getName();
         Member loginMember = memberService.getMemberByEmail(email);
 
+        if (loginMember == null) {
+            throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(),ErrorCode.MEMBER_NOTFOUND);
+        }
+
         if (loginMember.isNotEditor()) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
         }
@@ -64,15 +68,24 @@ public class ArticleServiceImpl implements ArticleService{
                 .map(image -> articleImageRepository.save(ArticleImage.builder().image(image).article(article).build()))
                 .toList();
 
-        response.setImageList(imageList);
+        response.setImageList(imageList.stream().map(ArticleImage::toDto).toList());
         return response;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable) {
-        Slice<Article> searchResult = articleRepository.findAllByTitleContainsAndContentContains(word, word, pageable);
+    public Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable, OAuth2User principal) {
+        String email = principal.getName();
+        Member loginMember = memberService.getMemberByEmail(email);
 
-        return searchResult.stream().map(article -> article.toDto()).toList();
+        Slice<Article> searchResult = null;
+
+        if (word == null || word.equals("")){
+            searchResult = articleRepository.findAllByStatus(ArticleStatus.ACTIVE, pageable);
+        } else {
+            searchResult = articleRepository.findAllByTitleContainingAndContentContainingAndStatus(word, word,ArticleStatus.ACTIVE, pageable);
+        }
+
+        return searchResult.map(article -> article.toDto(loginMember));
     }
 }
