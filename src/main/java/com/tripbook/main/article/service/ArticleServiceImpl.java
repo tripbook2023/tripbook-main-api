@@ -75,12 +75,12 @@ public class ArticleServiceImpl implements ArticleService{
 
         if (word == null || word.equals("")){
             return articleRepository
-                    .findAllByStatus(ArticleStatus.ACTIVE, pageable)
+                    .findAllByStatus(ArticleStatus.APPROVED, pageable)
                     .map(article -> article.toDto(loginMember));
         }
         
         return articleRepository
-                .findAllByTitleContainingAndContentContainingAndStatus(word, word,ArticleStatus.ACTIVE, pageable)
+                .findAllByTitleContainingAndContentContainingAndStatus(word, word,ArticleStatus.APPROVED, pageable)
                 .map(article -> article.toDto(loginMember));
     }
 }
