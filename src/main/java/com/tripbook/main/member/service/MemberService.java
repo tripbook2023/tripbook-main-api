@@ -23,5 +23,5 @@ public interface MemberService {
 
 	ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto);
 
-	Member getMemberByEmail(String email);
+	Member getLoginMemberByEmail(String email);
 }

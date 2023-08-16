@@ -116,7 +116,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member getMemberByEmail(String email) {
+	public Member getLoginMemberByEmail(String email) {
 		return memberRepository.findByEmail(email);
 	}
 }

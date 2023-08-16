@@ -13,20 +13,15 @@ import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.repository.ImageRepository;
 import com.tripbook.main.member.entity.Member;
-import com.tripbook.main.member.repository.MemberRepository;
 import com.tripbook.main.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,7 +37,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional
     public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, OAuth2User principal) {
         String email = principal.getName();
-        Member loginMember = memberService.getMemberByEmail(email);
+        Member loginMember = memberService.getLoginMemberByEmail(email);
 
         if (loginMember == null) {
             throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(),ErrorCode.MEMBER_NOTFOUND);
@@ -76,7 +71,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = true)
     public Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable, OAuth2User principal) {
         String email = principal.getName();
-        Member loginMember = memberService.getMemberByEmail(email);
+        Member loginMember = memberService.getLoginMemberByEmail(email);
 
         if (word == null || word.equals("")){
             return articleRepository
