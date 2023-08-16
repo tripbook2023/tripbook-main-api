@@ -80,7 +80,7 @@ public class ArticleController {
             page = 0;
         }
         if (Objects.isNull(size)){
-            size = 10;
+            size = 5;
         }
 
         Pageable pageable = PageRequest.of(page, size, pageSort);
