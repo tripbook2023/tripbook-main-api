@@ -33,6 +33,9 @@ public class ArticleResponseDto {
         @Schema(description = "이미지")
         private List<ImageResponse> imageList;
 
+        @Schema(description = "태그 목록")
+        private List<String> tagList;
+
         @Schema(description = "좋아요 수")
         private long heartNum;
 

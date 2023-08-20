@@ -42,6 +42,9 @@ public class Article extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private ArticleStatus status;
 
+    @OneToMany
+    private List<ArticleTag> tagList = new ArrayList<>();
+
     @OneToMany(mappedBy = "article")
     private List<ArticleHeart> heartList = new ArrayList<>();
 

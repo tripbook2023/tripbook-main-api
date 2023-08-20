@@ -4,9 +4,11 @@ import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.entity.ArticleImage;
+import com.tripbook.main.article.entity.ArticleTag;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
+import com.tripbook.main.article.repository.ArticleTagRepository;
 import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.enums.ErrorCode;
@@ -33,6 +35,8 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleRepository articleRepository;
     private final ImageRepository imageRepository;
     private final ArticleImageRepository articleImageRepository;
+    private final ArticleTagRepository articleTagRepository;
+
     @Override
     @Transactional
     public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, OAuth2User principal) {
@@ -56,14 +60,19 @@ public class ArticleServiceImpl implements ArticleService{
 
         ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
 
-        //TODO file path, Image name, article imageList 추가
         List<ArticleImage> imageList = requestDto.getImageList().stream()
                 .map(file -> uploadService.imageUpload(file, "article"))
                 .map(url -> imageRepository.save(Image.builder().url(url).build()))
                 .map(image -> articleImageRepository.save(ArticleImage.builder().image(image).article(article).build()))
                 .toList();
 
+        List<ArticleTag> tagList= requestDto.getTagList().stream()
+                        .map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
+                        .toList();
+
+
         response.setImageList(imageList.stream().map(ArticleImage::toDto).toList());
+        response.setTagList(tagList.stream().map(ArticleTag::getName).toList());
         return response;
     }
 
