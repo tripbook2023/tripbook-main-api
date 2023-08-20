@@ -64,14 +64,14 @@ public class ArticleController {
             @Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY),
             @Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
             @Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
-            @Parameter(name = "sort", description = "정렬 기준 (Default : createdAt-DESC)",
-                        example = "createdAt-DESC, popularity-ASC", in = ParameterIn.QUERY)
+            @Parameter(name = "sort", description = "정렬 기준 (Default : createdDesc)",
+                        example = "createdDesc, createdAsc, popularity 중 1", in = ParameterIn.QUERY)
     })
     @GetMapping()
     public ResponseEntity<?> searchArticle(@RequestParam String word,
                                             @RequestParam int page,
                                             @RequestParam int size,
-                                            @RequestParam List<String> sort) {
+                                            @RequestParam String sort) {
 
         OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -175,28 +175,25 @@ public class ArticleController {
         return ResponseEntity.ok("ok");
     }
 
-    private Sort getPageSort(List<String> sortParam) {
+    private Sort getPageSort(String sortParam) {
+
+        // 좋아요 > 댓글 > 저장 > 공유
         Sort pageSort = Sort.unsorted();
 
-        if (sortParam.isEmpty()) {
-            sortParam.add("createdAt-DESC");
-        }
-
-        for (String sort : sortParam) {
-            String field = sort.split("-")[0];
-            String direction = sort.split("-")[1];
-
-            pageSort = pageSort.and(getSortByOption(field, direction));
+        switch (sortParam) {
+            case "createdAsc":
+                pageSort = Sort.by("createdAt").ascending();
+                break;
+            case "createdDesc":
+                pageSort = Sort.by("createdAt").descending();
+                break;
+            case "polularity":
+                pageSort = Sort.by("heartNum").descending()
+                        .and(Sort.by("commentNum").descending())
+                        .and(Sort.by("bookmarkNum").descending());
+                break;
         }
 
         return pageSort;
     }
-
-    private Sort getSortByOption(String field, String direction) {
-        if (direction.equals("DESC")) {
-            return Sort.by(field).descending();
-        }
-        return Sort.by(field).ascending();
-    }
-
 }

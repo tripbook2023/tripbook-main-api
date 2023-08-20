@@ -55,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService{
                                                         .title(requestDto.getTitle())
                                                         .content(requestDto.getContent())
                                                         .member(loginMember)
-                                                        .status(ArticleStatus.ACTIVE)
+                                                        .status(ArticleStatus.PRE_JUDGEMENT)
                                                         .build());
 
         ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
