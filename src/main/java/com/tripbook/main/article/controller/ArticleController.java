@@ -3,7 +3,6 @@ package com.tripbook.main.article.controller;
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.service.ArticleService;
-import com.tripbook.main.article.service.ArticleServiceImpl;
 import com.tripbook.main.global.common.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,17 +20,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -97,7 +91,6 @@ public class ArticleController {
     })
     @GetMapping("/{articleId}")
     public ResponseEntity<?> getArticle(@PathVariable long articleId) {
-        // , page, size, sort
         return ResponseEntity.ok("ok");
     }
 
@@ -177,7 +170,6 @@ public class ArticleController {
 
     private Sort getPageSort(String sortParam) {
 
-        // 좋아요 > 댓글 > 저장 > 공유
         Sort pageSort = Sort.unsorted();
 
         switch (sortParam) {
