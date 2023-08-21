@@ -1,5 +1,9 @@
 cloud:
   aws:
+    ses:
+      from: leeseokwoon@naver.com
+      accessKey: AKIAZ4B4AVXH2VA4YQMA
+      secretKey: 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
     s3:
       bucket: tripbook-bucket
     stack.auto: false
