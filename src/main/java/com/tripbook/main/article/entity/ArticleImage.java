@@ -1,5 +1,6 @@
 package com.tripbook.main.article.entity;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.global.entity.Image;
 import jakarta.persistence.*;
@@ -33,5 +34,12 @@ public class ArticleImage extends BasicEntity {
     public ArticleImage(Image image, Article article) {
         this.image = image;
         this.article = article;
+    }
+
+    public ArticleResponseDto.ImageResponse toDto() {
+        return ArticleResponseDto.ImageResponse.builder()
+                .id(this.id)
+                .url(this.image.getUrl())
+                .build();
     }
 }

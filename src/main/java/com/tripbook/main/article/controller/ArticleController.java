@@ -16,14 +16,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/articles")
@@ -50,23 +53,32 @@ public class ArticleController {
             responses = {
             @ApiResponse(responseCode = "200", description = "성공 \n\n 'content'배열 내의 값은 여행소식 저장API 성공시 반환하는 값을 참고해주세요.",
                          content = @Content(schema = @Schema(implementation = Slice.class))),
-            @ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
     })
     @Parameters(value = {
             @Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY),
             @Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
             @Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
-            @Parameter(name = "sort", description = "정렬 기준 (Default : [createdAt-DESC])",
-                        example = "[createdAt-DESC, popularity-ASC]", in = ParameterIn.QUERY)
+            @Parameter(name = "sort", description = "정렬 기준 (Default : createdDesc)",
+                        example = "createdDesc, createdAsc, popularity 중 1", in = ParameterIn.QUERY)
     })
     @GetMapping()
-    public ResponseEntity<?> getArticles(
-            @RequestParam String word,
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestParam String sort) {
+    public ResponseEntity<?> searchArticle(@RequestParam String word,
+                                            @RequestParam int page,
+                                            @RequestParam int size,
+                                            @RequestParam String sort) {
 
-        return ResponseEntity.ok("ok");
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Sort pageSort = getPageSort(sort);
+        if (Objects.isNull(page)){
+            page = 0;
+        }
+        if (Objects.isNull(size)){
+            size = 5;
+        }
+
+        Pageable pageable = PageRequest.of(page, size, pageSort);
+        return ResponseEntity.ok(articleService.searchArticle(word, pageable, principal));
     }
 
     @Operation(summary = "여행소식 상세 조회",
@@ -79,7 +91,6 @@ public class ArticleController {
     })
     @GetMapping("/{articleId}")
     public ResponseEntity<?> getArticle(@PathVariable long articleId) {
-        // , page, size, sort
         return ResponseEntity.ok("ok");
     }
 
@@ -157,4 +168,24 @@ public class ArticleController {
         return ResponseEntity.ok("ok");
     }
 
+    private Sort getPageSort(String sortParam) {
+
+        Sort pageSort = Sort.unsorted();
+
+        switch (sortParam) {
+            case "createdAsc":
+                pageSort = Sort.by("createdAt").ascending();
+                break;
+            case "createdDesc":
+                pageSort = Sort.by("createdAt").descending();
+                break;
+            case "polularity":
+                pageSort = Sort.by("heartNum").descending()
+                        .and(Sort.by("commentNum").descending())
+                        .and(Sort.by("bookmarkNum").descending());
+                break;
+        }
+
+        return pageSort;
+    }
 }
