@@ -39,7 +39,7 @@ jobs:
 
       # Jar 파일 복사
       - name: Copy Jar
-        run: cp ./build/libs/*.jar ./deploy
+        run: cp ./target/*.jar ./deploy
 
       - name: Make zip file
         run: zip -r ./tripbook.zip ./deploy
