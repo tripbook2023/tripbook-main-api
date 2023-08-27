@@ -17,13 +17,19 @@ import com.tripbook.main.token.repository.JwtRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+@Service("jwtService")
 @RequiredArgsConstructor
 @Slf4j
 public class JwtServiceImpl implements JwtService {
 	private final JwtRepository jwtRepository;
 	private final JwtProvider jwtProvider;
 
+	/**
+	 * 토큰 유효성검사
+	 * @param token - 토큰정보
+	 * @param device - 접근 디바이스 정보
+	 * @return TokenInfo
+	 */
 	@Override
 	public TokenInfo tokenIssue(String token, String device) {
 		//토큰에서 member추출
@@ -39,6 +45,12 @@ public class JwtServiceImpl implements JwtService {
 		}
 	}
 
+	/**
+	 * 토큰 DB 저장
+	 * @param member
+	 * @param deviceType
+	 * @return
+	 */
 	@Transactional
 	@Override
 	public TokenInfo saveToken(Member member, String deviceType) {
@@ -67,6 +79,12 @@ public class JwtServiceImpl implements JwtService {
 		jwtRepository.deleteByDeviceAndMemberId(jwtToken.getDevice(), jwtToken.getMemberId());
 	}
 
+	/**
+	 * 토큰 발급
+	 * @param member
+	 * @param deviceType
+	 * @return
+	 */
 	private TokenInfo jwtGenerateToken(Member member, String deviceType) {
 		return jwtProvider.generateToken(member, deviceType);
 	}

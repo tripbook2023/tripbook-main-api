@@ -37,6 +37,26 @@ public class JwtProvider {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
+	/**
+	 * 이메일 인증 토큰생성
+	 * @param member
+	 * @param deviceType
+	 * @return
+	 */
+	public TokenInfo emailGenerateToken(Member member) {
+		LocalDateTime now = LocalDateTime.now();
+		// Access Token 생성
+		LocalDateTime accessTokenExpiresIn = null;
+		accessTokenExpiresIn = now.plusMinutes(10); // 10분
+		String accessToken = Jwts.builder()
+			.setSubject(member.getEmail())
+			.claim("auth", member.getRole())
+			.setExpiration(Date.from(accessTokenExpiresIn.atZone(ZoneId.systemDefault()).toInstant()))
+			.signWith(key, SignatureAlgorithm.HS256)
+			.compact();
+		return TokenInfo.builder().grantType("Bearer").accessToken(accessToken).build();
+	}
+
 	/** 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
 	 * 토큰 유효시간
 	 * WEB - 2시간
