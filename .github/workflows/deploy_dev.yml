@@ -63,16 +63,14 @@ jobs:
       - name: Upload to S3
         run: aws s3 cp --region $AWS_REGION ./tripbook.zip s3://$S3_BUCKET_NAME/
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    environment: development
-
-    run: |
-      aws deploy create-deployment \
-        --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-        --file-exists-behavior OVERWRITE \
-        --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=tripbook.zip \ 
-        --region ${{ env.AWS_REGION }}
+      - name: Deploy
+        runs-on: ubuntu-latest
+        environment: development
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --file-exists-behavior OVERWRITE \
+            --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=tripbook.zip \ 
+            --region ${{ env.AWS_REGION }}
   
