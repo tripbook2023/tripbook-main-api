@@ -64,8 +64,6 @@ jobs:
         run: aws s3 cp --region $AWS_REGION ./tripbook.zip s3://$S3_BUCKET_NAME/
 
       - name: Deploy
-        runs-on: ubuntu-latest
-        environment: development
         run: |
           aws deploy create-deployment \
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
