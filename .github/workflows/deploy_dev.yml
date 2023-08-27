@@ -14,9 +14,6 @@ env:
   CODE_DEPLOY_APPLICATION_NAME: tripbook-codedeploy-add
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: tripbook-codedeploy-dev-group
 
-permissions:
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -65,8 +62,4 @@ jobs:
 
       - name: Deploy
         run: |
-          aws deploy create-deployment \
-            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=tripbook.zip \ 
+          aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=tripbook.zip
