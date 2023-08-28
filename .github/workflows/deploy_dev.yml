@@ -2,8 +2,8 @@ name: Deploy Dev to Amazon EC2
 
 on:
   push:
-#    branches:
-#      - develop
+    branches:
+      - develop
 
 env:
   AWS_REGION: ap-northeast-2
