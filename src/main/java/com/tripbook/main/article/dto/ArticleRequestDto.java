@@ -25,6 +25,9 @@ public class ArticleRequestDto {
 
         @Schema(description = "이미지 리스트")
         private List<MultipartFile> imageList;
+
+        @Schema(description = "테그 리스트")
+        private List<String> tagList;
     }
 
     @Getter

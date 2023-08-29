@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -38,6 +40,8 @@ public class UserInfoRequest {
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 		try {
 			//@TODO 에러 핸들링 재검토
+			ResponseEntity<Map<String, Object>> response = restTemplate.exchange(issuerUri, HttpMethod.GET, request,
+				RESPONSE_TYPE);
 			Map<String, Object> responseBody = (Map<String, Object>)response.getBody();
 			return MemberVO.builder()
 				.email(responseBody.get("email").toString())

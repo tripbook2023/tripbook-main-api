@@ -18,6 +18,12 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-ses -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-ses</artifactId>
+            <version>1.12.518</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -131,28 +137,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.24</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.oci.sdk</groupId>
-            <artifactId>oci-java-sdk-artifacts</artifactId>
-            <version>3.15.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.oci.sdk</groupId>
-            <artifactId>oci-java-sdk-common</artifactId>
-            <version>3.15.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.oracle.oci.sdk/oci-java-sdk-shaded-full -->
-        <dependency>
-            <groupId>com.oracle.oci.sdk</groupId>
-            <artifactId>oci-java-sdk-shaded-full</artifactId>
-            <version>3.15.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.oci.sdk</groupId>
-            <artifactId>oci-java-sdk-objectstorage</artifactId>
-            <version>3.15.0</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
