@@ -51,21 +51,21 @@ public class ArticleController {
 
     @Operation(summary = "여행소식 목록 조회 및 검색",
             responses = {
-            @ApiResponse(responseCode = "200", description = "성공 \n\n 'content'배열 내의 값은 여행소식 저장API 성공시 반환하는 값을 참고해주세요.",
-                         content = @Content(schema = @Schema(implementation = Slice.class))),
-    })
+                    @ApiResponse(responseCode = "200", description = "성공 \n\n 'content'배열 내의 값은 여행소식 저장API 성공시 반환하는 값을 참고해주세요.",
+                            content = @Content(schema = @Schema(implementation = Slice.class))),
+            })
     @Parameters(value = {
             @Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY),
             @Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
             @Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
             @Parameter(name = "sort", description = "정렬 기준 (Default : createdDesc)",
-                        example = "createdDesc, createdAsc, popularity 중 1", in = ParameterIn.QUERY)
+                    example = "createdDesc, createdAsc, popularity 중 1", in = ParameterIn.QUERY)
     })
     @GetMapping()
     public ResponseEntity<?> searchArticle(@RequestParam String word,
-                                            @RequestParam int page,
-                                            @RequestParam int size,
-                                            @RequestParam String sort) {
+                                           @RequestParam int page,
+                                           @RequestParam int size,
+                                           @RequestParam String sort) {
 
         OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -84,14 +84,14 @@ public class ArticleController {
     @Operation(summary = "여행소식 상세 조회",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
-                    @ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             })
     @Parameters(value = {
             @Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
     })
     @GetMapping("/{articleId}")
     public ResponseEntity<?> getArticle(@PathVariable long articleId) {
-        return ResponseEntity.ok("ok");
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(articleService.getArticleDetail(articleId, principal));
     }
 
     @Operation(summary = "여행소식 삭제", security = {@SecurityRequirement(name = "JWT")},
@@ -104,6 +104,9 @@ public class ArticleController {
     })
     @DeleteMapping("/{articleId}")
     public void deleteArticle(@PathVariable long articleId) {
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        articleService.deleteArticle(articleId, principal);
     }
 
     @Operation(summary = "댓글 작성", security = {@SecurityRequirement(name = "JWT")},
@@ -114,9 +117,11 @@ public class ArticleController {
     @Parameters(value = {
             @Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
     })
-    @PostMapping(value = "/{articleId}/comment")
+    @PostMapping(value = "/{articleId}/comments")
     public ResponseEntity<?> saveComment(@PathVariable long articleId, @Valid @RequestBody ArticleRequestDto.CommentSaveRequest requestDto) {
-        return ResponseEntity.ok("ok");
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(articleService.saveArticleComment(articleId, requestDto, principal));
     }
 
 
@@ -128,8 +133,11 @@ public class ArticleController {
     @Parameters(value = {
             @Parameter(name = "commentId", description = "댓글 ID", in = ParameterIn.PATH),
     })
-    @DeleteMapping("/comment/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public void deleteComment(@PathVariable long commentId) {
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        articleService.deleteArticleComment(commentId, principal);
     }
 
     @Operation(summary = "여행소식 좋아요", security = {@SecurityRequirement(name = "JWT")},
@@ -142,7 +150,10 @@ public class ArticleController {
     })
     @PostMapping("/{articleId}/like")
     public ResponseEntity<?> likeArticle(@PathVariable long articleId) {
-        return ResponseEntity.ok("ok");
+
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(articleService.likeArticle(articleId, principal));
     }
 
     @Operation(summary = "여행소식 북마크", security = {@SecurityRequirement(name = "JWT")},
@@ -155,7 +166,10 @@ public class ArticleController {
     })
     @PostMapping("/{articleId}/bookmark")
     public ResponseEntity<?> bookmarkArticle(@PathVariable long articleId) {
-        return ResponseEntity.ok("ok");
+
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(articleService.bookmarkArticle(articleId, principal));
     }
 
     @Operation(summary = "여행소식 임시저장", security = {@SecurityRequirement(name = "JWT")},

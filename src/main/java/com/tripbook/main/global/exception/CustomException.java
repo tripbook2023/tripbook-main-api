@@ -116,4 +116,16 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+
+	public static class ArticleNotFoundException extends CustomException {
+		public ArticleNotFoundException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+	public static class CommentNotFoundException extends CustomException {
+		public CommentNotFoundException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 }
