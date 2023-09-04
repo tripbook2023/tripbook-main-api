@@ -41,8 +41,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     @Transactional
     public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, OAuth2User principal) {
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (loginMember == null) {
             throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(),ErrorCode.MEMBER_NOTFOUND);
@@ -80,8 +79,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     @Transactional(readOnly = true)
     public Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable, OAuth2User principal) {
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (word == null || word.equals("")){
             return articleRepository
@@ -101,9 +99,7 @@ public class ArticleServiceImpl implements ArticleService{
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
         );
 
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
-
+        Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (!article.isApproved() && !article.isWrittenBy(loginMember)) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
@@ -119,8 +115,11 @@ public class ArticleServiceImpl implements ArticleService{
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
         );
 
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
+
+        if (loginMember == null) {
+            throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(),ErrorCode.MEMBER_NOTFOUND);
+        }
 
         if (!article.isWrittenBy(loginMember) && !loginMember.isAdmin()) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
@@ -136,8 +135,7 @@ public class ArticleServiceImpl implements ArticleService{
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
         );
 
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (loginMember == null) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
@@ -165,8 +163,11 @@ public class ArticleServiceImpl implements ArticleService{
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.COMMENT_NOT_FOUND.getMessage(), ErrorCode.COMMENT_NOT_FOUND)
         );
 
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
+
+        if (loginMember == null) {
+            throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(),ErrorCode.MEMBER_NOTFOUND);
+        }
 
         if (!comment.isWrittenBy(loginMember) && !loginMember.isAdmin()) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
@@ -182,8 +183,7 @@ public class ArticleServiceImpl implements ArticleService{
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
         );
 
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (loginMember == null) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
@@ -211,8 +211,7 @@ public class ArticleServiceImpl implements ArticleService{
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
         );
 
-        String email = principal.getName();
-        Member loginMember = memberService.getLoginMemberByEmail(email);
+        Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (loginMember == null) {
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
@@ -233,5 +232,9 @@ public class ArticleServiceImpl implements ArticleService{
         return ArticleResponseDto.ArticleResponse.builder().id(article.getId()).bookmarkNum(article.getBookmarkNum()).isBookmark(false).build();
     }
 
+    private Member getLoginMemberByPrincipal(OAuth2User principal) {
+        String email = principal.getName();
 
+        return memberService.getLoginMemberByEmail(email);
+    }
 }
