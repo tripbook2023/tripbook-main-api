@@ -3,12 +3,12 @@ package com.tripbook.main.member.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import com.tripbook.main.member.dto.ResponseMember;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.tripbook.main.global.common.BasicEntity;
+import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
@@ -119,7 +119,22 @@ public class Member extends BasicEntity implements Serializable {
 	}
 
 	public boolean isNotEditor() {
-		return !(role.equals(MemberRole.ROLE_ADMIN) || role.equals(MemberRole.ROLE_EDITOR) || role.equals(MemberRole.ROLE_NAMED_EDITOR));
+		return !(role.equals(MemberRole.ROLE_ADMIN) || role.equals(MemberRole.ROLE_EDITOR) || role.equals(
+			MemberRole.ROLE_NAMED_EDITOR));
+	}
+
+	public void updateMember(MemberVO memberVO) {
+		this.status = memberVO.getStatus() == null ? this.status : memberVO.getStatus();
+		this.role = memberVO.getRole() == null ? this.role : memberVO.getRole();
+		this.profile = memberVO.getProfile() == null ? this.profile : memberVO.getProfile();
+		this.birth = memberVO.getBirth() == null ? this.birth : memberVO.getBirth();
+		this.name = memberVO.getName() == null ? this.name : memberVO.getName();
+		this.termsOfService = memberVO.getTermsOfService() == null ? this.termsOfService : memberVO.getTermsOfService();
+		this.termsOfPrivacy = memberVO.getTermsOfPrivacy() == null ? this.termsOfPrivacy : memberVO.getTermsOfPrivacy();
+		this.termsOfLocation =
+			memberVO.getTermsOfLocation() == null ? this.termsOfLocation : memberVO.getTermsOfLocation();
+		this.marketingConsent =
+			memberVO.getMarketingConsent() == null ? this.marketingConsent : memberVO.getMarketingConsent();
 	}
 
 	@Builder
@@ -153,10 +168,10 @@ public class Member extends BasicEntity implements Serializable {
 
 	public ResponseMember.MemberSimpleDto toSimpleDto() {
 		return ResponseMember.MemberSimpleDto.builder()
-				.id(this.id)
-				.name(this.name)
-				.profileUrl(this.profile)
-				.role(role)
-				.build();
+			.id(this.id)
+			.name(this.name)
+			.profileUrl(this.profile)
+			.role(role)
+			.build();
 	}
 }
