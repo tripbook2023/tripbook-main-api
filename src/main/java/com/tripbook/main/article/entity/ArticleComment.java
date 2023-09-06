@@ -1,6 +1,7 @@
 package com.tripbook.main.article.entity;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
+import com.tripbook.main.article.enums.ArticleCommentStatus;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
 import jakarta.persistence.*;
@@ -36,6 +37,10 @@ public class ArticleComment extends BasicEntity {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ArticleCommentStatus status;
+
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private ArticleComment parent;
@@ -44,11 +49,24 @@ public class ArticleComment extends BasicEntity {
     private List<ArticleComment> childList = new ArrayList<>();
 
     @Builder
-    public ArticleComment(Member member, Article article, String content, ArticleComment parent) {
+    public ArticleComment(Member member, Article article, String content, ArticleComment parent, ArticleCommentStatus status) {
         this.member = member;
         this.article = article;
         this.content = content;
         this.parent = parent;
+        this.status = status;
+    }
+
+    public boolean isWrittenBy(Member member) {
+        if (member == null) {
+            return false;
+        }
+
+        return this.member == member;
+    }
+
+    public void delete() {
+        this.status = ArticleCommentStatus.DELETED;
     }
 
     public ArticleResponseDto.CommentResponse toDto() {

@@ -1,5 +1,6 @@
 package com.tripbook.main.article.entity;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
 import jakarta.persistence.*;
@@ -33,5 +34,13 @@ public class ArticleBookmark extends BasicEntity {
     public ArticleBookmark(Member member, Article article) {
         this.member = member;
         this.article = article;
+    }
+
+    public ArticleResponseDto.ArticleResponse toDto(Member member) {
+        return ArticleResponseDto.ArticleResponse.builder()
+                .id(this.article.getId())
+                .isBookmark(this.member.equals(member))
+                .bookmarkNum(article.getHeartNum())
+                .build();
     }
 }

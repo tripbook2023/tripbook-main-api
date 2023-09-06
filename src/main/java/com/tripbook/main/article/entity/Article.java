@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ public class Article extends BasicEntity {
     @Enumerated(EnumType.STRING)
     private ArticleStatus status;
 
+    @OneToMany
+    private List<ArticleTag> tagList = new ArrayList<>();
+
     @OneToMany(mappedBy = "article")
     private List<ArticleHeart> heartList = new ArrayList<>();
 
@@ -53,6 +57,15 @@ public class Article extends BasicEntity {
 
     @OneToMany(mappedBy = "article")
     private List<ArticleImage> imageList = new ArrayList<>();
+
+    @Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
+    private long heartNum;
+
+    @Formula("(select count(*) from TB_ARTICLE_BOOKMARK b where b.article_id = id)")
+    private long bookmarkNum;
+
+    @Formula("(select count(*) from TB_ARTICLE_COMMENT c where c.article_id = id)")
+    private long commentNum;
 
     @Builder
     public Article(String title, String content, ArticleStatus status, Member member,
@@ -68,6 +81,22 @@ public class Article extends BasicEntity {
         this.imageList = imageList;
     }
 
+    public boolean isApproved() {
+        return this.status.equals(ArticleStatus.APPROVED);
+    }
+
+    public boolean isWrittenBy(Member member) {
+        if (member == null) {
+            return false;
+        }
+
+        return this.member == member;
+    }
+
+    public void delete() {
+        this.status = ArticleStatus.DELETED;
+    }
+
     public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
         return ArticleResponseDto.ArticleResponse.builder()
@@ -75,14 +104,15 @@ public class Article extends BasicEntity {
                 .title(this.title)
                 .content(this.content)
                 .author(this.member.toSimpleDto())
-                .heartNum(this.heartList.size())
+                .heartNum(this.heartNum)
                 .isHeart(this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
-                .bookmarkNum(this.bookmarkList.size())
+                .bookmarkNum(this.bookmarkNum)
                 .isBookmark(this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
                 .commentList(this.commentList.stream().map(ArticleComment::toDto).toList())
                 .createdAt(this.getCreatedAt())
                 .updatedAt(this.getUpdatedAt())
-                .imageList(this.imageList)
+                .imageList(this.imageList.stream().map(ArticleImage::toDto).toList())
+                .tagList(this.tagList.stream().map(ArticleTag::getName).toList())
                 .build();
 
     }

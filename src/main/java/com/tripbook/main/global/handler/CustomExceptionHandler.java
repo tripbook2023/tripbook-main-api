@@ -147,5 +147,18 @@ public class CustomExceptionHandler {
 		return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 	}
 
+	@ExceptionHandler(CustomException.ArticleNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleArticleNotFoundException(Exception ex) {
+		log.info("handleException", ex);
+		ErrorResponse response = new ErrorResponse(ErrorCode.ARTICLE_NOT_FOUND);
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(CustomException.CommentNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleCommentNotFoundException(Exception ex) {
+		log.info("handleException", ex);
+		ErrorResponse response = new ErrorResponse(ErrorCode.COMMENT_NOT_FOUND);
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	}
 
 }
