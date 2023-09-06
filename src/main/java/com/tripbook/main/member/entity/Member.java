@@ -122,6 +122,10 @@ public class Member extends BasicEntity implements Serializable {
 		return !(role.equals(MemberRole.ROLE_ADMIN) || role.equals(MemberRole.ROLE_EDITOR) || role.equals(MemberRole.ROLE_NAMED_EDITOR));
 	}
 
+	public boolean isAdmin() {
+		return this.role.equals(MemberRole.ROLE_ADMIN);
+	}
+
 	@Builder
 	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status,
 		Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation, Boolean marketingConsent,
