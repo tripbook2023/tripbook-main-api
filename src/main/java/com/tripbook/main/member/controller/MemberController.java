@@ -3,6 +3,7 @@ package com.tripbook.main.member.controller;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
 import com.tripbook.main.member.service.MemberService;
 import com.tripbook.main.member.vo.MemberVO;
+import com.tripbook.main.token.service.JwtService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,6 +51,8 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Members", description = "Member API")
 public class MemberController {
 	private final MemberService memberService;
+	@Qualifier("mailJwtService")
+	private final JwtService mailJwtService;
 
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
@@ -132,6 +136,18 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
+	@Operation(responses = {
+		@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
+		@ApiResponse(responseCode = "400", description = "유효시간 만료 또는 이미 인증된 유저", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/smtp")
+	public ResponseEntity<Object> memberSmtpValidation(@RequestParam String accessToken) {
+		mailJwtService.tokenIssue(accessToken, null);
+		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
 
 	private static MemberVO bindMemberVo(RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = MemberVO.builder()

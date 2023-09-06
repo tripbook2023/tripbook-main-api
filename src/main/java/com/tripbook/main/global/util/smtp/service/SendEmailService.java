@@ -77,9 +77,9 @@ public class SendEmailService {
 				"<button onclick='location.href=\"http://localhost:9000/email?token=" + token
 					+ "\"'>이메일인증하기</button><br>");
 			 */
-			targetURL = "http://localhost:9000/email?token=" + token;
+			targetURL = "http://localhost:9000/member/smtp?accessToken=" + token;
 		} else {
-			targetURL = "https://dev.tripbook.link/email?token=" + token;
+			targetURL = "https://dev.tripbook.link/smtp?accessToken=" + token;
 		}
 		sb.append("<a href=\"" + targetURL + "\">이메일인증하기</a><br>");
 		sb.append("해당 이메일은 발송된 시점으로부터 10분간만 유효합니다.<br>"

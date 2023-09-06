@@ -127,7 +127,7 @@ public class JwtProvider {
 	}
 
 	// JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-	public String getRefreshTokenAuthentication(String token) {
+	public String getRefreshTokenAuthentication(String token) throws CustomException.ExpiredJwtException {
 		// 토큰 복호화
 		Claims claims = validateToken(token);
 		// 클레임에서 권한 정보 가져오기
