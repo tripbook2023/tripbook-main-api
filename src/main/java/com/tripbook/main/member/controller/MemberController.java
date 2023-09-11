@@ -93,7 +93,7 @@ public class MemberController {
 				+ "\n\n 유효하지 않는 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 		})
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberUpdateInfo updateMember,
+	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.UpdateProfile updateMember,
 		Authentication authentication) {
 		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
 		// notNull 필드 가져오기
@@ -151,7 +151,7 @@ public class MemberController {
 		return memberVO;
 	}
 
-	private static MemberVO bindMemberVo(RequestMember.MemberUpdateInfo requestMember, OAuth2User authUser) {
+	private static MemberVO bindMemberVo(RequestMember.UpdateProfile requestMember, OAuth2User authUser) {
 		MemberVO memberVO = MemberVO.builder()
 			.birth(requestMember.getBirth())
 			.imageFile(requestMember.getImageFile())

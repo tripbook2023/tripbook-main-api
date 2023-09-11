@@ -96,7 +96,7 @@ public class RequestMember {
 	@Getter
 	@Setter
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	public static class MemberUpdateInfo {
+	public static class UpdateProfile {
 		@Size(min = 1, max = 9, message = "이름은 1 ~ 9자 이여야 합니다!")
 		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
 		@Schema(title = "닉네임")
