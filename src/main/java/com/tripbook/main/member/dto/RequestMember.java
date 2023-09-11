@@ -73,14 +73,9 @@ public class RequestMember {
 		}
 
 		public boolean isImageFileValid(MultipartFile imageFile) {
-			if (imageFile == null || imageFile.isEmpty()) {
+			if (imageFile.getSize() > MAX_FILE_SIZE || imageFile == null || imageFile.isEmpty()) {
 				return false;
 			}
-
-			if (imageFile.getSize() > MAX_FILE_SIZE) {
-				return false;
-			}
-
 			String fileExtension = getFileExtension(imageFile.getOriginalFilename());
 			if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {
 				return false;

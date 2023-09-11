@@ -3,7 +3,6 @@ package com.tripbook.main.member.controller;
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Members", description = "Member API")
 public class MemberController {
 	private final MemberService memberService;
-	private final ModelMapper modelMapper;
 
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
