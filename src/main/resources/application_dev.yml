@@ -1,4 +1,6 @@
 ---
+domain:
+  name: https://dev.tripbook.link
 server.port: 9000
 spring:
   jpa:
