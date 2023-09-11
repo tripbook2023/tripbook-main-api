@@ -92,7 +92,7 @@ public class MemberController {
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
 			@ApiResponse(responseCode = "400", description = "Nickname 중복 \n\n 이메일 중복 "
-				+ "\n\n 유효하지 않 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+				+ "\n\n 유효하지 않는 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 		})
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberUpdateInfo updateMember,
