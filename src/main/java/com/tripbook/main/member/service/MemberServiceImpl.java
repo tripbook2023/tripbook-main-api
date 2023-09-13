@@ -2,6 +2,7 @@ package com.tripbook.main.member.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
+	@Qualifier("jwtService")
 	private final JwtService jwtService;
 	private final UploadService uploadService;
 	@Value("${file.upload_path.signup}")

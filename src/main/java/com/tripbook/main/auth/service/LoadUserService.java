@@ -2,6 +2,7 @@ package com.tripbook.main.auth.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.tripbook.main.auth.common.UserInfoRequest;
@@ -21,6 +22,7 @@ import lombok.SneakyThrows;
 @RequiredArgsConstructor
 public class LoadUserService {
 	private final UserInfoRequest userInfoRequest;
+	@Qualifier("jwtService")
 	private final JwtService jwtService;
 	private final MemberService memberService;
 

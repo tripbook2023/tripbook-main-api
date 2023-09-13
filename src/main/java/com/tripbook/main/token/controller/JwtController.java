@@ -2,6 +2,7 @@ package com.tripbook.main.token.controller;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "JWT", description = "JWT API")
 @RequiredArgsConstructor
 public class JwtController {
+	@Qualifier("jwtService")
 	private final JwtService jwtService;
 
 	@Operation(security = {
