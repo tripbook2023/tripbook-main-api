@@ -81,6 +81,22 @@ public class Article extends BasicEntity {
         this.imageList = imageList;
     }
 
+    public boolean isApproved() {
+        return this.status.equals(ArticleStatus.APPROVED);
+    }
+
+    public boolean isWrittenBy(Member member) {
+        if (member == null) {
+            return false;
+        }
+
+        return this.member == member;
+    }
+
+    public void delete() {
+        this.status = ArticleStatus.DELETED;
+    }
+
     public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
         return ArticleResponseDto.ArticleResponse.builder()

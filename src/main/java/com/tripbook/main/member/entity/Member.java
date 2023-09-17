@@ -137,6 +137,10 @@ public class Member extends BasicEntity implements Serializable {
 			memberVO.getMarketingConsent() == null ? this.marketingConsent : memberVO.getMarketingConsent();
 	}
 
+	public boolean isAdmin() {
+		return this.role.equals(MemberRole.ROLE_ADMIN);
+	}
+
 	@Builder
 	public Member(String email, String name, Gender gender, MemberRole role, MemberStatus status,
 		Boolean termsOfService, Boolean termsOfPrivacy, Boolean termsOfLocation, Boolean marketingConsent,

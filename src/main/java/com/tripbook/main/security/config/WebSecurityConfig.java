@@ -1,6 +1,5 @@
 package com.tripbook.main.security.config;
 
-import com.tripbook.main.global.util.discord.RequestStorage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.tripbook.main.auth.filter.OAuth2AccessTokenAuthenticationFilter;
+import com.tripbook.main.global.util.discord.RequestStorage;
 import com.tripbook.main.member.controller.LogoutHandler;
 import com.tripbook.main.security.filter.ExceptionHandlerFilter;
 import com.tripbook.main.token.filter.JwtAuthenticationFilter;
@@ -65,7 +65,7 @@ public class WebSecurityConfig {
 			.permitAll()
 			.requestMatchers(HttpMethod.POST, "/member/delete")
 			.permitAll()
-			.requestMatchers(HttpMethod.GET, "/member/nickname/validate")
+			.requestMatchers(HttpMethod.GET, "/member/nickname/validate", "/member/smtp")
 			.permitAll()
 			.requestMatchers(HttpMethod.GET, "member/discord")
 			.permitAll()
