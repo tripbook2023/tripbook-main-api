@@ -94,12 +94,14 @@ public class MemberController {
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
 			@ApiResponse(responseCode = "400", description = "Nickname 중복 \n\n 이메일 중복 "
-				+ "\n\n 유효하지 않 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+				+ "\n\n 유효하지 않는 유저이메일", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 		})
 	@PostMapping(value = "/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.MemberReqInfo updateMember,
-		Authentication authUser) {
-		memberService.memberUpdate(bindMemberVo(updateMember));
+	public ResponseEntity<Object> memberUpdate(@Validated RequestMember.UpdateProfile updateMember,
+		Authentication authentication) {
+		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
+		// notNull 필드 가져오기
+		memberService.memberUpdate(bindMemberVo(updateMember, authUser));
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
 			.message(Arrays.asList("success"))
 			.build();
@@ -136,19 +138,6 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
-	@Operation(responses = {
-		@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
-		@ApiResponse(responseCode = "400", description = "유효시간 만료 또는 이미 인증된 유저", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-	})
-	@GetMapping("/smtp")
-	public ResponseEntity<Object> memberSmtpValidation(@RequestParam String accessToken) {
-		mailJwtService.tokenIssue(accessToken, null);
-		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
-			.build();
-		return ResponseEntity.status(HttpStatus.OK).body(result);
-	}
-
 	private static MemberVO bindMemberVo(RequestMember.MemberReqInfo requestMember) {
 		MemberVO memberVO = MemberVO.builder()
 			.birth(requestMember.getBirth())
@@ -162,6 +151,21 @@ public class MemberController {
 			.gender(requestMember.getGender())
 			.role(MemberRole.ROLE_MEMBER)
 			.status(MemberStatus.STATUS_NORMAL)
+			.build();
+		return memberVO;
+	}
+
+	private static MemberVO bindMemberVo(RequestMember.UpdateProfile requestMember, OAuth2User authUser) {
+		MemberVO memberVO = MemberVO.builder()
+			.birth(requestMember.getBirth())
+			.imageFile(requestMember.getImageFile())
+			.termsOfService(requestMember.getTermsOfService())
+			.termsOfPrivacy(requestMember.getTermsOfPrivacy())
+			.termsOfLocation(requestMember.getTermsOfLocation())
+			.marketingContent(requestMember.getMarketingConsent())
+			.email(authUser.getAttribute("email"))
+			.name(requestMember.getName())
+			.gender(requestMember.getGender())
 			.build();
 		return memberVO;
 	}
