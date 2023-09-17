@@ -81,6 +81,7 @@ public class MemberController {
 		MemberVO memberVO = bindMemberVo(requestMember);
 		String deviceValue = CheckDevice.checkDevice(request);
 		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
+		log.info("Email::"+memberVO.getEmail());
 		return ResponseEntity.status(HttpStatus.OK).body(info);
 	}
 
