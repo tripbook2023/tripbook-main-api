@@ -34,14 +34,18 @@ public class ArticleTemp extends BasicEntity {
     @Column
     private String content;
 
+    @Column
+    private List<String> tagList = new ArrayList<>();
+
     @OneToMany(mappedBy = "articleTemp")
     private List<ArticleTempImage> imageList = new ArrayList<>();
 
     @Builder
-    public ArticleTemp(String title, String content, Member member, List<ArticleTempImage> imageList) {
+    public ArticleTemp(String title, String content, Member member, List<ArticleTempImage> imageList, List<String> tagList) {
         this.title = title;
         this.content = content;
         this.member = member;
         this.imageList = imageList;
+        this.tagList = tagList;
     }
 }
