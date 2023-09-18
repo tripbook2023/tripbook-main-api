@@ -8,7 +8,8 @@ public enum ArticleStatus {
     ON_JUDGEMENT("심사중"),
     APPROVED("승인"),
     REJECTED("거절"),
-    DELETED("삭제");
+    DELETED("삭제"),
+    TEMP("임시저장");
     @Getter
     private String desc;
 

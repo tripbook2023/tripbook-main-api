@@ -40,7 +40,7 @@ public class ArticleServiceImpl implements ArticleService{
 
     @Override
     @Transactional
-    public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, OAuth2User principal) {
+    public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, ArticleStatus status, OAuth2User principal) {
         Member loginMember = getLoginMemberByPrincipal(principal);
 
         if (loginMember == null) {
@@ -55,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService{
                                                         .title(requestDto.getTitle())
                                                         .content(requestDto.getContent())
                                                         .member(loginMember)
-                                                        .status(ArticleStatus.PRE_JUDGEMENT)
+                                                        .status(status)
                                                         .build());
 
         ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
