@@ -24,7 +24,7 @@
     </appender>
     </springProfile>
         <!-- 로컬 서버용 설정 -->
-    <springProfile name="dev">
+    <springProfile name="local">
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <!-- Rolling 정책 -->
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
