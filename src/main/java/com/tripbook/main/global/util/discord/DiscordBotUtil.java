@@ -28,7 +28,7 @@ public class DiscordBotUtil {
         System.out.println(jda.getGuilds());
         Guild guild = jda.getGuilds().get(0);
         List<GuildChannel> channels = guild.getChannels();
-        TextChannel tc = (TextChannel) channels.stream().filter(c -> c.getName().equals("서버에러-발생이슈")).toList().get(0);
+        TextChannel tc = (TextChannel) channels.stream().filter(c -> c.getName().contains("서버에러")).toList().get(0);
 
         tc.sendMessage(object).queue();
     }
