@@ -2,6 +2,7 @@ package com.tripbook.main.article.controller;
 
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
+import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.service.ArticleService;
 import com.tripbook.main.global.common.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,7 +47,7 @@ public class ArticleController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> saveArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto) {
         OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(articleService.saveArticle(requestDto, principal));
+        return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.PRE_JUDGEMENT, principal));
     }
 
     @Operation(summary = "여행소식 목록 조회 및 검색",
@@ -179,7 +180,10 @@ public class ArticleController {
             })
     @PostMapping("/temp")
     public ResponseEntity<?> saveTempArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto) {
-        return ResponseEntity.ok("ok");
+
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
     }
 
     private Sort getPageSort(String sortParam) {
