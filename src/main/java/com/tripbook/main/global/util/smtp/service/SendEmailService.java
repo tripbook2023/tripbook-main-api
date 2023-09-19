@@ -75,15 +75,8 @@ public class SendEmailService {
 		sb.append("안녕하세요, 트립북입니다.<br>"
 			+ "트립북을 이용해주셔서 진심으로 감사합니다.<br>"
 			+ "하단의 버튼을 통해 이메일을 인증해주시기 바랍니다.<br>");
-		if (activeProfile.equals("local")) {
-			/*sb.append(
-				"<button onclick='location.href=\"http://localhost:9000/email?token=" + token
-					+ "\"'>이메일인증하기</button><br>");
-			 */
-			targetURL = domainName+":"+serverPort+"/member/smtp?accessToken=" + token;
-		} else {
-			targetURL = domainName+"/member/smtp?accessToken=" + token;
-		}
+
+		targetURL = domainName+"/member/smtp?accessToken=" + token;
 		sb.append("<a href=\"" + targetURL + "\">이메일인증하기</a><br>");
 		sb.append("해당 이메일은 발송된 시점으로부터 10분간만 유효합니다.<br>"
 			+ "감사합니다.<br><br>"
