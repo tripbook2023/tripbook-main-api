@@ -1,9 +1,8 @@
 package com.tripbook.main.member.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import com.tripbook.main.global.enums.ErrorCode;
-import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
@@ -24,4 +23,6 @@ public interface MemberService {
 	ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto);
 
 	Member getLoginMemberByEmail(String email);
+
+	List<Member> selectMemberList(String keyword);
 }

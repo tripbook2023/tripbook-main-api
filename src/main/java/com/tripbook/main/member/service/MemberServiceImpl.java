@@ -1,5 +1,6 @@
 package com.tripbook.main.member.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -123,5 +124,11 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Member getLoginMemberByEmail(String email) {
 		return memberRepository.findByEmail(email);
+	}
+
+	@Override
+	public List<Member> selectMemberList(String keyword) {
+		return memberRepository.findByNameContainsAndStatusEquals(keyword, MemberStatus.STATUS_NORMAL);
+
 	}
 }
