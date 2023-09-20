@@ -108,6 +108,22 @@ public class ArticleServiceImpl implements ArticleService{
         return article.toDto(loginMember);
     }
 
+    public ArticleResponseDto.ArticleResponse editArticle(long articleId, ArticleRequestDto.ArticleSaveRequest requestDto, OAuth2User principal) {
+        Article article = articleRepository.findById(articleId).orElseThrow(
+                () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
+        );
+
+        Member loginMember = getLoginMemberByPrincipal(principal);
+
+        if (article.isWrittenBy(loginMember)) {
+            throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
+        }
+
+
+
+        return null;
+    }
+
     @Override
     @Transactional
     public void deleteArticle(long articleId, OAuth2User principal) {

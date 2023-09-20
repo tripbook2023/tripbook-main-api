@@ -23,6 +23,9 @@ public class ArticleRequestDto {
         @NotNull(message = "Content is required")
         private String content;
 
+        @Schema(description = "썸네일")
+        private MultipartFile thumbnail;
+
         @Schema(description = "이미지 리스트")
         private List<MultipartFile> imageList;
 

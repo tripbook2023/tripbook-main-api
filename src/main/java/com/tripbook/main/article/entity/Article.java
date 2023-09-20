@@ -32,6 +32,9 @@ public class Article extends BasicEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column
+    private String thumbnail;
+
     @Column(nullable = false)
     private String title;
 
