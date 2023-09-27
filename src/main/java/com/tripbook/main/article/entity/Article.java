@@ -1,5 +1,6 @@
 package com.tripbook.main.article.entity;
 
+import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.global.common.BasicEntity;
@@ -32,14 +33,13 @@ public class Article extends BasicEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column
-    private String thumbnail;
+    @OneToOne
+    private ArticleImage thumbnail;
 
     @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
-    @Length(min = 800, max = 10000)
     private String content;
 
     @Column(nullable = false)
@@ -96,6 +96,14 @@ public class Article extends BasicEntity {
         return this.member == member;
     }
 
+    public void edit(ArticleRequestDto.ArticleEditRequest requestDto) {
+//        this.title = requestDto.getTitle();
+//        this.thumbnail = requestDto
+//        this.content = re
+//        this.imageList = imageList;
+//        this.tagList = tagList;
+    }
+
     public void delete() {
         this.status = ArticleStatus.DELETED;
     }
@@ -105,17 +113,18 @@ public class Article extends BasicEntity {
         return ArticleResponseDto.ArticleResponse.builder()
                 .id(this.id)
                 .title(this.title)
+                .thumbnail(this.thumbnail != null ? this.thumbnail.getImage().getUrl() : null)
                 .content(this.content)
                 .author(this.member.toSimpleDto())
                 .heartNum(this.heartNum)
-                .isHeart(this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+                .isHeart(this.heartList != null && !this.heartList.stream().filter(h -> h.getMember() == member).toList().isEmpty())
                 .bookmarkNum(this.bookmarkNum)
-                .isBookmark(this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
-                .commentList(this.commentList.stream().map(ArticleComment::toDto).toList())
+                .isBookmark(this.bookmarkList != null && !this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().isEmpty())
+                .commentList(this.commentList != null ? this.commentList.stream().map(ArticleComment::toDto).toList() : null)
                 .createdAt(this.getCreatedAt())
                 .updatedAt(this.getUpdatedAt())
-                .imageList(this.imageList.stream().map(ArticleImage::toDto).toList())
-                .tagList(this.tagList.stream().map(ArticleTag::getName).toList())
+                .imageList(this.imageList != null ? this.imageList.stream().map(ArticleImage::toDto).toList() : null)
+                .tagList(this.tagList != null ? this.tagList.stream().map(ArticleTag::getName).toList() : null)
                 .build();
 
     }

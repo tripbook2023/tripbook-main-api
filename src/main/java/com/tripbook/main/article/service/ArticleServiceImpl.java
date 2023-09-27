@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,19 +59,32 @@ public class ArticleServiceImpl implements ArticleService{
                                                         .status(status)
                                                         .build());
 
+        ArticleImage thumbnail = null;
+        if (requestDto.getThumbnail() != null) {
+            String thumbnailUrl = uploadService.imageUpload(requestDto.getThumbnail(), "article");
+            Image thumbnailImg = imageRepository.save(Image.builder().url(thumbnailUrl).build());
+            thumbnail = articleImageRepository.save(ArticleImage.builder().image(thumbnailImg).article(article).build());
+        }
+
+
+        List<ArticleImage> imageList = new ArrayList<>();
+        if (requestDto.getImageList() != null) {
+            imageList = requestDto.getImageList().stream()
+                    .map(file -> uploadService.imageUpload(file, "article"))
+                    .map(url -> imageRepository.save(Image.builder().url(url).build()))
+                    .map(image -> articleImageRepository.save(ArticleImage.builder().image(image).article(article).build()))
+                    .toList();
+        }
+
+        List<ArticleTag> tagList = new ArrayList<>();
+        if (requestDto.getTagList() != null) {
+            tagList= requestDto.getTagList().stream()
+                    .map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
+                    .toList();
+        }
+
         ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
-
-        List<ArticleImage> imageList = requestDto.getImageList().stream()
-                .map(file -> uploadService.imageUpload(file, "article"))
-                .map(url -> imageRepository.save(Image.builder().url(url).build()))
-                .map(image -> articleImageRepository.save(ArticleImage.builder().image(image).article(article).build()))
-                .toList();
-
-        List<ArticleTag> tagList= requestDto.getTagList().stream()
-                        .map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
-                        .toList();
-
-
+        response.setThumbnail(thumbnail!=null ? thumbnail.getImage().getUrl():null);
         response.setImageList(imageList.stream().map(ArticleImage::toDto).toList());
         response.setTagList(tagList.stream().map(ArticleTag::getName).toList());
         return response;
@@ -108,7 +122,9 @@ public class ArticleServiceImpl implements ArticleService{
         return article.toDto(loginMember);
     }
 
-    public ArticleResponseDto.ArticleResponse editArticle(long articleId, ArticleRequestDto.ArticleSaveRequest requestDto, OAuth2User principal) {
+    @Override
+    @Transactional
+    public ArticleResponseDto.ArticleResponse editArticle(long articleId, ArticleRequestDto.ArticleEditRequest requestDto, OAuth2User principal) {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND)
         );
@@ -119,9 +135,9 @@ public class ArticleServiceImpl implements ArticleService{
             throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
         }
 
+        article.edit(requestDto);
 
-
-        return null;
+        return article.toDto(loginMember);
     }
 
     @Override

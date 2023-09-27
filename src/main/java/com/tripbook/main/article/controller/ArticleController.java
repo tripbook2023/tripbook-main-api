@@ -95,6 +95,20 @@ public class ArticleController {
         return ResponseEntity.ok(articleService.getArticleDetail(articleId, principal));
     }
 
+    @Operation(summary = "여행소식 수정",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            })
+    @Parameters(value = {
+            @Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
+    })
+    @PostMapping("/{articleId}")
+    public ResponseEntity<?> editArticle(@PathVariable long articleId, @RequestBody ArticleRequestDto.ArticleEditRequest requestDto) {
+        OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(articleService.editArticle(articleId, requestDto, principal));
+    }
+
     @Operation(summary = "여행소식 삭제", security = {@SecurityRequirement(name = "JWT")},
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseEntity.class))),

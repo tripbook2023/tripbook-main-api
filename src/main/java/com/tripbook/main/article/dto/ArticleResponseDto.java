@@ -21,6 +21,9 @@ public class ArticleResponseDto {
         @Schema(description = "여행소식 ID")
         private long id;
 
+        @Schema(description = "썸네일")
+        private String thumbnail;
+
         @Schema(description = "제목")
         private String title;
 
