@@ -1,6 +1,9 @@
 ---
+springdoc:
+  swagger-ui:
+    use-root-path: true
 domain:
-  name: http://127.0.0.1
+  name: http://127.0.0.1:${server.port}
 server.port: 9000
 spring:
   security.debug: false
