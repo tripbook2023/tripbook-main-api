@@ -1,5 +1,6 @@
 package com.tripbook.main.article.controller;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.service.ArticleService;
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.exception.CustomException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,9 +59,20 @@ public class ArticleController {
 		@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<?> saveArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto) {
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.PRE_JUDGEMENT, principal));
+	public ResponseEntity<?> saveArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
+		Authentication authentication) {
+		if (!requestDto.getImageAccept()) {
+			List<String> imageList = requestDto.getImageList()
+				.stream()
+				.map(MultipartFile::getOriginalFilename)
+				.toList();
+			log.error("Image Not Accepted::{},{}", imageList, requestDto.getThumbnail().getOriginalFilename());
+			throw new CustomException.UnsupportedImageFileException(
+				imageList.toString().concat("||").concat(requestDto.getThumbnail().getOriginalFilename()),
+				ErrorCode.FILE_UNSUPPORTED_ERROR);
+		}
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
+		return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal));
 	}
 
 	@Operation(summary = "여행소식 목록 조회 및 검색",
@@ -77,8 +91,8 @@ public class ArticleController {
 	})
 	@GetMapping()
 	public ResponseEntity<?> searchArticle(@RequestParam String word, Authentication authentication,
-		@RequestParam int page,
-		@RequestParam int size,
+		@RequestParam Integer page,
+		@RequestParam Integer size,
 		@RequestParam String sort) {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 		//OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -103,8 +117,8 @@ public class ArticleController {
 		@Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
 	})
 	@GetMapping("/{articleId}")
-	public ResponseEntity<?> getArticle(@PathVariable long articleId) {
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public ResponseEntity<?> getArticle(@PathVariable long articleId, Authentication authentication) {
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 		return ResponseEntity.ok(articleService.getArticleDetail(articleId, principal));
 	}
 
@@ -117,8 +131,8 @@ public class ArticleController {
 		@Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
 	})
 	@DeleteMapping("/{articleId}")
-	public void deleteArticle(@PathVariable long articleId) {
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public void deleteArticle(@PathVariable long articleId, Authentication authentication) {
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		articleService.deleteArticle(articleId, principal);
 	}
@@ -133,8 +147,8 @@ public class ArticleController {
 	})
 	@PostMapping(value = "/{articleId}/comments")
 	public ResponseEntity<?> saveComment(@PathVariable long articleId,
-		@Valid @RequestBody ArticleRequestDto.CommentSaveRequest requestDto) {
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		@Valid @RequestBody ArticleRequestDto.CommentSaveRequest requestDto, Authentication authentication) {
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		return ResponseEntity.ok(articleService.saveArticleComment(articleId, requestDto, principal));
 	}
@@ -148,8 +162,8 @@ public class ArticleController {
 		@Parameter(name = "commentId", description = "댓글 ID", in = ParameterIn.PATH),
 	})
 	@DeleteMapping("/comments/{commentId}")
-	public void deleteComment(@PathVariable long commentId) {
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	public void deleteComment(@PathVariable long commentId, Authentication authentication) {
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		articleService.deleteArticleComment(commentId, principal);
 	}
@@ -163,9 +177,9 @@ public class ArticleController {
 		@Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
 	})
 	@PostMapping("/{articleId}/like")
-	public ResponseEntity<?> likeArticle(@PathVariable long articleId) {
+	public ResponseEntity<?> likeArticle(@PathVariable long articleId, Authentication authentication) {
 
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		return ResponseEntity.ok(articleService.likeArticle(articleId, principal));
 	}
@@ -179,9 +193,9 @@ public class ArticleController {
 		@Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
 	})
 	@PostMapping("/{articleId}/bookmark")
-	public ResponseEntity<?> bookmarkArticle(@PathVariable long articleId) {
+	public ResponseEntity<?> bookmarkArticle(@PathVariable long articleId, Authentication authentication) {
 
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		return ResponseEntity.ok(articleService.bookmarkArticle(articleId, principal));
 	}
@@ -192,9 +206,10 @@ public class ArticleController {
 			@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
 	@PostMapping("/temp")
-	public ResponseEntity<?> saveTempArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto) {
+	public ResponseEntity<?> saveTempArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto,
+		Authentication authentication) {
 
-		OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
 	}
