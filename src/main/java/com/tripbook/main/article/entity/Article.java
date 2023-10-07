@@ -2,6 +2,7 @@ package com.tripbook.main.article.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -67,7 +68,6 @@ public class Article extends BasicEntity {
 
 	@OneToMany(mappedBy = "article")
 	private List<ArticleImage> imageList = new ArrayList<>();
-
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
 	private long heartNum;
 
@@ -107,6 +107,23 @@ public class Article extends BasicEntity {
 		this.status = ArticleStatus.DELETED;
 	}
 
+	private ArticleResponseDto.ImageResponse getThumbnailImage() {
+		if (this.getImageList() != null) {
+			Optional<ArticleImage> image = this.getImageList()
+				.stream()
+				.filter(ArticleImage::getIsThumbnail)
+				.findFirst();
+			if (image.isPresent()) {
+				return image.get().toDto();
+			} else {
+				// Thumbnail 이미지가 없음
+				return new ArticleResponseDto.ImageResponse();
+			}
+		}
+		// 이미지가 없음
+		return new ArticleResponseDto.ImageResponse();
+	}
+
 	public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
 		return ArticleResponseDto.ArticleResponse.builder()
@@ -115,12 +132,12 @@ public class Article extends BasicEntity {
 			.content(this.content)
 			.author(this.member.toSimpleDto())
 			.heartNum(this.heartNum)
-			.isHeart(this.heartList == null ? false :
-				this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+			.isHeart(this.heartList != null
+				&& this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
 			//.isHeart(this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
 			.bookmarkNum(this.bookmarkNum)
-			.isBookmark(this.bookmarkList == null ? false :
-				this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+			.isBookmark(this.bookmarkList != null
+				&& this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
 			.commentList(
 				this.commentList == null ? new ArrayList<>() :
 					this.commentList.stream().map(ArticleComment::toDto).toList())
@@ -128,6 +145,9 @@ public class Article extends BasicEntity {
 			.updatedAt(this.getUpdatedAt())
 			.imageList(
 				this.imageList == null ? new ArrayList<>() : this.imageList.stream().map(ArticleImage::toDto).toList())
+			.thumbnail(
+				getThumbnailImage()
+			)
 			.tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
 			.build();
 
