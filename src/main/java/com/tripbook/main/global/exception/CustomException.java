@@ -32,6 +32,12 @@ public class CustomException extends RuntimeException {
 		}
 	}
 
+	public static class MemberNotAcceptedImage extends CustomException {
+		public MemberNotAcceptedImage(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
 	public static class EmailDuplicateException extends CustomException {
 		public EmailDuplicateException(String message, ErrorCode errorCode) {
 			super(message, errorCode);
@@ -111,7 +117,7 @@ public class CustomException extends RuntimeException {
 		}
 	}
 
-	public static class MemberNotPermittedException extends  CustomException {
+	public static class MemberNotPermittedException extends CustomException {
 		public MemberNotPermittedException(String message, ErrorCode errorCode) {
 			super(message, errorCode);
 		}
