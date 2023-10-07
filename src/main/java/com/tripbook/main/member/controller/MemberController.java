@@ -73,15 +73,20 @@ public class MemberController {
 	@Operation(
 		summary = "회원가입", description = "프로필 정보를 입력한다.\n\n birth:yyyy-mm-dd", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.Info.class))),
-		@ApiResponse(responseCode = "400", description = "이미 인증되었거나, 유저를 찾을 수 없음, 프로필 업로드 용량을 초과함(5MB)", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+		@ApiResponse(responseCode = "400", description = "이미 인증되었거나, 유’저를 찾을 수 없음, 프로필 업로드 용량을 초과함(5MB)", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
 	@PostMapping(value = "/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberJoin(HttpServletRequest request,
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.MemberReqInfo requestMember) {
+		if (!requestMember.getImageAccept()) {
+			log.error("Image Not Accepted::{}", requestMember.getImageFile().getOriginalFilename());
+			throw new CustomException.UnsupportedImageFileException(ErrorCode.FILE_UNSUPPORTED_ERROR.getMessage(),
+				ErrorCode.FILE_UNSUPPORTED_ERROR);
+		}
 		MemberVO memberVO = bindMemberVo(requestMember);
 		String deviceValue = CheckDevice.checkDevice(request);
 		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
-		log.info("Email::"+memberVO.getEmail());
+		log.info("Email::" + memberVO.getEmail());
 		return ResponseEntity.status(HttpStatus.OK).body(info);
 	}
 
