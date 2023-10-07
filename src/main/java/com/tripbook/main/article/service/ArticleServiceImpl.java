@@ -74,15 +74,29 @@ public class ArticleServiceImpl implements ArticleService {
 			.build());
 
 		ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
-		if (!response.getImageList().isEmpty()) {
+		//이미지 리스트 저장
+		if (requestDto.getImageList() != null) {
 			List<ArticleImage> imageList = requestDto.getImageList().stream()
-				.map(file -> uploadService.imageUpload(file, "article"))
-				.map(url -> imageRepository.save(Image.builder().url(url).build()))
-				.map(image -> articleImageRepository.save(ArticleImage.builder().image(image).article(article).build()))
-				.toList();
+				.map(file -> {
+					String resultUrl = uploadService.imageUpload(file, "article");
+					Image image = imageRepository.save(
+						Image.builder().url(resultUrl).name(file.getOriginalFilename()).build());
+					return articleImageRepository.save(
+						ArticleImage.builder().image(image).article(article).isThumbnail(false).build());
+
+				}).toList();
 			response.setImageList(imageList.stream().map(ArticleImage::toDto).toList());
 		}
-		if (!response.getTagList().isEmpty()) {
+		//썸네일 이미지 저장
+		if (requestDto.getThumbnail() != null) {
+			String resultUrl = uploadService.imageUpload(requestDto.getThumbnail(), "article");
+			Image image = imageRepository.save(
+				Image.builder().url(resultUrl).name(requestDto.getThumbnail().getOriginalFilename()).build());
+			ArticleImage articleImage = articleImageRepository.save(
+				ArticleImage.builder().image(image).article(article).isThumbnail(true).build());
+			response.setThumbnail(articleImage.toDto());
+		}
+		if (requestDto.getTagList() != null) {
 			List<ArticleTag> tagList = requestDto.getTagList().stream()
 				.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
 				.toList();

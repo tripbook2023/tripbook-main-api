@@ -3,7 +3,6 @@ package com.tripbook.main.global.handler;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.tripbook.main.global.util.discord.DiscordAlarm;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +13,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.global.util.discord.DiscordAlarm;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +35,7 @@ public class CustomExceptionHandler {
 	public ResponseEntity<ErrorResponse> UnsupportedImageFileException(
 		CustomException.UnsupportedImageFileException ex) {
 		log.info("UnsupportedImageFileException", ex);
-		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
 
