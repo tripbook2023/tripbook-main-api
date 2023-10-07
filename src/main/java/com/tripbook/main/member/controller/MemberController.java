@@ -80,7 +80,7 @@ public class MemberController {
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.MemberReqInfo requestMember) {
 		if (!requestMember.getImageAccept()) {
 			log.error("Image Not Accepted::{}", requestMember.getImageFile().getOriginalFilename());
-			throw new CustomException.UnsupportedImageFileException(ErrorCode.FILE_UNSUPPORTED_ERROR.getMessage(),
+			throw new CustomException.UnsupportedImageFileException(requestMember.getImageFile().getOriginalFilename(),
 				ErrorCode.FILE_UNSUPPORTED_ERROR);
 		}
 		MemberVO memberVO = bindMemberVo(requestMember);
