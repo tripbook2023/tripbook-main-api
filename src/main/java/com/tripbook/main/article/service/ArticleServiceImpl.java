@@ -55,7 +55,24 @@ public class ArticleServiceImpl implements ArticleService {
 	public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto,
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
+		Article article;
+		if(requestDto.getArticleId()!=null){
+			Optional<Article> resultDto = articleRepository.findById(requestDto.getArticleId());
+			article = resultDto.orElseGet(() -> articleRepository.save(Article.builder()
+				.title(requestDto.getTitle())
+				.content(requestDto.getContent())
+				.member(loginMember)
+				.status(status)
+				.build()));
 
+		}else{
+			article= articleRepository.save(Article.builder()
+				.title(requestDto.getTitle())
+				.content(requestDto.getContent())
+				.member(loginMember)
+				.status(status)
+				.build());
+		}
 		if (loginMember == null) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
@@ -65,13 +82,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
  */
-
-		Article article = articleRepository.save(Article.builder()
-			.title(requestDto.getTitle())
-			.content(requestDto.getContent())
-			.member(loginMember)
-			.status(status)
-			.build());
 
 		ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
 		//이미지 리스트 저장
@@ -85,6 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
 						ArticleImage.builder().image(image).article(article).isThumbnail(false).build());
 
 				}).toList();
+
 			response.setImageList(imageList.stream().map(ArticleImage::toDto).toList());
 		}
 		//썸네일 이미지 저장

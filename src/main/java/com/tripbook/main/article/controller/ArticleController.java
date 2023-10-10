@@ -109,7 +109,9 @@ public class ArticleController {
 		return ResponseEntity.ok(articleService.searchArticle(word, pageable, principal));
 	}
 
-	@Operation(summary = "여행소식 상세 조회",
+	@Operation(	security = {
+		@SecurityRequirement(name = "JWT")},
+		summary = "여행소식 상세 조회",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 		})
@@ -200,13 +202,14 @@ public class ArticleController {
 		return ResponseEntity.ok(articleService.bookmarkArticle(articleId, principal));
 	}
 
+
 	@Operation(summary = "여행소식 임시저장", security = {@SecurityRequirement(name = "JWT")},
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 			@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
-	@PostMapping("/temp")
-	public ResponseEntity<?> saveTempArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto,
+	@PostMapping(value="/temp",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<?> saveTempArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
 		Authentication authentication) {
 
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();

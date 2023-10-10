@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Formula;
 
+import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.global.common.BasicEntity;
@@ -105,6 +106,10 @@ public class Article extends BasicEntity {
 
 	public void delete() {
 		this.status = ArticleStatus.DELETED;
+	}
+	private void updateTempArticle(ArticleRequestDto.ArticleSaveRequest request){
+		this.title=request.getTitle();
+		this.content=request.getContent();
 	}
 
 	private ArticleResponseDto.ImageResponse getThumbnailImage() {

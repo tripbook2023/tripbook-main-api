@@ -23,6 +23,8 @@ public class ArticleRequestDto {
 	@Builder
 	@Setter
 	public static class ArticleSaveRequest {
+		@Schema(description = "PK")
+		private Long articleId;
 		@Schema(description = "제목")
 		@NotNull(message = "Title is required")
 		private String title;
