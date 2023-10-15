@@ -78,10 +78,15 @@ public class MemberController {
 	@PostMapping(value = "/signup", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<Object> memberJoin(HttpServletRequest request,
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Validated RequestMember.MemberReqInfo requestMember) {
+		if (!requestMember.getImageAccept()) {
+			log.error("Image Not Accepted::{}", requestMember.getImageFile().getOriginalFilename());
+			throw new CustomException.UnsupportedImageFileException(requestMember.getImageFile().getOriginalFilename(),
+				ErrorCode.FILE_UNSUPPORTED_ERROR);
+		}
 		MemberVO memberVO = bindMemberVo(requestMember);
 		String deviceValue = CheckDevice.checkDevice(request);
 		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
-		log.info("Email::"+memberVO.getEmail());
+		log.info("Email::" + memberVO.getEmail());
 		return ResponseEntity.status(HttpStatus.OK).body(info);
 	}
 

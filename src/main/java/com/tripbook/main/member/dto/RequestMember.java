@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tripbook.main.member.enums.Gender;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -29,7 +31,10 @@ public class RequestMember {
 
 	@Getter
 	@Setter
+	@ApiModel(description = "MemberReqInfo")
 	public static class MemberReqInfo {
+		@JsonIgnore
+		private Boolean imageAccept = true;
 		@NotBlank(message = "name is required")
 		@Size(min = 1, max = 9, message = "이름은 1 ~ 9자 이여야 합니다!")
 		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
@@ -61,15 +66,17 @@ public class RequestMember {
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
 		private LocalDate birth;
 		private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 
 		public void setImageFile(MultipartFile imageFile) {
+			this.imageFile = imageFile;
 			//이미지파일 유효성 검사
 			if (!isImageFileValid(imageFile)) {
-				this.imageFile = null;
+				this.imageAccept = false;
 			}
-			this.imageFile = imageFile;
+
 		}
 
 		public boolean isImageFileValid(MultipartFile imageFile) {

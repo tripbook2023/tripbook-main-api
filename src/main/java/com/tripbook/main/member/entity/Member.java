@@ -52,7 +52,7 @@ public class Member extends BasicEntity implements Serializable {
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate birth;
-	@Column
+	@Column(length = 1000)
 	private String profile;
 
 	@Column(nullable = false)
