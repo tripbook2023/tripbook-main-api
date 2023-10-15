@@ -139,7 +139,6 @@ public class Article extends BasicEntity {
 			.heartNum(this.heartNum)
 			.isHeart(this.heartList != null
 				&& this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
-			//.isHeart(this.heartList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
 			.bookmarkNum(this.bookmarkNum)
 			.isBookmark(this.bookmarkList != null
 				&& this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)

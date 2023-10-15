@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
+import com.tripbook.main.article.enums.ArticleSort;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.service.ArticleService;
 import com.tripbook.main.global.common.ErrorResponse;
@@ -87,7 +88,7 @@ public class ArticleController {
 		@Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
 		@Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
 		@Parameter(name = "sort", description = "정렬 기준 (Default : createdDesc)",
-			example = "createdDesc, createdAsc, popularity 중 1", in = ParameterIn.QUERY)
+			example = "CREATED_ASC, CREATED_DESC, POPULARITY 중 1", in = ParameterIn.QUERY)
 	})
 	@GetMapping()
 	public ResponseEntity<?> searchArticle(@RequestParam String word, Authentication authentication,
@@ -97,7 +98,7 @@ public class ArticleController {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 		//OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		Sort pageSort = getPageSort(sort);
+		Sort pageSort = getPageSort(ArticleSort.valueOf(sort));
 		if (Objects.isNull(page)) {
 			page = 0;
 		}
@@ -217,24 +218,14 @@ public class ArticleController {
 		return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
 	}
 
-	private Sort getPageSort(String sortParam) {
-
-		Sort pageSort = Sort.unsorted();
-
-		switch (sortParam) {
-			case "createdAsc":
-				pageSort = Sort.by("createdAt").ascending();
-				break;
-			case "createdDesc":
-				pageSort = Sort.by("createdAt").descending();
-				break;
-			case "polularity":
-				pageSort = Sort.by("heartNum").descending()
-					.and(Sort.by("commentNum").descending())
-					.and(Sort.by("bookmarkNum").descending());
-				break;
-		}
-
-		return pageSort;
+	private Sort getPageSort(ArticleSort sortParam) {
+		return switch (sortParam) {
+			case CREATED_ASC -> Sort.by("createdAt").ascending();
+			case CREATED_DESC -> Sort.by("createdAt").descending();
+			case POPULARITY -> Sort.by("heartNum").descending()
+				.and(Sort.by("commentNum").descending())
+				.and(Sort.by("bookmarkNum").descending());
+			default -> Sort.unsorted();
+		};
 	}
 }
