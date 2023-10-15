@@ -25,4 +25,11 @@ public class ErrorResponse {
 		this.message.add(errorCode.getMessage());
 		this.code = errorCode.getErrorCode();
 	}
+
+	public ErrorResponse(ErrorCode errorCode, String detailMessage) {
+		this.status = errorCode.getStatus();
+		this.message.add(errorCode.getMessage());
+		this.message.add(detailMessage);
+		this.code = errorCode.getErrorCode();
+	}
 }

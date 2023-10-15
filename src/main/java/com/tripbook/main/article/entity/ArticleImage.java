@@ -1,15 +1,23 @@
 package com.tripbook.main.article.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.global.entity.Image;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Table(name = "TB_ARTICLE_IMAGE")
@@ -18,28 +26,29 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArticleImage extends BasicEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+	private Boolean isThumbnail;
+	@ManyToOne
+	@JoinColumn(name = "image_id")
+	private Image image;
 
-    @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
+	@ManyToOne
+	@JoinColumn(name = "article_id")
+	private Article article;
 
-    @ManyToOne
-    @JoinColumn(name = "article_id")
-    private Article article;
+	@Builder
+	public ArticleImage(Image image, Article article, Boolean isThumbnail) {
+		this.image = image;
+		this.article = article;
+		this.isThumbnail = isThumbnail;
+	}
 
-    @Builder
-    public ArticleImage(Image image, Article article) {
-        this.image = image;
-        this.article = article;
-    }
-
-    public ArticleResponseDto.ImageResponse toDto() {
-        return ArticleResponseDto.ImageResponse.builder()
-                .id(this.id)
-                .url(this.image.getUrl())
-                .build();
-    }
+	public ArticleResponseDto.ImageResponse toDto() {
+		return ArticleResponseDto.ImageResponse.builder()
+			.id(this.id)
+			.url(this.image.getUrl())
+			.build();
+	}
 }
