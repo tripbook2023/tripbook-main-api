@@ -67,10 +67,10 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public void memberUpdate(MemberVO updateMember) {
-
 		if (memberRepository.findByName(updateMember.getName()) != null) {
 			log.error("Already Exist Nickname");
-			throw new CustomException(ErrorCode.MEMBER_NAME_ERROR.getErrorCode(), ErrorCode.MEMBER_NAME_ERROR);
+			throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+				ErrorCode.MEMBER_NAME_ERROR);
 		} else {
 			Member byEmail = memberRepository.findByEmail(updateMember.getEmail());
 			byEmail.updateMember(updateMember);
