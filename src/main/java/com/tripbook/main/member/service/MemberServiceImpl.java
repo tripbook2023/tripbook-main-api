@@ -36,22 +36,38 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
-		//중복가입 검사
-		if (!memberValidation(member)) {
+		Member updateMember = withdrawalMemberUpdate(member);
+		if(updateMember!=null){
+			updateMember.updateStatus(MemberStatus.STATUS_NORMAL);
+		}
+		else if (!memberValidation(member)) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
+			//프로필 이미지 저장
+
 		}
-		//프로필 이미지 저장
 		if (member.getImageFile() != null) {
 			String profileURL = uploadService.imageUpload(member.getImageFile(), path);
 			member.setProfile(profileURL);
 		}
-		Member saveMember = memberRepository.save(new Member(member));
-		TokenInfo tokenInfo = jwtService.saveToken(saveMember, deviceValue);
+		updateMember= memberRepository.save(new Member(member));
+
+		TokenInfo tokenInfo = jwtService.saveToken(updateMember, deviceValue);
 		return ResponseMember.Info.builder()
 			.message("success")
 			.refreshToken(tokenInfo.getRefreshToken())
 			.accessToken(tokenInfo.getAccessToken()).build();
+	}
+
+	private Member withdrawalMemberUpdate(MemberVO member) {
+		Member rstMember = memberRepository.findByEmail(member.getEmail());
+		if(rstMember==null){
+			return null;
+		}
+		if(rstMember.getStatus().equals(MemberStatus.STATUS_WITHDRAWAL)){
+			return rstMember;
+		}
+		return null;
 	}
 
 	@Override
@@ -81,10 +97,16 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public void memberDelete(MemberVO bindMemberVo) {
 		/*
+		/*
 		 임시 Delete Member Service
 		 @TODO - 후에는 실제 삭제가 아닌 MemberStatus 탈퇴처리 진행 (현재는 편의상 실제 DB데이터삭제)
 		 */
-		memberRepository.deleteByEmail(bindMemberVo.getEmail());
+		Member rstMember = memberRepository.findByEmail(bindMemberVo.getEmail());
+		if(rstMember==null){
+			log.error("MemberNotFound::{}",bindMemberVo.getEmail());
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
+		}
+		rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
 	}
 
 	@Override
@@ -108,6 +130,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	private boolean memberValidation(MemberVO member) {
+
 		if (memberRepository.findByEmail(member.getEmail()) != null) {
 			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
 				ErrorCode.EMAIL_DUPLICATION);

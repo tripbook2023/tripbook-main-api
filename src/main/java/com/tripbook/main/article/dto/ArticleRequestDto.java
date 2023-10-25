@@ -40,7 +40,6 @@ public class ArticleRequestDto {
 
 		@Schema(description = "테그 리스트")
 		private List<String> tagList;
-		private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 		@JsonIgnore
@@ -62,9 +61,7 @@ public class ArticleRequestDto {
 
 		public void isImageFileValid(List<MultipartFile> imageFileList) {
 			imageFileList.forEach(imageFile -> {
-				if (imageFile.getSize() > MAX_FILE_SIZE || imageFile == null || imageFile.isEmpty()) {
-					this.imageAccept = false;
-				}
+
 				String fileExtension = getFileExtension(imageFile.getOriginalFilename());
 				if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {
 					this.imageAccept = false;
@@ -73,9 +70,7 @@ public class ArticleRequestDto {
 		}
 
 		public void isImageFileValid(MultipartFile image) {
-			if (image.getSize() > MAX_FILE_SIZE || image == null || image.isEmpty()) {
-				this.imageAccept = false;
-			}
+
 			String fileExtension = getFileExtension(image.getOriginalFilename());
 			if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {
 				this.imageAccept = false;

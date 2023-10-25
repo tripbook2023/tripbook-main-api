@@ -65,7 +65,6 @@ public class RequestMember {
 		@Schema(title = "생일", description = "yyyy-mm-dd", type = "LocalDate", example = "1996-07-13")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
 		private LocalDate birth;
-		private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
@@ -80,9 +79,7 @@ public class RequestMember {
 		}
 
 		public boolean isImageFileValid(MultipartFile imageFile) {
-			if (imageFile.getSize() > MAX_FILE_SIZE || imageFile == null || imageFile.isEmpty()) {
-				return false;
-			}
+
 			String fileExtension = getFileExtension(imageFile.getOriginalFilename());
 			if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {
 				return false;
@@ -124,7 +121,6 @@ public class RequestMember {
 		@Schema(title = "생일", description = "yyyy-mm-dd", type = "LocalDate", example = "1996-07-13")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
 		private LocalDate birth;
-		private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 
@@ -141,9 +137,6 @@ public class RequestMember {
 				return false;
 			}
 
-			if (imageFile.getSize() > MAX_FILE_SIZE) {
-				return false;
-			}
 
 			String fileExtension = getFileExtension(imageFile.getOriginalFilename());
 			if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {

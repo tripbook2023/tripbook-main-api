@@ -6,6 +6,10 @@ domain:
   name: http://127.0.0.1:${server.port}
 server.port: 9000
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   security.debug: false
   jpa:
     #    generate-ddl: false
