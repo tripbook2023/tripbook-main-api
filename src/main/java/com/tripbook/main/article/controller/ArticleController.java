@@ -31,6 +31,7 @@ import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 
+import io.micrometer.common.lang.Nullable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -84,33 +85,33 @@ public class ArticleController {
 				content = @Content(schema = @Schema(implementation = Slice.class))),
 		})
 	@Parameters(value = {
-		@Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY),
+		@Parameter(name = "word", description = "검색어", in = ParameterIn.QUERY, required = false),
 		@Parameter(name = "page", description = "페이지 번호 (Default : 0)", in = ParameterIn.QUERY),
 		@Parameter(name = "size", description = "페이지당 게시글 수 (Default : 10)", in = ParameterIn.QUERY),
-		@Parameter(name = "sort", description = "정렬 기준 (Default : createdDesc)",
-			example = "CREATED_ASC, CREATED_DESC, POPULARITY 중 1", in = ParameterIn.QUERY)
+		@Parameter(name = "sort", description = "정렬 기준 (Default : createdDesc)\n CREATED_ASC, CREATED_DESC, POPULARITY 중 1",
+			in = ParameterIn.QUERY)
 	})
 	@GetMapping()
-	public ResponseEntity<?> searchArticle(@RequestParam String word, Authentication authentication,
-		@RequestParam Integer page,
-		@RequestParam Integer size,
-		@RequestParam String sort) {
+	public ResponseEntity<?> searchArticle(@Nullable @RequestParam String word, Authentication authentication,
+		@Nullable @RequestParam Integer page,
+		@Nullable @RequestParam Integer size,
+		@Nullable @RequestParam String sort) {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-		//OAuth2User principal = (OAuth2User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		Sort pageSort = getPageSort(ArticleSort.valueOf(sort));
+		Sort pageSort = getPageSort(
+			sort == null || sort.isBlank() ? ArticleSort.CREATED_DESC : ArticleSort.valueOf(sort));
 		if (Objects.isNull(page)) {
 			page = 0;
 		}
 		if (Objects.isNull(size)) {
-			size = 5;
+			size = 10;
 		}
 
 		Pageable pageable = PageRequest.of(page, size, pageSort);
 		return ResponseEntity.ok(articleService.searchArticle(word, pageable, principal));
 	}
 
-	@Operation(	security = {
+	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "여행소식 상세 조회",
 		responses = {
@@ -203,13 +204,12 @@ public class ArticleController {
 		return ResponseEntity.ok(articleService.bookmarkArticle(articleId, principal));
 	}
 
-
 	@Operation(summary = "여행소식 임시저장", security = {@SecurityRequirement(name = "JWT")},
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 			@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
-	@PostMapping(value="/temp",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	@PostMapping(value = "/temp", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<?> saveTempArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
 		Authentication authentication) {
 
@@ -225,7 +225,6 @@ public class ArticleController {
 			case POPULARITY -> Sort.by("heartNum").descending()
 				.and(Sort.by("commentNum").descending())
 				.and(Sort.by("bookmarkNum").descending());
-			default -> Sort.unsorted();
 		};
 	}
 }
