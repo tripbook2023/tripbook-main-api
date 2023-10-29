@@ -3,6 +3,10 @@ domain:
   name: https://dev.tripbook.link
 server.port: 9000
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   jpa:
     properties:
       hibernate.hbm2ddl.auto: update
