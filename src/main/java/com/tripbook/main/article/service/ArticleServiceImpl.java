@@ -56,7 +56,7 @@ public class ArticleServiceImpl implements ArticleService {
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 		Article article;
-		if(requestDto.getArticleId()!=null){
+		if (requestDto.getArticleId() != null) {
 			Optional<Article> resultDto = articleRepository.findById(requestDto.getArticleId());
 			article = resultDto.orElseGet(() -> articleRepository.save(Article.builder()
 				.title(requestDto.getTitle())
@@ -65,8 +65,8 @@ public class ArticleServiceImpl implements ArticleService {
 				.status(status)
 				.build()));
 
-		}else{
-			article= articleRepository.save(Article.builder()
+		} else {
+			article = articleRepository.save(Article.builder()
 				.title(requestDto.getTitle())
 				.content(requestDto.getContent())
 				.member(loginMember)
@@ -125,12 +125,12 @@ public class ArticleServiceImpl implements ArticleService {
 
 		if (word == null || word.equals("")) {
 			return articleRepository
-				.findAllByStatus(ArticleStatus.APPROVED, pageable)
+				.findAllByStatus(ArticleStatus.ACTIVE, pageable)
 				.map(article -> article.toDto(loginMember));
 		}
 
 		return articleRepository
-			.findAllByTitleContainingOrContentContainingAndStatus(word, word, ArticleStatus.APPROVED, pageable)
+			.findAllByTitleContainingOrContentContainingAndStatus(word, word, ArticleStatus.ACTIVE, pageable)
 			.map(article -> article.toDto(loginMember));
 	}
 
