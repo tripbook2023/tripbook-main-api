@@ -39,6 +39,11 @@ public class MemberServiceImpl implements MemberService {
 		Member updateMember = withdrawalMemberUpdate(member);
 		if(updateMember!=null){
 			updateMember.updateStatus(MemberStatus.STATUS_NORMAL);
+			TokenInfo tokenInfo = jwtService.saveToken(updateMember, deviceValue);
+			return ResponseMember.Info.builder()
+				.message("success")
+				.refreshToken(tokenInfo.getRefreshToken())
+				.accessToken(tokenInfo.getAccessToken()).build();
 		}
 		else if (!memberValidation(member)) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
@@ -96,11 +101,6 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public void memberDelete(MemberVO bindMemberVo) {
-		/*
-		/*
-		 임시 Delete Member Service
-		 @TODO - 후에는 실제 삭제가 아닌 MemberStatus 탈퇴처리 진행 (현재는 편의상 실제 DB데이터삭제)
-		 */
 		Member rstMember = memberRepository.findByEmail(bindMemberVo.getEmail());
 		if(rstMember==null){
 			log.error("MemberNotFound::{}",bindMemberVo.getEmail());
