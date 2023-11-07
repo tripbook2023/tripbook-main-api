@@ -114,11 +114,25 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
-	@Operation(summary = "테스트용 멤버삭제 API")
+	@Operation(
+		security = {
+		@SecurityRequirement(name = "JWT")},
+		responses = {
+		@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
+		@ApiResponse(responseCode = "401", description = "토큰정보와 사용자 이메일정보가 다름", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))}
+		, summary = "멤버 삭제", description = "Member 삭제API")
 	@PostMapping("/delete")
-	public ResponseEntity<Object> memberDelete(@RequestParam String email) {
+	public ResponseEntity<Object> memberDelete(@RequestParam String email,Authentication authentication) {
+		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
+		if(!email.equals(authUser.getAttribute("email"))){
+			throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(),
+				ErrorCode.MEMBER_NOT_PERMITTED);
+		}
 		memberService.memberDelete(MemberVO.builder().email(email).build());
-		return ResponseEntity.status(HttpStatus.OK).build();
+		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 
 	}
 
