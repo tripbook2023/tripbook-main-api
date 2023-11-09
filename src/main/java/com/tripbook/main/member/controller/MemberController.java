@@ -2,6 +2,7 @@ package com.tripbook.main.member.controller;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
@@ -35,6 +37,7 @@ import com.tripbook.main.member.vo.MemberVO;
 import com.tripbook.main.token.service.JwtService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -69,7 +72,23 @@ public class MemberController {
 		ResponseMember.MemberInfo memberInfo = memberService.memberSelect(principalMemberDto);
 		return ResponseEntity.status(HttpStatus.OK).body(memberInfo);
 	}
-
+	@Operation(security = {
+		@SecurityRequirement(name = "JWT")},
+		summary = "멤버_임시저장리스트조회", description = "JWT를 사용하여 임시저장 리스트 조회.", responses = {
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(
+			array = @ArraySchema(schema = @Schema(implementation = Article.class)))
+		),
+		@ApiResponse(responseCode = "400", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/select/articles/temp")
+	public ResponseEntity<Object> selectTempArticles(Authentication authentication) {
+		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
+		String email = (String)authUser.getAttribute("email");
+		if(email==null || email.isEmpty()){
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberTempArticleList(email));
+	}
 	@Operation(
 		summary = "회원가입", description = "프로필 정보를 입력한다.\n\n birth:yyyy-mm-dd", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.Info.class))),
