@@ -1,5 +1,6 @@
 package com.tripbook.main.member.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tripbook.main.article.entity.Article;
+import com.tripbook.main.article.enums.ArticleStatus;
+import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
@@ -28,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
+	private final ArticleRepository articleRepository;
 	@Qualifier("jwtService")
 	private final JwtService jwtService;
 	private final UploadService uploadService;
@@ -78,6 +83,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Optional<Member> memberCertification(MemberVO memberVO) {
 		return Optional.ofNullable(memberRepository.findByEmail(memberVO.getEmail()));
+	}
+
+	@Override
+	public List<Article> memberTempArticleList(String email) {
+		List<Article> tempAritcleList = articleRepository.findAllByStatusAndMemberEmail(ArticleStatus.TEMP,email);
+		return tempAritcleList;
 	}
 
 	@Override
