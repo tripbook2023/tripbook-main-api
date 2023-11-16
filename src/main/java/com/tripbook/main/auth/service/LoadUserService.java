@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.tripbook.main.auth.common.UserInfoRequest;
-import com.tripbook.main.auth.dto.ResponseAuth.ResultInfo;
+import com.tripbook.main.auth.dto.ResponseAuth;
 import com.tripbook.main.auth.token.CustomPlatformAccessToken;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.enums.MemberStatus;
@@ -27,7 +27,7 @@ public class LoadUserService {
 	private final MemberService memberService;
 
 	@SneakyThrows
-	public ResultInfo getOAuth2UserDetails(CustomPlatformAccessToken authentication) {
+	public ResponseAuth.ResultData getOAuth2UserDetails(CustomPlatformAccessToken authentication) {
 		MemberVO memberVO = userInfoRequest.getSocialEmail(authentication.getAccessToken());
 		Optional<Member> resultMember = memberService.memberCertification(memberVO);
 
@@ -41,8 +41,8 @@ public class LoadUserService {
 		}
 	}
 
-	private static ResultInfo getSignInMessage(Member member, TokenInfo tokenInfo) {
-		return ResultInfo.builder()
+	private static ResponseAuth.ResultData getSignInMessage(Member member, TokenInfo tokenInfo) {
+		return ResponseAuth.ResultData.builder()
 			.status(member.getStatus())
 			.nickname(member.getName())
 			.email(member.getEmail())
@@ -51,8 +51,8 @@ public class LoadUserService {
 			.build();
 	}
 
-	private static ResultInfo getSignUpMessage(MemberVO memberVO) {
-		return ResultInfo.builder()
+	private static ResponseAuth.ResultData getSignUpMessage(MemberVO memberVO) {
+		return ResponseAuth.ResultData.builder()
 			.email(memberVO.getEmail())
 			.nickname(memberVO.getName())
 			.status(MemberStatus.STATUS_REQUIRED_AUTH)

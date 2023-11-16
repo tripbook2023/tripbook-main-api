@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import com.tripbook.main.auth.dto.ResponseAuth.ResultInfo;
+import com.tripbook.main.auth.dto.ResponseAuth;
 import com.tripbook.main.auth.service.LoadUserService;
 import com.tripbook.main.auth.token.CustomPlatformAccessToken;
 
@@ -22,7 +22,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 	@SneakyThrows
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		ResultInfo resultInfo = loadUserService.getOAuth2UserDetails(
+		ResponseAuth.ResultData resultInfo = loadUserService.getOAuth2UserDetails(
 			(CustomPlatformAccessToken)authentication);
 		return new CustomPlatformAccessToken(resultInfo);
 	}

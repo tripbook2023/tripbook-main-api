@@ -12,7 +12,7 @@ public class ResponseAuth {
 	@Builder
 	@Getter
 	@Schema(description = "간편로그인에 대한 성공 응답 값")
-	public static class ResultInfo implements Serializable {
+	public static class ResultData implements Serializable {
 		private static final long serialVersionUID = 15623L;
 		@Schema(title = "사용자 닉네임")
 		private String nickname;

@@ -2,7 +2,6 @@ package com.tripbook.main.member.controller;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -72,6 +71,7 @@ public class MemberController {
 		ResponseMember.MemberInfo memberInfo = memberService.memberSelect(principalMemberDto);
 		return ResponseEntity.status(HttpStatus.OK).body(memberInfo);
 	}
+
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "멤버_임시저장리스트조회", description = "JWT를 사용하여 임시저장 리스트 조회.", responses = {
@@ -84,11 +84,12 @@ public class MemberController {
 	public ResponseEntity<Object> selectTempArticles(Authentication authentication) {
 		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
 		String email = (String)authUser.getAttribute("email");
-		if(email==null || email.isEmpty()){
+		if (email == null || email.isEmpty()) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberTempArticleList(email));
 	}
+
 	@Operation(
 		summary = "회원가입", description = "프로필 정보를 입력한다.\n\n birth:yyyy-mm-dd", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseMember.Info.class))),
@@ -111,6 +112,7 @@ public class MemberController {
 
 	/**
 	 * 멤버 수정 로직
+	 *
 	 * @param updateMember
 	 * @return 결과 값
 	 */
@@ -135,15 +137,15 @@ public class MemberController {
 
 	@Operation(
 		security = {
-		@SecurityRequirement(name = "JWT")},
+			@SecurityRequirement(name = "JWT")},
 		responses = {
-		@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
-		@ApiResponse(responseCode = "401", description = "토큰정보와 사용자 이메일정보가 다름", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))}
+			@ApiResponse(responseCode = "200", description = "성공시 success 메시지 출력", content = @Content(schema = @Schema(implementation = ResponseMember.ResultInfo.class))),
+			@ApiResponse(responseCode = "401", description = "토큰정보와 사용자 이메일정보가 다름", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))}
 		, summary = "멤버 삭제", description = "Member 삭제API")
 	@PostMapping("/delete")
-	public ResponseEntity<Object> memberDelete(@RequestParam String email,Authentication authentication) {
+	public ResponseEntity<Object> memberDelete(@RequestParam String email, Authentication authentication) {
 		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
-		if(!email.equals(authUser.getAttribute("email"))){
+		if (!email.equals(authUser.getAttribute("email"))) {
 			throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(),
 				ErrorCode.MEMBER_NOT_PERMITTED);
 		}

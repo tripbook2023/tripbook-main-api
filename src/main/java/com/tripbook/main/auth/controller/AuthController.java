@@ -26,7 +26,7 @@ public class AuthController {
 	@Operation(security = {
 		@SecurityRequirement(name = "OAUTH")}, summary = "간편로그인 토큰인증", description = "Auth0에서 발급받은 토큰을 Header에 전달한다", responses = {
 		@ApiResponse(responseCode = "200", description = "1.status:STATUS_NORMAL(로그인완료)\n\n"
-			+ "2.status:STATUS_REQUIRED_AUTH(회원가입필요)", content = @Content(schema = @Schema(implementation = ResponseAuth.ResultInfo.class))),
+			+ "2.status:STATUS_REQUIRED_AUTH(회원가입필요)", content = @Content(schema = @Schema(implementation = ResponseAuth.ResultData.class))),
 		@ApiResponse(responseCode = "401", description = "유효하지 않은 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "403", description = "CSRF 또는 권한문제로 관리자 문의 필요", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
