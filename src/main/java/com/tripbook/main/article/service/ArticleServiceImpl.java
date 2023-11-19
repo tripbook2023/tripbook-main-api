@@ -144,9 +144,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
-		if (!article.isApproved() && !article.isWrittenBy(loginMember)) {
-			throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(),
-				ErrorCode.MEMBER_NOT_PERMITTED);
+		if (!article.getStatus().equals(ArticleStatus.DELETED)) {
+			throw  new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
+				ErrorCode.ARTICLE_NOT_FOUND);
 		}
 
 		return article.toDto(loginMember);
