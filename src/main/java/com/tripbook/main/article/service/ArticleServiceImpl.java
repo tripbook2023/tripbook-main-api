@@ -143,6 +143,12 @@ public class ArticleServiceImpl implements ArticleService {
 		);
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
+
+		if (!article.getStatus().equals(ArticleStatus.DELETED)) {
+			throw  new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
+				ErrorCode.ARTICLE_NOT_FOUND);
+		}
+
 		return article.toDto(loginMember);
 	}
 
