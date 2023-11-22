@@ -2,12 +2,15 @@ package com.tripbook.main.member.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleRepository;
@@ -86,9 +89,14 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public List<Article> memberTempArticleList(String email) {
-		List<Article> tempAritcleList = articleRepository.findAllByStatusAndMemberEmail(ArticleStatus.TEMP,email);
-		return tempAritcleList;
+	public List<ArticleResponseDto.ArticleResponse> memberTempArticleList(String email) {
+		Member loginMember = getLoginMemberByEmail(email);
+		List<ArticleResponseDto.ArticleResponse> resultList = articleRepository.findAllByStatusAndMemberEmail(
+				ArticleStatus.TEMP, email)
+			.stream().map(article -> article.toDto(loginMember))
+			.collect(Collectors.toList());
+
+		return resultList;
 	}
 
 	@Override
@@ -158,4 +166,5 @@ public class MemberServiceImpl implements MemberService {
 	public Member getLoginMemberByEmail(String email) {
 		return memberRepository.findByEmail(email);
 	}
+
 }
