@@ -200,6 +200,7 @@ public class MemberController {
 		MemberVO memberVO = MemberVO.builder()
 			.birth(requestMember.getBirth())
 			.imageFile(requestMember.getImageFile())
+			.profile(requestMember.getProfile())
 			.termsOfService(requestMember.getTermsOfService())
 			.termsOfPrivacy(requestMember.getTermsOfPrivacy())
 			.termsOfLocation(requestMember.getTermsOfLocation())

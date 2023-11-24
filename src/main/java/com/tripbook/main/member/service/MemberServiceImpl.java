@@ -99,14 +99,32 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public void memberUpdate(MemberVO updateMember) {
-		if (memberRepository.findByName(updateMember.getName()) != null) {
-			log.error("Already Exist Nickname");
-			throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
-				ErrorCode.MEMBER_NAME_ERROR);
-		} else {
-			Member byEmail = memberRepository.findByEmail(updateMember.getEmail());
+		if(updateMember.getName()!=null){
+			if(memberRepository.findByName(updateMember.getName())!=null){
+				log.error("Already Exist Nickname");
+				throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+					ErrorCode.MEMBER_NAME_ERROR);
+			}
+		}
+		Member byEmail = memberRepository.findByEmail(updateMember.getEmail());
+		if(byEmail!=null){
+			//Prfile Default Set
+			if(updateMember.getProfile()!=null){
+				if(updateMember.getProfile().isEmpty()){
+					byEmail.updateProfile(null);
+				}else{
+					byEmail.updateProfile(updateMember.getProfile());
+				}
+				return ;
+			}
+			//Profile Save.
+			if (updateMember.getImageFile() != null) {
+				String profileURL = uploadService.imageUpload(updateMember.getImageFile(), path);
+				updateMember.setProfile(profileURL);
+			}
 			byEmail.updateMember(updateMember);
 		}
+
 	}
 
 	@Override
