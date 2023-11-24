@@ -2,6 +2,7 @@ package com.tripbook.main.member.controller;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
@@ -76,7 +78,7 @@ public class MemberController {
 		@SecurityRequirement(name = "JWT")},
 		summary = "멤버_임시저장리스트조회", description = "JWT를 사용하여 임시저장 리스트 조회.", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(
-			array = @ArraySchema(schema = @Schema(implementation = Article.class)))
+			array = @ArraySchema(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class)))
 		),
 		@ApiResponse(responseCode = "400", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	})
@@ -87,7 +89,8 @@ public class MemberController {
 		if (email == null || email.isEmpty()) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberTempArticleList(email));
+		List<ArticleResponseDto.ArticleResponse> resultList = memberService.memberTempArticleList(email);
+		return ResponseEntity.status(HttpStatus.OK).body(resultList);
 	}
 
 	@Operation(
