@@ -108,6 +108,15 @@ public class MemberServiceImpl implements MemberService {
 		}
 		Member byEmail = memberRepository.findByEmail(updateMember.getEmail());
 		if(byEmail!=null){
+			//Prfile Default Set
+			if(updateMember.getProfile()!=null){
+				if(updateMember.getProfile().isEmpty()){
+					byEmail.updateProfile(null);
+				}else{
+					byEmail.updateProfile(updateMember.getProfile());
+				}
+				return ;
+			}
 			//Profile Save.
 			if (updateMember.getImageFile() != null) {
 				String profileURL = uploadService.imageUpload(updateMember.getImageFile(), path);

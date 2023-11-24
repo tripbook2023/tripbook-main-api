@@ -108,6 +108,8 @@ public class RequestMember {
 		@Schema(title = "이미지 파일", example = "가능확장자 : jpg, jpeg, png, gif \n\n 파일용량 : 5MB")
 		@Nullable
 		private MultipartFile imageFile;
+		@Schema(title = "프로필 이미지 URL")
+		private String profile;
 		@Schema(title = "서비스 이용 약관 동의 여부")
 		private Boolean termsOfService;
 		@Schema(title = "개인정보 수집 및 이용 동의 여부")
