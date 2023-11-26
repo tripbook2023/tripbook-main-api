@@ -116,6 +116,8 @@ public class ArticleController {
 		summary = "여행소식 상세 조회",
 		responses = {
 			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
+			@ApiResponse(responseCode = "400", description = "삭제된 여행소식", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+			@ApiResponse(responseCode = "404", description = "여행소식 찾을 수  없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
 	@Parameters(value = {
 		@Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),

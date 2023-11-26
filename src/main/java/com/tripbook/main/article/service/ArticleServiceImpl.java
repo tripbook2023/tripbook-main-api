@@ -144,9 +144,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
-		if (!article.getStatus().equals(ArticleStatus.DELETED)) {
-			throw  new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
-				ErrorCode.ARTICLE_NOT_FOUND);
+		if (article.getStatus().equals(ArticleStatus.DELETED)) {
+			throw  new CustomException.ArticleDeletedException(ErrorCode.ARTICLE_DELETED.getMessage(),
+				ErrorCode.ARTICLE_DELETED);
 		}
 
 		return article.toDto(loginMember);
