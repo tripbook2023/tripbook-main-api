@@ -129,6 +129,13 @@ public class CustomException extends RuntimeException {
 		}
 	}
 
+	public static class ArticleDeletedException extends CustomException {
+		public ArticleDeletedException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
+
 	public static class CommentNotFoundException extends CustomException {
 		public CommentNotFoundException(String message, ErrorCode errorCode) {
 			super(message, errorCode);
