@@ -119,11 +119,8 @@ public class MemberServiceImpl implements MemberService {
 			//Prfile Default Set
 			if(updateMember.getProfile()!=null){
 				if(updateMember.getProfile().isEmpty()){
-					byEmail.updateProfile(null);
-				}else{
-					byEmail.updateProfile(updateMember.getProfile());
+					updateMember.setProfile(null);
 				}
-				return ;
 			}
 			//Profile Save.
 			if (updateMember.getImageFile() != null) {
