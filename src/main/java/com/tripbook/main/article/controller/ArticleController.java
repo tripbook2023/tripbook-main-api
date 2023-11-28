@@ -1,5 +1,6 @@
 package com.tripbook.main.article.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,7 @@ import com.tripbook.main.article.service.ArticleService;
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.member.dto.ResponseMember;
 
 import io.micrometer.common.lang.Nullable;
 import io.swagger.v3.oas.annotations.Operation;
@@ -130,17 +133,20 @@ public class ArticleController {
 
 	@Operation(summary = "여행소식 삭제", security = {@SecurityRequirement(name = "JWT")},
 		responses = {
-			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
+			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ResultInfo.class))),
 			@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
 	@Parameters(value = {
 		@Parameter(name = "articleId", description = "여행 소식 ID", in = ParameterIn.PATH),
 	})
 	@DeleteMapping("/{articleId}")
-	public void deleteArticle(@PathVariable long articleId, Authentication authentication) {
+	public ResponseEntity<?> deleteArticle(@PathVariable long articleId, Authentication authentication) {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-
 		articleService.deleteArticle(articleId, principal);
+		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
 	@Operation(summary = "댓글 작성", security = {@SecurityRequirement(name = "JWT")},
@@ -161,17 +167,21 @@ public class ArticleController {
 
 	@Operation(summary = "댓글 삭제", security = {@SecurityRequirement(name = "JWT")},
 		responses = {
-			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseEntity.class))),
+			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 			@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
 	@Parameters(value = {
 		@Parameter(name = "commentId", description = "댓글 ID", in = ParameterIn.PATH),
 	})
 	@DeleteMapping("/comments/{commentId}")
-	public void deleteComment(@PathVariable long commentId, Authentication authentication) {
+	public ResponseEntity<?> deleteComment(@PathVariable long commentId, Authentication authentication) {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 
 		articleService.deleteArticleComment(commentId, principal);
+		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
 	@Operation(summary = "여행소식 좋아요", security = {@SecurityRequirement(name = "JWT")},
