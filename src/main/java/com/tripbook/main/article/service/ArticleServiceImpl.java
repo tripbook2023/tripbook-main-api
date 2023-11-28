@@ -63,8 +63,18 @@ public class ArticleServiceImpl implements ArticleService {
 			if(resultDto.isEmpty()) {
 				throw  new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND);
 			}
-			article=resultDto.get();
-			article.updateArticle(requestDto,status,loginMember);
+			if(resultDto.get().getStatus().equals(ArticleStatus.ACTIVE)&&status.equals(ArticleStatus.TEMP)){
+				//ACTIVE 되어있는 여행소식 수정 후 임시저장 프로세스
+				article = articleRepository.save(Article.builder()
+					.title(requestDto.getTitle())
+					.content(requestDto.getContent())
+					.member(loginMember)
+					.status(status)
+					.build());
+			}else{
+				article=resultDto.get();
+				article.updateArticle(requestDto,status,loginMember);
+			}
 		}
 		//Save
 		else {
