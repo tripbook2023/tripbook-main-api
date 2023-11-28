@@ -56,16 +56,18 @@ public class ArticleServiceImpl implements ArticleService {
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 		Article article;
+		//Update
 		if (requestDto.getArticleId() != null) {
 			Optional<Article> resultDto = articleRepository.findById(requestDto.getArticleId());
-			article = resultDto.orElseGet(() -> articleRepository.save(Article.builder()
-				.title(requestDto.getTitle())
-				.content(requestDto.getContent())
-				.member(loginMember)
-				.status(status)
-				.build()));
-
-		} else {
+			//Article Validation
+			if(resultDto.isEmpty()) {
+				throw  new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND);
+			}
+			article=resultDto.get();
+			article.updateArticle(requestDto,status,loginMember);
+		}
+		//Save
+		else {
 			article = articleRepository.save(Article.builder()
 				.title(requestDto.getTitle())
 				.content(requestDto.getContent())
