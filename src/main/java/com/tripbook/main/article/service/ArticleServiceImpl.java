@@ -63,6 +63,8 @@ public class ArticleServiceImpl implements ArticleService {
 			if(resultDto.isEmpty()) {
 				throw  new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(), ErrorCode.ARTICLE_NOT_FOUND);
 			}
+			//기존 여행소식 이미지,태그 삭제
+			deleteArticleImagesAndArticleTags(requestDto);
 			if(resultDto.get().getStatus().equals(ArticleStatus.ACTIVE)&&status.equals(ArticleStatus.TEMP)){
 				//ACTIVE 되어있는 여행소식 수정 후 임시저장 프로세스
 				article = articleRepository.save(Article.builder()
@@ -127,6 +129,12 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 
 		return response;
+	}
+
+	private void deleteArticleImagesAndArticleTags(ArticleRequestDto.ArticleSaveRequest requestDto) {
+		//기존 이미지, 태그 삭제
+		articleImageRepository.deleteAllByArticleId(requestDto.getArticleId());
+		articleTagRepository.deleteAllByArticleId(requestDto.getArticleId());
 	}
 
 	@Override
