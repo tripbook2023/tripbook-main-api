@@ -1,6 +1,7 @@
-package com.tripbook.main.file.service;
+package com.tripbook.main.global.service;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

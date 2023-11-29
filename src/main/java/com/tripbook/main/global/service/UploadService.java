@@ -1,4 +1,4 @@
-package com.tripbook.main.file.service;
+package com.tripbook.main.global.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
