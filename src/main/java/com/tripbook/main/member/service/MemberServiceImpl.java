@@ -6,15 +6,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
-import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleRepository;
-import com.tripbook.main.file.service.UploadService;
+import com.tripbook.main.global.service.UploadService;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
