@@ -32,9 +32,25 @@ public class Image extends BasicEntity {
 	@Column(nullable = false)
 	private String name;
 
+	@Column
+	private long refId;
+
+	@Column
+	private String refType;
+	@Builder
+	public Image(String url, String name, long refId, String refType) {
+		this.url = url;
+		this.name = name;
+		this.refId = refId;
+		this.refType = refType;
+	}
+
 	@Builder
 	public Image(String url, String name) {
 		this.url = url;
 		this.name = name;
+	}
+	public void updateRefId(Long refId){
+		this.refId=refId;
 	}
 }
