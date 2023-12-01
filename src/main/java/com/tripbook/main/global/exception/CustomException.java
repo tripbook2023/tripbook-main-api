@@ -141,4 +141,21 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+
+	public static class CommonNotPermittedException extends CustomException {
+		public CommonNotPermittedException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+	public static class CommonUnSupportedException extends CustomException {
+		public CommonUnSupportedException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+	public static class CommonRuntimeException extends CustomException {
+		public CommonRuntimeException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+
 }

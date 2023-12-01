@@ -160,5 +160,27 @@ public class CustomExceptionHandler {
 		ErrorResponse response = new ErrorResponse(ErrorCode.COMMENT_NOT_FOUND);
 		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
+	@ExceptionHandler(CustomException.CommonUnSupportedException.class)
+	@DiscordAlarm
+	public ResponseEntity<ErrorResponse> handleCommonUnSupportedException(CustomException.CommonUnSupportedException ex) {
+		log.info("handleException", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response,  HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+	@ExceptionHandler(CustomException.CommonNotPermittedException.class)
+	@DiscordAlarm
+	public ResponseEntity<ErrorResponse> handleCommonNotPermittedException(CustomException.CommonNotPermittedException ex) {
+		log.info("handleException", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+	@ExceptionHandler(CustomException.CommonRuntimeException.class)
+	@DiscordAlarm
+	public ResponseEntity<ErrorResponse> handleCommonRuntimeException(CustomException.CommonRuntimeException ex) {
+		log.info("handleException", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
 
 }

@@ -25,11 +25,11 @@ import com.tripbook.main.article.repository.ArticleHeartRepository;
 import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.article.repository.ArticleTagRepository;
-import com.tripbook.main.file.service.UploadService;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.repository.ImageRepository;
+import com.tripbook.main.global.service.UploadService;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.service.MemberService;
 

@@ -40,6 +40,14 @@ public class SwaggerConfig {
 	}
 
 	@Bean
+	public GroupedOpenApi CommonGroup() {
+		return GroupedOpenApi.builder()
+			.group("공통API")
+			.packagesToScan("com.tripbook.main.global.controller")
+			.build();
+	}
+
+	@Bean
 	public OpenAPI JwtOpenAPI() {
 		return new OpenAPI()
 			.servers(Arrays.asList(
