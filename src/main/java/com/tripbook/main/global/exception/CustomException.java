@@ -152,5 +152,10 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+	public static class CommonRuntimeException extends CustomException {
+		public CommonRuntimeException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 
 }

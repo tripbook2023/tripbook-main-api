@@ -39,10 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UploadController {
 	@Resource
 	UploadService uploadService;
-	@Value("${file.upload_path.signup}")
-	private String memberPath;
-	@Value("${file.upload_path.article}")
-	private String articlePath;
+
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "S3이미지업로드", description = "S3를 이용한 이미지 업로드\n Category : 여행소식(BOARD_A) ", responses = {
@@ -58,15 +55,8 @@ public class UploadController {
 			//토큰없음
 			throw new CustomException.CommonNotPermittedException(ErrorCode.COMMON_NOT_PERMITTED.getMessage(),ErrorCode.COMMON_NOT_PERMITTED);
 		}
-		if(ImageCategory.BOARD_A.toString().equals(category.toUpperCase())){
-			//여행소식
-			String result = uploadService.imageUpload(image,articlePath);
-			return ResponseEntity.status(HttpStatus.OK).body(result);
-		}else if(ImageCategory.MEMBER.toString().equals(category.toUpperCase())){
-			//멤버 프로필(현재 미사용)
-			String result = uploadService.imageUpload(image, articlePath);
-			return ResponseEntity.status(HttpStatus.OK).body(result);
-		}
+		uploadService.imageUpload(image,category);
+
 		throw new CustomException.CommonUnSupportedException(ErrorCode.COMMON_UNSUPPORTED_ERROR.getMessage(),ErrorCode.COMMON_UNSUPPORTED_ERROR);
 	}
 

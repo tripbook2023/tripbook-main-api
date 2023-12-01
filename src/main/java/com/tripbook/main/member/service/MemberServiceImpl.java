@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleRepository;
+import com.tripbook.main.global.dto.ResponseImage;
+import com.tripbook.main.global.entity.Image;
+import com.tripbook.main.global.enums.ImageCategory;
+import com.tripbook.main.global.repository.ImageRepository;
 import com.tripbook.main.global.service.UploadService;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
@@ -25,6 +29,7 @@ import com.tripbook.main.member.vo.MemberVO;
 import com.tripbook.main.token.dto.TokenInfo;
 import com.tripbook.main.token.service.JwtService;
 
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,40 +39,50 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final ArticleRepository articleRepository;
+	private final ImageRepository imageRepository;
 	@Qualifier("jwtService")
 	private final JwtService jwtService;
 	private final UploadService uploadService;
-	@Value("${file.upload_path.signup}")
-	private String path;
+
 
 	@Override
 	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
-		Member updateMember = withdrawalMemberUpdate(member);
-		if(updateMember!=null){
-			updateMember.updateStatus(MemberStatus.STATUS_NORMAL);
-			TokenInfo tokenInfo = jwtService.saveToken(updateMember, deviceValue);
-			return ResponseMember.Info.builder()
-				.message("success")
-				.refreshToken(tokenInfo.getRefreshToken())
-				.accessToken(tokenInfo.getAccessToken()).build();
-		}
-		else if (!memberValidation(member)) {
+		// Member deleteMember = withdrawalMemberUpdate(member);
+		// if(deleteMember!=null){
+		// 	targetMember=deleteMember;
+		// 	targetMember.updateStatus(MemberStatus.STATUS_NORMAL);
+		// 	TokenInfo tokenInfo = jwtService.saveToken(deleteMember, deviceValue);
+		// }
+		ResponseImage.ImageInfo imageInfo;
+		if (!memberValidation(member)) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
-			//프로필 이미지 저장
-
 		}
 		if (member.getImageFile() != null) {
-			String profileURL = uploadService.imageUpload(member.getImageFile(), path);
-			member.setProfile(profileURL);
-		}
-		updateMember= memberRepository.save(new Member(member));
+			imageInfo = uploadService.imageUpload(member.getImageFile(),
+				ImageCategory.MEMBER.toString());
 
-		TokenInfo tokenInfo = jwtService.saveToken(updateMember, deviceValue);
+			member.setProfile(imageInfo.getUrl());
+		} else {
+			imageInfo = null;
+		}
+		Member resultMember= memberRepository.save(new Member(member));
+		//이미지  <-> 멤버 연결
+		if(imageInfo!=null){
+			imageRefIdMapping(imageInfo,resultMember.getId());
+		}
+
+		//토큰 응답
+		TokenInfo tokenInfo = jwtService.saveToken(resultMember, deviceValue);
 		return ResponseMember.Info.builder()
 			.message("success")
 			.refreshToken(tokenInfo.getRefreshToken())
 			.accessToken(tokenInfo.getAccessToken()).build();
+	}
+
+	private void imageRefIdMapping(ResponseImage.ImageInfo imageInfo,Long refId) {
+		Optional<Image> targetImage = imageRepository.findById(imageInfo.getId());
+		targetImage.ifPresent(image->image.updateRefId(refId));
 	}
 
 	private Member withdrawalMemberUpdate(MemberVO member) {
@@ -122,8 +137,13 @@ public class MemberServiceImpl implements MemberService {
 			}
 			//Profile Save.
 			if (updateMember.getImageFile() != null) {
-				String profileURL = uploadService.imageUpload(updateMember.getImageFile(), path);
-				updateMember.setProfile(profileURL);
+				ResponseImage.ImageInfo imageInfo = uploadService.imageUpload(updateMember.getImageFile(),
+					ImageCategory.MEMBER.name());
+
+				updateMember.setProfile(imageInfo.getUrl());
+				//이미지  <-> 멤버 연결
+				imageRefIdMapping(imageInfo,byEmail.getId());
+
 			}
 			byEmail.updateMember(updateMember);
 		}
@@ -145,20 +165,6 @@ public class MemberServiceImpl implements MemberService {
 	public ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto) {
 		Member member = memberRepository.findByEmail(principalMemberDto.getEmail());
 		return new ResponseMember.MemberInfo(member);
-	}
-
-	@Transactional
-	public void updateMember(RequestMember.MemberReqInfo signupMember, Member findMember) {
-		if (signupMember.getImageFile() != null) {
-			String profileURL = uploadService.imageUpload(signupMember.getImageFile(), path);
-			findMember.updateProfile(profileURL);
-
-		}
-		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
-		findMember.updateMarketingConsent(signupMember.getMarketingConsent());
-		findMember.updateName(signupMember.getName());
-		// findMember.updateBirth(signupMember.getBirth());
-		memberRepository.save(findMember);
 	}
 
 	private boolean memberValidation(MemberVO member) {
