@@ -283,7 +283,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 		return memberService.getLoginMemberByEmail(email);
 	}
-	private void imageRefIdMapping(long[] imageArr,Long refId) {
+	private void imageRefIdMapping(long[] imageArr,long refId) {
 		if(imageArr==null){
 			return;
 		}
