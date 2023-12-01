@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 public interface ArticleService {
-    ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, ArticleStatus status, OAuth2User principal);
+    void saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto, ArticleStatus status, OAuth2User principal);
     Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable, OAuth2User principal);
     ArticleResponseDto.ArticleResponse getArticleDetail(long articleId, OAuth2User principal);
     void deleteArticle(long articleId, OAuth2User principal);

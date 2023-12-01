@@ -32,12 +32,8 @@ public class ArticleRequestDto {
 		@Schema(description = "내용")
 		@NotNull(message = "Content is required")
 		private String content;
-
-		@Schema(description = "이미지 리스트")
-		private List<MultipartFile> imageList;
-		@Schema(description = "썸네일 이미지")
-		private MultipartFile thumbnail;
-
+		@Schema(description = "이미지 ID리스트")
+		private long[] fileIds;
 		@Schema(description = "테그 리스트")
 		private List<String> tagList;
 		// 확장자 검사
@@ -45,15 +41,7 @@ public class ArticleRequestDto {
 		@JsonIgnore
 		private Boolean imageAccept = true;
 
-		public void setImageList(List<MultipartFile> imageList) {
-			this.imageList = imageList;
-			isImageFileValid(imageList);
-		}
 
-		public void setThumbnail(MultipartFile thumbnail) {
-			this.thumbnail = thumbnail;
-			isImageFileValid(thumbnail);
-		}
 
 		public void setTagList(List<String> tagList) {
 			this.tagList = tagList;

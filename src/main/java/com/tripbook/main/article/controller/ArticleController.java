@@ -66,18 +66,12 @@ public class ArticleController {
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<?> saveArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
 		Authentication authentication) {
-		if (!requestDto.getImageAccept()) {
-			List<String> imageList = requestDto.getImageList()
-				.stream()
-				.map(MultipartFile::getOriginalFilename)
-				.toList();
-			log.error("Image Not Accepted::{},{}", imageList, requestDto.getThumbnail().getOriginalFilename());
-			throw new CustomException.UnsupportedImageFileException(
-				imageList.toString().concat("||").concat(requestDto.getThumbnail().getOriginalFilename()),
-				ErrorCode.FILE_UNSUPPORTED_ERROR);
-		}
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-		return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal));
+		articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal);
+		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
 	@Operation(summary = "여행소식 목록 조회 및 검색",
@@ -226,8 +220,11 @@ public class ArticleController {
 		Authentication authentication) {
 
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-
-		return ResponseEntity.ok(articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
+		articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal);
+		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
+			.message(Arrays.asList("success"))
+			.build();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 
 	private Sort getPageSort(ArticleSort sortParam) {

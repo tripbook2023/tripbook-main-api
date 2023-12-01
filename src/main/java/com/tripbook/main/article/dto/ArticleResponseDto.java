@@ -112,5 +112,14 @@ public class ArticleResponseDto {
 		@Schema(description = "이미지 URL")
 		private String url;
 	}
+	@Builder
+	@Getter
+	@Schema(description = "여행소식에 대한 성공 응답 값")
+	public static class ResultInfo {
+		@Schema(description = "HTTP 상태값")
+		private HttpStatus status;
+		@Schema(description = "String배열 형태의 결과값")
+		private List<String> message;
+	}
 
 }

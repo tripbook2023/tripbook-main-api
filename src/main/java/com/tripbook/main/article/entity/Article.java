@@ -92,11 +92,10 @@ public class Article extends BasicEntity {
 		this.commentList = commentList;
 		this.imageList = imageList;
 	}
-	public void updateArticle(ArticleRequestDto.ArticleSaveRequest requestDto,ArticleStatus status,Member member){
-		this.title = requestDto.getTitle();
-		this.content = requestDto.getContent();
-		this.status =status;
-		this.member = member;
+	public void updateArticle(Article article){
+		this.title = article.title;
+		this.content = article.content;
+		this.status = article.status;
 	}
 	public boolean isApproved() {
 		return this.status.equals(ArticleStatus.APPROVED);
