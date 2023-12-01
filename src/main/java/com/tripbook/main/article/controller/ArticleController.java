@@ -60,7 +60,7 @@ public class ArticleController {
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "여행소식 저장", description = "여행소식을 저장합니다.", responses = {
-		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ResultInfo.class))),
 		@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
