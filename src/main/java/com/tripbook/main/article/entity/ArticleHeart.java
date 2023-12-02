@@ -36,11 +36,11 @@ public class ArticleHeart extends BasicEntity {
         this.article = article;
     }
 
-    public ArticleResponseDto.ArticleResponse toDto(Member member) {
+    public ArticleResponseDto.ArticleResponse toDto(Member member,Long heartNum) {
         return ArticleResponseDto.ArticleResponse.builder()
                 .id(this.article.getId())
                 .isHeart(this.member.equals(member))
-                .heartNum(article.getHeartNum())
+                .heartNum(heartNum)
                 .build();
     }
 }

@@ -233,13 +233,13 @@ public class ArticleServiceImpl implements ArticleService {
 				.member(loginMember)
 				.build());
 
-			return heart.toDto(loginMember);
+			return heart.toDto(loginMember,articleHeartRepository.countByArticle(article));
 		}
 
 		articleHeartRepository.delete(existedHeart.get());
 		return ArticleResponseDto.ArticleResponse.builder()
 			.id(article.getId())
-			.heartNum(article.getHeartNum())
+			.heartNum(articleHeartRepository.countByArticle(article))
 			.isHeart(false)
 			.build();
 	}
