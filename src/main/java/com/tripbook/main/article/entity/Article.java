@@ -67,9 +67,8 @@ public class Article extends BasicEntity {
 
 	@OneToMany(mappedBy = "article")
 	private List<ArticleComment> commentList = new ArrayList<>();
-
-	@OneToMany(mappedBy = "article")
-	private List<ArticleImage> imageList = new ArrayList<>();
+	@Column
+	private String thumbnailUrl;
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
 	private long heartNum;
 
@@ -82,7 +81,7 @@ public class Article extends BasicEntity {
 	@Builder
 	public Article(String title, String content, ArticleStatus status, Member member,
 		List<ArticleHeart> heartList, List<ArticleBookmark> bookmarkList,
-		List<ArticleComment> commentList, List<ArticleImage> imageList) {
+		List<ArticleComment> commentList,String thumbnailUrl) {
 		this.title = title;
 		this.content = content;
 		this.status = status;
@@ -90,12 +89,13 @@ public class Article extends BasicEntity {
 		this.heartList = heartList;
 		this.bookmarkList = bookmarkList;
 		this.commentList = commentList;
-		this.imageList = imageList;
+		this.thumbnailUrl=thumbnailUrl;
 	}
-	public void updateArticle(Article article){
-		this.title = article.title;
-		this.content = article.content;
-		this.status = article.status;
+	public void updateArticle(ArticleRequestDto.ArticleSaveRequest articleSaveRequest,ArticleStatus status){
+		this.title = articleSaveRequest.getTitle();
+		this.content = articleSaveRequest.getContent();
+		this.thumbnailUrl= articleSaveRequest.getThumbnail();
+		this.status = status;
 	}
 	public boolean isApproved() {
 		return this.status.equals(ArticleStatus.APPROVED);
@@ -117,22 +117,7 @@ public class Article extends BasicEntity {
 		this.content=request.getContent();
 	}
 
-	private ArticleResponseDto.ImageResponse getThumbnailImage() {
-		if (this.getImageList() != null) {
-			Optional<ArticleImage> image = this.getImageList()
-				.stream()
-				.filter(ArticleImage::getIsThumbnail)
-				.findFirst();
-			if (image.isPresent()) {
-				return image.get().toDto();
-			} else {
-				// Thumbnail 이미지가 없음
-				return new ArticleResponseDto.ImageResponse();
-			}
-		}
-		// 이미지가 없음
-		return new ArticleResponseDto.ImageResponse();
-	}
+
 
 	public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
@@ -152,11 +137,7 @@ public class Article extends BasicEntity {
 					this.commentList.stream().map(ArticleComment::toDto).toList())
 			.createdAt(this.getCreatedAt())
 			.updatedAt(this.getUpdatedAt())
-			.imageList(
-				this.imageList == null ? new ArrayList<>() : this.imageList.stream().map(ArticleImage::toDto).toList())
-			.thumbnail(
-				getThumbnailImage()
-			)
+			.thumbnailUrl(this.thumbnailUrl)
 			.tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
 			.build();
 

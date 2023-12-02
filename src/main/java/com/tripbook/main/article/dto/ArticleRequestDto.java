@@ -34,6 +34,9 @@ public class ArticleRequestDto {
 		private String content;
 		@Schema(description = "이미지 ID리스트")
 		private long[] fileIds;
+		@Schema(description = "썸네일 ImageURL")
+		private String thumbnail;
+
 		@Schema(description = "테그 리스트")
 		private List<String> tagList;
 		// 확장자 검사

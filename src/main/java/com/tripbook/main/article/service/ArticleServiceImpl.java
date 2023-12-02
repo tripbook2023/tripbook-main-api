@@ -65,7 +65,7 @@ public class ArticleServiceImpl implements ArticleService {
 			Optional<Article> resultDto = articleRepository.findById(requestDto.getArticleId());
 			resultDto.ifPresent(targetArticle ->{
 				//업데이트
-				targetArticle.updateArticle(targetArticle);
+				targetArticle.updateArticle(requestDto,status);
 				imageRefIdMapping(requestDto.getFileIds(),targetArticle.getId());
 				//태그 저장
 				if (requestDto.getTagList() != null) {
@@ -81,6 +81,7 @@ public class ArticleServiceImpl implements ArticleService {
 				.title(requestDto.getTitle())
 				.content(requestDto.getContent())
 				.member(loginMember)
+				.thumbnailUrl(requestDto.getThumbnail())
 				.status(status)
 				.build());
 			imageRefIdMapping(requestDto.getFileIds(),article.getId());

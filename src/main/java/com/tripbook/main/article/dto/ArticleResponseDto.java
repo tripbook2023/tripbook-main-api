@@ -44,10 +44,8 @@ public class ArticleResponseDto {
 		@Schema(description = "작성자")
 		private ResponseMember.MemberSimpleDto author;
 
-		@Schema(description = "이미지")
-		private List<ImageResponse> imageList;
 		@Schema(description = "썸네일이미지")
-		private ImageResponse thumbnail;
+		private String thumbnailUrl;
 
 		@Schema(description = "태그 목록")
 		private List<String> tagList;
