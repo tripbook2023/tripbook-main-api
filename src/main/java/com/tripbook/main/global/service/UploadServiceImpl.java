@@ -56,8 +56,8 @@ public class UploadServiceImpl implements UploadService {
 				.name(file.getName())
 				.refType(category)
 				.build();
-			imageRepository.save(image);
-			return new ResponseImage.ImageInfo(image);
+			Image saveImage = imageRepository.save(image);
+			return new ResponseImage.ImageInfo(saveImage);
 		}else{
 			throw new CustomException.CommonUnSupportedException(ErrorCode.COMMON_UNSUPPORTED_ERROR.getMessage(),ErrorCode.COMMON_UNSUPPORTED_ERROR);
 		}

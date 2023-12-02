@@ -44,7 +44,9 @@ public class ArticleImage extends BasicEntity {
 		this.article = article;
 		this.isThumbnail = isThumbnail;
 	}
-
+	public void updateEnable(boolean enable){
+		this.setIsEnable(enable);
+	}
 	public ArticleResponseDto.ImageResponse toDto() {
 		return ArticleResponseDto.ImageResponse.builder()
 			.id(this.id)

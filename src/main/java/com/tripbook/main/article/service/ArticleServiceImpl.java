@@ -1,5 +1,6 @@
 package com.tripbook.main.article.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ import com.tripbook.main.article.repository.ArticleHeartRepository;
 import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.article.repository.ArticleTagRepository;
+import com.tripbook.main.global.dto.ResponseImage;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
@@ -52,69 +54,50 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	@Transactional
-	public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto,
+	public void saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto,
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 		Article article;
+		if (loginMember == null) {
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
+		}
 		if (requestDto.getArticleId() != null) {
 			Optional<Article> resultDto = articleRepository.findById(requestDto.getArticleId());
-			article = resultDto.orElseGet(() -> articleRepository.save(Article.builder()
-				.title(requestDto.getTitle())
-				.content(requestDto.getContent())
-				.member(loginMember)
-				.status(status)
-				.build()));
+			resultDto.ifPresent(targetArticle ->{
+				//업데이트
+				targetArticle.updateArticle(requestDto,status);
+				imageRefIdMapping(requestDto.getFileIds(),targetArticle.getId());
+				//태그 저장
+				if (requestDto.getTagList() != null) {
+					List<ArticleTag> tagList = requestDto.getTagList().stream()
+						.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(targetArticle).build()))
+						.toList();
+				}
+			});
 
 		} else {
+			// 저장
 			article = articleRepository.save(Article.builder()
 				.title(requestDto.getTitle())
 				.content(requestDto.getContent())
 				.member(loginMember)
+				.thumbnailUrl(requestDto.getThumbnail())
 				.status(status)
 				.build());
+			imageRefIdMapping(requestDto.getFileIds(),article.getId());
+			//태그 저장
+			if (requestDto.getTagList() != null) {
+				List<ArticleTag> tagList = requestDto.getTagList().stream()
+					.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
+					.toList();
+			}
 		}
-		if (loginMember == null) {
-			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
-		}
-/*
-        if (loginMember.isNotEditor()) {
-            throw new CustomException.MemberNotPermittedException(ErrorCode.MEMBER_NOT_PERMITTED.getMessage(), ErrorCode.MEMBER_NOT_PERMITTED);
-        }
+	}
 
- */
-
-		ArticleResponseDto.ArticleResponse response = article.toDto(loginMember);
-		//이미지 리스트 저장
-		if (requestDto.getImageList() != null) {
-			List<ArticleImage> imageList = requestDto.getImageList().stream()
-				.map(file -> {
-					String resultUrl = uploadService.imageUpload(file, "article");
-					Image image = imageRepository.save(
-						Image.builder().url(resultUrl).name(file.getOriginalFilename()).build());
-					return articleImageRepository.save(
-						ArticleImage.builder().image(image).article(article).isThumbnail(false).build());
-
-				}).toList();
-
-			response.setImageList(imageList.stream().map(ArticleImage::toDto).toList());
-		}
-		//썸네일 이미지 저장
-		if (requestDto.getThumbnail() != null) {
-			String resultUrl = uploadService.imageUpload(requestDto.getThumbnail(), "article");
-			Image image = imageRepository.save(
-				Image.builder().url(resultUrl).name(requestDto.getThumbnail().getOriginalFilename()).build());
-			ArticleImage articleImage = articleImageRepository.save(
-				ArticleImage.builder().image(image).article(article).isThumbnail(true).build());
-			response.setThumbnail(articleImage.toDto());
-		}
-		if (requestDto.getTagList() != null) {
-			List<ArticleTag> tagList = requestDto.getTagList().stream()
-				.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
-				.toList();
-			response.setTagList(tagList.stream().map(ArticleTag::getName).toList());
-		}
-
-		return response;
+	private void deleteArticleImagesAndArticleTags(ArticleRequestDto.ArticleSaveRequest requestDto) {
+		//기존 이미지, 태그 삭제
+		articleImageRepository.deleteAllByArticleId(requestDto.getArticleId());
+		articleTagRepository.deleteAllByArticleId(requestDto.getArticleId());
 	}
 
 	@Override
@@ -250,13 +233,13 @@ public class ArticleServiceImpl implements ArticleService {
 				.member(loginMember)
 				.build());
 
-			return heart.toDto(loginMember);
+			return heart.toDto(loginMember,articleHeartRepository.countByArticle(article));
 		}
 
 		articleHeartRepository.delete(existedHeart.get());
 		return ArticleResponseDto.ArticleResponse.builder()
 			.id(article.getId())
-			.heartNum(article.getHeartNum())
+			.heartNum(articleHeartRepository.countByArticle(article))
 			.isHeart(false)
 			.build();
 	}
@@ -300,5 +283,18 @@ public class ArticleServiceImpl implements ArticleService {
 		String email = principal.getName();
 
 		return memberService.getLoginMemberByEmail(email);
+	}
+	private void imageRefIdMapping(long[] imageArr,long refId) {
+		if(imageArr==null){
+			return;
+		}
+
+		// 기존 이미지 연결 끊기 isEnable=false
+		imageRepository.updateByRefIdReset(refId);
+		// 새로운 이미지 refId Update
+		Arrays.stream(imageArr).forEach(targetId->{
+			Optional<Image> image = imageRepository.findById(targetId);
+			image.ifPresent(targetImage->targetImage.updateRefId(refId));
+		});
 	}
 }

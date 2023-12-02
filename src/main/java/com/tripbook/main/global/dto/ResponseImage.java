@@ -32,8 +32,9 @@ public class ResponseImage {
 		private List<String> message;
 	}
 	@Getter
-	@Schema(description = "멤버조회에 대한 응답 값")
+	@Schema(description = "이미지정보 대한 응답 값")
 	public static class ImageInfo {
+		@Builder
 		public ImageInfo(Image image) {
 			this.id = image.getId();
 			this.url = image.getUrl();

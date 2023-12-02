@@ -1,5 +1,7 @@
 package com.tripbook.main.global.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.dto.ResponseImage;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.enums.ImageCategory;
 import com.tripbook.main.global.exception.CustomException;
@@ -55,9 +59,7 @@ public class UploadController {
 			//토큰없음
 			throw new CustomException.CommonNotPermittedException(ErrorCode.COMMON_NOT_PERMITTED.getMessage(),ErrorCode.COMMON_NOT_PERMITTED);
 		}
-		uploadService.imageUpload(image,category);
-
-		throw new CustomException.CommonUnSupportedException(ErrorCode.COMMON_UNSUPPORTED_ERROR.getMessage(),ErrorCode.COMMON_UNSUPPORTED_ERROR);
+		return ResponseEntity.status(HttpStatus.OK).body(uploadService.imageUpload(image,category));
 	}
 
 }

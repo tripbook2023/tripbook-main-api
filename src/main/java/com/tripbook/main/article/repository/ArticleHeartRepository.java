@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface ArticleHeartRepository extends JpaRepository<ArticleHeart, Long> {
     Optional<ArticleHeart> findByMemberAndArticle(Member member, Article article);
+    Long countByArticle(Article article);
 }

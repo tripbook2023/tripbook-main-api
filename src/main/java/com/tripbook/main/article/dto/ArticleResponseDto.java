@@ -3,6 +3,8 @@ package com.tripbook.main.article.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tripbook.main.member.dto.ResponseMember;
 
@@ -14,7 +16,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class ArticleResponseDto {
-
+	@Builder
+	@Getter
+	@Schema(description = "여행소식에 대한 성공 응답 값")
+	public static class ResultInfo {
+		@Schema(description = "HTTP 상태값")
+		private HttpStatus status;
+		@Schema(description = "String배열 형태의 결과값")
+		private List<String> message;
+	}
 	@Getter
 	@Setter
 	@NoArgsConstructor
@@ -34,10 +44,8 @@ public class ArticleResponseDto {
 		@Schema(description = "작성자")
 		private ResponseMember.MemberSimpleDto author;
 
-		@Schema(description = "이미지")
-		private List<ImageResponse> imageList;
 		@Schema(description = "썸네일이미지")
-		private ImageResponse thumbnail;
+		private String thumbnailUrl;
 
 		@Schema(description = "태그 목록")
 		private List<String> tagList;
@@ -102,5 +110,6 @@ public class ArticleResponseDto {
 		@Schema(description = "이미지 URL")
 		private String url;
 	}
+
 
 }
