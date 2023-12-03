@@ -16,7 +16,6 @@ import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.entity.ArticleBookmark;
 import com.tripbook.main.article.entity.ArticleComment;
 import com.tripbook.main.article.entity.ArticleHeart;
-import com.tripbook.main.article.entity.ArticleImage;
 import com.tripbook.main.article.entity.ArticleTag;
 import com.tripbook.main.article.enums.ArticleCommentStatus;
 import com.tripbook.main.article.enums.ArticleStatus;
@@ -26,7 +25,6 @@ import com.tripbook.main.article.repository.ArticleHeartRepository;
 import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.article.repository.ArticleTagRepository;
-import com.tripbook.main.global.dto.ResponseImage;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
@@ -63,18 +61,22 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		if (requestDto.getArticleId() != null) {
 			Optional<Article> resultDto = articleRepository.findById(requestDto.getArticleId());
-			resultDto.ifPresent(targetArticle ->{
+			resultDto.ifPresentOrElse(targetArticle -> {
 				//업데이트
-				targetArticle.updateArticle(requestDto,status);
-				imageRefIdMapping(requestDto.getFileIds(),targetArticle.getId());
+				targetArticle.updateArticle(requestDto, status);
+				imageRefIdMapping(requestDto.getFileIds(), targetArticle.getId());
 				//태그 저장
 				if (requestDto.getTagList() != null) {
 					List<ArticleTag> tagList = requestDto.getTagList().stream()
-						.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(targetArticle).build()))
+						.map(tag -> articleTagRepository.save(
+							ArticleTag.builder().name(tag).article(targetArticle).build()))
 						.toList();
 				}
+			}, () -> {
+				//Empty
+				throw new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
+					ErrorCode.ARTICLE_NOT_FOUND);
 			});
-
 		} else {
 			// 저장
 			article = articleRepository.save(Article.builder()
@@ -84,7 +86,7 @@ public class ArticleServiceImpl implements ArticleService {
 				.thumbnailUrl(requestDto.getThumbnail())
 				.status(status)
 				.build());
-			imageRefIdMapping(requestDto.getFileIds(),article.getId());
+			imageRefIdMapping(requestDto.getFileIds(), article.getId());
 			//태그 저장
 			if (requestDto.getTagList() != null) {
 				List<ArticleTag> tagList = requestDto.getTagList().stream()
@@ -128,7 +130,7 @@ public class ArticleServiceImpl implements ArticleService {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
 		if (article.getStatus().equals(ArticleStatus.DELETED)) {
-			throw  new CustomException.ArticleDeletedException(ErrorCode.ARTICLE_DELETED.getMessage(),
+			throw new CustomException.ArticleDeletedException(ErrorCode.ARTICLE_DELETED.getMessage(),
 				ErrorCode.ARTICLE_DELETED);
 		}
 
@@ -233,7 +235,7 @@ public class ArticleServiceImpl implements ArticleService {
 				.member(loginMember)
 				.build());
 
-			return heart.toDto(loginMember,articleHeartRepository.countByArticle(article));
+			return heart.toDto(loginMember, articleHeartRepository.countByArticle(article));
 		}
 
 		articleHeartRepository.delete(existedHeart.get());
@@ -284,17 +286,18 @@ public class ArticleServiceImpl implements ArticleService {
 
 		return memberService.getLoginMemberByEmail(email);
 	}
-	private void imageRefIdMapping(long[] imageArr,long refId) {
-		if(imageArr==null){
+
+	private void imageRefIdMapping(long[] imageArr, long refId) {
+		if (imageArr == null) {
 			return;
 		}
 
 		// 기존 이미지 연결 끊기 isEnable=false
 		imageRepository.updateByRefIdReset(refId);
 		// 새로운 이미지 refId Update
-		Arrays.stream(imageArr).forEach(targetId->{
+		Arrays.stream(imageArr).forEach(targetId -> {
 			Optional<Image> image = imageRepository.findById(targetId);
-			image.ifPresent(targetImage->targetImage.updateRefId(refId));
+			image.ifPresent(targetImage -> targetImage.updateRefId(refId));
 		});
 	}
 }
