@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
-import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.global.common.ErrorResponse;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
@@ -90,6 +89,25 @@ public class MemberController {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
 		List<ArticleResponseDto.ArticleResponse> resultList = memberService.memberTempArticleList(email);
+		return ResponseEntity.status(HttpStatus.OK).body(resultList);
+	}
+
+	@Operation(security = {
+		@SecurityRequirement(name = "JWT")},
+		summary = "멤버_최근리스트조회", description = "JWT를 사용하여 여행소식 최근리스트 조회.", responses = {
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(
+			array = @ArraySchema(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class)))
+		),
+		@ApiResponse(responseCode = "400", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+	})
+	@GetMapping("/select/articles/recent")
+	public ResponseEntity<Object> selectRecentArticles(Authentication authentication) {
+		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
+		String email = (String)authUser.getAttribute("email");
+		if (email == null || email.isEmpty()) {
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
+		}
+		List<ArticleResponseDto.ArticleResponse> resultList = memberService.memberRecentArticleList(email);
 		return ResponseEntity.status(HttpStatus.OK).body(resultList);
 	}
 

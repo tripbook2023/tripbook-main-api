@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,13 +13,12 @@ import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.global.dto.ResponseImage;
 import com.tripbook.main.global.entity.Image;
+import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.enums.ImageCategory;
+import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.repository.ImageRepository;
 import com.tripbook.main.global.service.UploadService;
-import com.tripbook.main.global.enums.ErrorCode;
-import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
-import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.enums.MemberStatus;
@@ -29,7 +27,6 @@ import com.tripbook.main.member.vo.MemberVO;
 import com.tripbook.main.token.dto.TokenInfo;
 import com.tripbook.main.token.service.JwtService;
 
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +40,6 @@ public class MemberServiceImpl implements MemberService {
 	@Qualifier("jwtService")
 	private final JwtService jwtService;
 	private final UploadService uploadService;
-
 
 	@Override
 	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
@@ -66,10 +62,10 @@ public class MemberServiceImpl implements MemberService {
 		} else {
 			imageInfo = null;
 		}
-		Member resultMember= memberRepository.save(new Member(member));
+		Member resultMember = memberRepository.save(new Member(member));
 		//이미지  <-> 멤버 연결
-		if(imageInfo!=null){
-			imageRefIdMapping(imageInfo,resultMember.getId());
+		if (imageInfo != null) {
+			imageRefIdMapping(imageInfo, resultMember.getId());
 		}
 
 		//토큰 응답
@@ -80,17 +76,17 @@ public class MemberServiceImpl implements MemberService {
 			.accessToken(tokenInfo.getAccessToken()).build();
 	}
 
-	private void imageRefIdMapping(ResponseImage.ImageInfo imageInfo,Long refId) {
+	private void imageRefIdMapping(ResponseImage.ImageInfo imageInfo, Long refId) {
 		Optional<Image> targetImage = imageRepository.findById(imageInfo.getId());
-		targetImage.ifPresent(image->image.updateRefId(refId));
+		targetImage.ifPresent(image -> image.updateRefId(refId));
 	}
 
 	private Member withdrawalMemberUpdate(MemberVO member) {
 		Member rstMember = memberRepository.findByEmail(member.getEmail());
-		if(rstMember==null){
+		if (rstMember == null) {
 			return null;
 		}
-		if(rstMember.getStatus().equals(MemberStatus.STATUS_WITHDRAWAL)){
+		if (rstMember.getStatus().equals(MemberStatus.STATUS_WITHDRAWAL)) {
 			return rstMember;
 		}
 		return null;
@@ -113,6 +109,17 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public List<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email) {
+		Member loginMember = getLoginMemberByEmail(email);
+		List<ArticleResponseDto.ArticleResponse> resultList = articleRepository.findTop5ByStatusAndMemberEmailOrderByCreatedAtDesc(
+				ArticleStatus.ACTIVE, email)
+			.stream().map(article -> article.toDto(loginMember))
+			.collect(Collectors.toList());
+
+		return resultList;
+	}
+
+	@Override
 	public boolean memberNameValidation(MemberVO member) {
 		return memberRepository.findByName(member.getName()) != null;
 	}
@@ -120,18 +127,18 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public void memberUpdate(MemberVO updateMember) {
-		if(updateMember.getName()!=null){
-			if(memberRepository.findByName(updateMember.getName())!=null){
+		if (updateMember.getName() != null) {
+			if (memberRepository.findByName(updateMember.getName()) != null) {
 				log.error("Already Exist Nickname");
 				throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 					ErrorCode.MEMBER_NAME_ERROR);
 			}
 		}
 		Member byEmail = memberRepository.findByEmail(updateMember.getEmail());
-		if(byEmail!=null){
+		if (byEmail != null) {
 			//Prfile Default Set
-			if(updateMember.getProfile()!=null){
-				if(updateMember.getProfile().isEmpty()){
+			if (updateMember.getProfile() != null) {
+				if (updateMember.getProfile().isEmpty()) {
 					updateMember.setProfile(null);
 				}
 			}
@@ -142,7 +149,7 @@ public class MemberServiceImpl implements MemberService {
 
 				updateMember.setProfile(imageInfo.getUrl());
 				//이미지  <-> 멤버 연결
-				imageRefIdMapping(imageInfo,byEmail.getId());
+				imageRefIdMapping(imageInfo, byEmail.getId());
 
 			}
 			byEmail.updateMember(updateMember);
@@ -154,8 +161,8 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public void memberDelete(MemberVO bindMemberVo) {
 		Member rstMember = memberRepository.findByEmail(bindMemberVo.getEmail());
-		if(rstMember==null){
-			log.error("MemberNotFound::{}",bindMemberVo.getEmail());
+		if (rstMember == null) {
+			log.error("MemberNotFound::{}", bindMemberVo.getEmail());
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
 		rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
