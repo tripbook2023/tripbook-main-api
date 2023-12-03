@@ -2,11 +2,11 @@ package com.tripbook.main.article.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Where;
 
 import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
@@ -65,6 +65,7 @@ public class Article extends BasicEntity {
 	@OneToMany(mappedBy = "article")
 	private List<ArticleBookmark> bookmarkList = new ArrayList<>();
 
+	@Where(clause = "status != 'DELETED'")
 	@OneToMany(mappedBy = "article")
 	private List<ArticleComment> commentList = new ArrayList<>();
 	@Column
@@ -81,7 +82,7 @@ public class Article extends BasicEntity {
 	@Builder
 	public Article(String title, String content, ArticleStatus status, Member member,
 		List<ArticleHeart> heartList, List<ArticleBookmark> bookmarkList,
-		List<ArticleComment> commentList,String thumbnailUrl) {
+		List<ArticleComment> commentList, String thumbnailUrl) {
 		this.title = title;
 		this.content = content;
 		this.status = status;
@@ -89,14 +90,16 @@ public class Article extends BasicEntity {
 		this.heartList = heartList;
 		this.bookmarkList = bookmarkList;
 		this.commentList = commentList;
-		this.thumbnailUrl=thumbnailUrl;
+		this.thumbnailUrl = thumbnailUrl;
 	}
-	public void updateArticle(ArticleRequestDto.ArticleSaveRequest articleSaveRequest,ArticleStatus status){
+
+	public void updateArticle(ArticleRequestDto.ArticleSaveRequest articleSaveRequest, ArticleStatus status) {
 		this.title = articleSaveRequest.getTitle();
 		this.content = articleSaveRequest.getContent();
-		this.thumbnailUrl= articleSaveRequest.getThumbnail();
+		this.thumbnailUrl = articleSaveRequest.getThumbnail();
 		this.status = status;
 	}
+
 	public boolean isApproved() {
 		return this.status.equals(ArticleStatus.APPROVED);
 	}
@@ -112,12 +115,11 @@ public class Article extends BasicEntity {
 	public void delete() {
 		this.status = ArticleStatus.DELETED;
 	}
-	private void updateTempArticle(ArticleRequestDto.ArticleSaveRequest request){
-		this.title=request.getTitle();
-		this.content=request.getContent();
+
+	private void updateTempArticle(ArticleRequestDto.ArticleSaveRequest request) {
+		this.title = request.getTitle();
+		this.content = request.getContent();
 	}
-
-
 
 	public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
