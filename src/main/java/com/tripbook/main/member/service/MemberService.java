@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
-import com.tripbook.main.article.entity.Article;
-import com.tripbook.main.global.enums.ErrorCode;
-import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
@@ -17,7 +14,11 @@ public interface MemberService {
 
 	// public Integer memberUpdate()
 	public Optional<Member> memberCertification(MemberVO memberVO);
+
 	public List<ArticleResponseDto.ArticleResponse> memberTempArticleList(String email);
+
+	public List<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email);
+
 	public boolean memberNameValidation(MemberVO memberVO);
 
 	void memberUpdate(MemberVO updateMember);

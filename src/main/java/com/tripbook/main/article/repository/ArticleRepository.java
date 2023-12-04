@@ -1,7 +1,6 @@
 package com.tripbook.main.article.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -12,8 +11,13 @@ import com.tripbook.main.article.enums.ArticleStatus;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 	Slice<Article> findAllByStatus(ArticleStatus status, Pageable pageable);
-	List<Article> findAllByStatusAndMemberEmail(ArticleStatus status,String email);
+
+	List<Article> findAllByStatusAndMemberEmail(ArticleStatus status, String email);
+
+	List<Article> findTop5ByStatusAndMemberEmailOrderByCreatedAtDesc(ArticleStatus status, String email);
+
 	Long deleteArticleById(Long id);
+
 	Slice<Article> findAllByTitleContainingOrContentContainingAndStatus(String title, String content,
 		ArticleStatus status, Pageable pageable);
 }
