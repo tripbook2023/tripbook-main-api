@@ -55,7 +55,7 @@ public class ArticleController {
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "여행소식 저장", description = "여행소식을 저장합니다.", responses = {
-		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ResultInfo.class))),
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 		@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "404", description = "여행소식 찾을 수  없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
@@ -63,11 +63,7 @@ public class ArticleController {
 	public ResponseEntity<?> saveArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
 		Authentication authentication) {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-		articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal);
-		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
-			.build();
-		return ResponseEntity.status(HttpStatus.OK).body(result);
+		return ResponseEntity.status(HttpStatus.OK).body(articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal));
 	}
 
 	@Operation(summary = "여행소식 목록 조회 및 검색",
@@ -216,11 +212,7 @@ public class ArticleController {
 		Authentication authentication) {
 
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-		articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal);
-		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
-			.build();
-		return ResponseEntity.status(HttpStatus.OK).body(result);
+		return ResponseEntity.status(HttpStatus.OK).body(	articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
 	}
 
 	private Sort getPageSort(ArticleSort sortParam) {

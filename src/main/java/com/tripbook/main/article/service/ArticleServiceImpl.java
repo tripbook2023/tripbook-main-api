@@ -52,10 +52,11 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Override
 	@Transactional
-	public void saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto,
+	public ArticleResponseDto.ArticleResponse saveArticle(ArticleRequestDto.ArticleSaveRequest requestDto,
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 		Article article;
+		String test="";
 		if (loginMember == null) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
@@ -77,6 +78,11 @@ public class ArticleServiceImpl implements ArticleService {
 				throw new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
 					ErrorCode.ARTICLE_NOT_FOUND);
 			});
+			// 성공시 return
+			return ArticleResponseDto.ArticleResponse.builder()
+				.id(requestDto.getArticleId())
+				.title(requestDto.getTitle())
+				.build();
 		} else {
 			// 저장
 			article = articleRepository.save(Article.builder()
@@ -93,6 +99,11 @@ public class ArticleServiceImpl implements ArticleService {
 					.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
 					.toList();
 			}
+			return ArticleResponseDto.ArticleResponse.builder()
+				.id(article.getId())
+				.title(article.getTitle())
+				.build();
+
 		}
 	}
 
