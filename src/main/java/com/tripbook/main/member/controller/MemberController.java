@@ -36,7 +36,11 @@ import com.tripbook.main.member.service.MemberService;
 import com.tripbook.main.member.vo.MemberVO;
 import com.tripbook.main.token.service.JwtService;
 
+import io.micrometer.common.lang.Nullable;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -100,16 +104,22 @@ public class MemberController {
 		),
 		@ApiResponse(responseCode = "400", description = "유저를 찾을 수 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	})
+	@Parameters(value = {
+		@Parameter(name = "page", description = "페이지 번호", in = ParameterIn.QUERY),
+		@Parameter(name = "size", description = "페이지당 게시글 수", in = ParameterIn.QUERY)
+	})
 	@GetMapping("/select/articles/recent")
-	public ResponseEntity<Object> selectRecentArticles(Authentication authentication) {
+	public ResponseEntity<Object> selectRecentArticles(Authentication authentication,
+		@RequestParam Integer page,
+		@RequestParam Integer size) {
 		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
 		String email = (String)authUser.getAttribute("email");
 		if (email == null || email.isEmpty()) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
-		List<ArticleResponseDto.ArticleResponse> resultList = memberService.memberRecentArticleList(email);
-		return ResponseEntity.status(HttpStatus.OK).body(resultList);
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberRecentArticleList(email,page,size));
 	}
+
 
 	@Operation(
 		summary = "회원가입", description = "프로필 정보를 입력한다.\n\n birth:yyyy-mm-dd", responses = {

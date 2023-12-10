@@ -5,10 +5,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
+import com.tripbook.main.article.entity.Article;
+import com.tripbook.main.article.enums.ArticleSort;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.global.dto.ResponseImage;
@@ -109,14 +116,12 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public List<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email) {
+	public Page<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email,Integer page,Integer size) {
 		Member loginMember = getLoginMemberByEmail(email);
-		List<ArticleResponseDto.ArticleResponse> resultList = articleRepository.findTop5ByStatusAndMemberEmailOrderByCreatedAtDesc(
-				ArticleStatus.ACTIVE, email)
-			.stream().map(article -> article.toDto(loginMember))
-			.collect(Collectors.toList());
-
-		return resultList;
+		Sort pageSort = Sort.by("createdAt").descending();
+		Pageable pageable = PageRequest.of(page, size, pageSort);
+		return articleRepository.findAllByStatusAndMemberEmail(
+				ArticleStatus.ACTIVE, email, pageable).map(article -> article.toDto(loginMember));
 	}
 
 	@Override
