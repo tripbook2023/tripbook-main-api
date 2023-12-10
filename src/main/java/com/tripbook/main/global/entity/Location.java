@@ -34,9 +34,10 @@ public class Location {
 	private Article article;
 
 	@Builder
-	public Location(String x, String y, String name) {
+	public Location(String x, String y, String name, Article article) {
 		this.x = x;
 		this.y = y;
 		this.name = name;
+		this.article = article;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tripbook.main.global.dto.LocationDto;
 import com.tripbook.main.member.dto.ResponseMember;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,7 @@ public class ArticleResponseDto {
 		@Schema(description = "String배열 형태의 결과값")
 		private List<String> message;
 	}
+
 	@Getter
 	@Setter
 	@NoArgsConstructor
@@ -61,6 +63,8 @@ public class ArticleResponseDto {
 
 		@Schema(description = "북마크 여부")
 		private boolean isBookmark;
+		@Schema(description = "장소")
+		private LocationDto.LocationSimpleDto location;
 
 		@Schema(description = "댓글 목록")
 		private List<CommentResponse> commentList;
@@ -110,6 +114,5 @@ public class ArticleResponseDto {
 		@Schema(description = "이미지 URL")
 		private String url;
 	}
-
 
 }

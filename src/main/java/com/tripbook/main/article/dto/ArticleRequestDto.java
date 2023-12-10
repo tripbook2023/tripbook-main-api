@@ -36,15 +36,19 @@ public class ArticleRequestDto {
 		private long[] fileIds;
 		@Schema(description = "썸네일 ImageURL")
 		private String thumbnail;
-
 		@Schema(description = "테그 리스트")
 		private List<String> tagList;
+		@Schema(description = "위치 좌표 X")
+		private String locationX;
+		@Schema(description = "위치 좌표 Y")
+		private String locationY;
+		@Schema(description = "위치 장소명")
+		private String locationName;
+
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 		@JsonIgnore
 		private Boolean imageAccept = true;
-
-
 
 		public void setTagList(List<String> tagList) {
 			this.tagList = tagList;

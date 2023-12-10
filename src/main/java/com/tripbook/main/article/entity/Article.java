@@ -12,6 +12,8 @@ import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.global.common.BasicEntity;
+import com.tripbook.main.global.dto.LocationDto;
+import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.member.entity.Member;
 
 import jakarta.persistence.Column;
@@ -25,6 +27,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,7 +59,7 @@ public class Article extends BasicEntity {
 	@Enumerated(EnumType.STRING)
 	private ArticleStatus status;
 
-	@OneToMany
+	@OneToMany(mappedBy = "article")
 	private List<ArticleTag> tagList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "article")
@@ -68,6 +71,8 @@ public class Article extends BasicEntity {
 	@Where(clause = "status != 'DELETED'")
 	@OneToMany(mappedBy = "article")
 	private List<ArticleComment> commentList = new ArrayList<>();
+	@OneToOne(mappedBy = "article")
+	private Location location;
 	@Column
 	private String thumbnailUrl;
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
@@ -137,6 +142,7 @@ public class Article extends BasicEntity {
 			.commentList(
 				this.commentList == null ? new ArrayList<>() :
 					this.commentList.stream().map(ArticleComment::toDto).toList())
+			.location(this.location == null ? null : new LocationDto.LocationSimpleDto(this.location))
 			.createdAt(this.getCreatedAt())
 			.updatedAt(this.getUpdatedAt())
 			.thumbnailUrl(this.thumbnailUrl)
