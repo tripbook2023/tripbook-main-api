@@ -15,7 +15,6 @@ import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.entity.ArticleBookmark;
 import com.tripbook.main.article.entity.ArticleComment;
 import com.tripbook.main.article.entity.ArticleHeart;
-import com.tripbook.main.article.entity.ArticleTag;
 import com.tripbook.main.article.enums.ArticleCommentStatus;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleBookmarkRepository;
@@ -69,7 +68,7 @@ public class ArticleServiceImpl implements ArticleService {
 				targetArticle.updateArticle(requestDto, status);
 				imageRefIdMapping(requestDto.getFileIds(), targetArticle.getId());
 				//태그 저장
-				initTagList(requestDto, targetArticle);
+				// initTagList(requestDto, targetArticle);
 				//위치 장소 저장
 				initLocation(requestDto, targetArticle);
 			}, () -> {
@@ -93,7 +92,7 @@ public class ArticleServiceImpl implements ArticleService {
 				.build());
 			imageRefIdMapping(requestDto.getFileIds(), article.getId());
 			//태그 저장
-			initTagList(requestDto, article);
+			// initTagList(requestDto, article);
 			//위치 장소 저장
 			initLocation(requestDto, article);
 
@@ -120,12 +119,12 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private void initTagList(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
-		if (requestDto.getTagList() != null) {
-			articleTagRepository.deleteAllByArticle(article);
-			requestDto.getTagList().forEach(tag -> {
-				articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build());
-			});
-		}
+		// if (requestDto.getTagList() != null) {
+		// 	articleTagRepository.deleteAllByArticle(article);
+		// 	requestDto.getTagList().forEach(tag -> {
+		// 		articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build());
+		// 	});
+		// }
 	}
 
 	private void deleteArticleImagesAndArticleTags(ArticleRequestDto.ArticleSaveRequest requestDto) {

@@ -36,8 +36,8 @@ public class ArticleRequestDto {
 		private long[] fileIds;
 		@Schema(description = "썸네일 ImageURL")
 		private String thumbnail;
-		@Schema(description = "테그 리스트")
-		private List<String> tagList;
+		// @Schema(description = "테그 리스트")
+		// private List<String> tagList;
 		@Schema(description = "위치 좌표 X")
 		private String locationX;
 		@Schema(description = "위치 좌표 Y")
@@ -50,9 +50,9 @@ public class ArticleRequestDto {
 		@JsonIgnore
 		private Boolean imageAccept = true;
 
-		public void setTagList(List<String> tagList) {
-			this.tagList = tagList;
-		}
+		// public void setTagList(List<String> tagList) {
+		// 	this.tagList = tagList;
+		// }
 
 		public void isImageFileValid(List<MultipartFile> imageFileList) {
 			imageFileList.forEach(imageFile -> {

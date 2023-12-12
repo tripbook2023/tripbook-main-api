@@ -146,7 +146,7 @@ public class Article extends BasicEntity {
 			.createdAt(this.getCreatedAt())
 			.updatedAt(this.getUpdatedAt())
 			.thumbnailUrl(this.thumbnailUrl)
-			.tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
+			// .tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
 			.build();
 
 	}
