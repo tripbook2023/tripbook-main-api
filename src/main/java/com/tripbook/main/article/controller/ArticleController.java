@@ -8,13 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,11 +57,12 @@ public class ArticleController {
 		@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "404", description = "여행소식 찾을 수  없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
-	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<?> saveArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
+	@PostMapping
+	public ResponseEntity<?> saveArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto,
 		Authentication authentication) {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-		return ResponseEntity.status(HttpStatus.OK).body(articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(articleService.saveArticle(requestDto, ArticleStatus.ACTIVE, principal));
 	}
 
 	@Operation(summary = "여행소식 목록 조회 및 검색",
@@ -207,12 +206,13 @@ public class ArticleController {
 			@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 			@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		})
-	@PostMapping(value = "/temp", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<?> saveTempArticle(@Valid @ModelAttribute ArticleRequestDto.ArticleSaveRequest requestDto,
+	@PostMapping(value = "/temp")
+	public ResponseEntity<?> saveTempArticle(@Valid @RequestBody ArticleRequestDto.ArticleSaveRequest requestDto,
 		Authentication authentication) {
 
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
-		return ResponseEntity.status(HttpStatus.OK).body(	articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(articleService.saveArticle(requestDto, ArticleStatus.TEMP, principal));
 	}
 
 	private Sort getPageSort(ArticleSort sortParam) {

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tripbook.main.global.dto.LocationDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class ArticleRequestDto {
-
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
@@ -38,12 +38,8 @@ public class ArticleRequestDto {
 		private String thumbnail;
 		// @Schema(description = "테그 리스트")
 		// private List<String> tagList;
-		@Schema(description = "위치 좌표 X")
-		private String locationX;
-		@Schema(description = "위치 좌표 Y")
-		private String locationY;
-		@Schema(description = "위치 장소명")
-		private String locationName;
+		@Schema(description = "위치태그 리스트")
+		private List<LocationDto.LocationSimpleDto> locationList;
 
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");

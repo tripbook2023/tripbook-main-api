@@ -3,6 +3,7 @@ package com.tripbook.main.global.entity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.entity.Article;
 
 import jakarta.persistence.Entity;
@@ -10,7 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class Location {
 	private String x;
 	private String y;
 	private String name;
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "article_id")
 	private Article article;
 
@@ -39,5 +40,14 @@ public class Location {
 		this.y = y;
 		this.name = name;
 		this.article = article;
+	}
+
+	public ArticleResponseDto.LocationResponse toDto() {
+		return ArticleResponseDto.LocationResponse.builder()
+			.id(this.id)
+			.locationX(this.x)
+			.locationY(this.y)
+			.name(this.name)
+			.build();
 	}
 }

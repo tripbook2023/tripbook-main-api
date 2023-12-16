@@ -105,17 +105,26 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private void initLocation(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
-		if (requestDto.getLocationX() != null && requestDto.getLocationY() != null
-			&& requestDto.getLocationName() != null) {
-			locationRepository.deleteByArticle(article);
-			locationRepository.save(Location.builder()
-				.x(requestDto.getLocationX())
-				.y(requestDto.getLocationY())
-				.name(requestDto.getLocationName())
-				.article(article)
-				.build()
-			);
-		}
+		if (requestDto.getLocationList().size() < 1)
+			return;
+		//기존 여행장소 리스트 제거
+		deleteLocationList(article);
+		requestDto.getLocationList().forEach(locationItem -> {
+			if (locationItem.getLocationX() != null && locationItem.getLocationY() != null
+				&& locationItem.getName() != null) {
+				locationRepository.save(Location.builder()
+					.x(locationItem.getLocationX())
+					.y(locationItem.getLocationY())
+					.name(locationItem.getName())
+					.article(article)
+					.build()
+				);
+			}
+		});
+	}
+
+	private void deleteLocationList(Article article) {
+		locationRepository.deleteByArticle(article);
 	}
 
 	private void initTagList(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
