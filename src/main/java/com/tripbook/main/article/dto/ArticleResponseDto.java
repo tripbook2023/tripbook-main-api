@@ -25,6 +25,7 @@ public class ArticleResponseDto {
 		@Schema(description = "String배열 형태의 결과값")
 		private List<String> message;
 	}
+
 	@Getter
 	@Setter
 	@NoArgsConstructor
@@ -61,6 +62,8 @@ public class ArticleResponseDto {
 
 		@Schema(description = "북마크 여부")
 		private boolean isBookmark;
+		@Schema(description = "장소")
+		private List<LocationResponse> location;
 
 		@Schema(description = "댓글 목록")
 		private List<CommentResponse> commentList;
@@ -103,6 +106,24 @@ public class ArticleResponseDto {
 	@AllArgsConstructor
 	@Builder
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class LocationResponse {
+		@Schema(description = "여행장소 ID")
+		private long id;
+
+		@Schema(description = "X")
+		private String locationX;
+		@Schema(description = "Y")
+		private String locationY;
+		@Schema(description = "여행장소 이름")
+		private String name;
+
+	}
+
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	public static class ImageResponse {
 		@Schema(description = "이미지 ID")
 		private long id;
@@ -110,6 +131,5 @@ public class ArticleResponseDto {
 		@Schema(description = "이미지 URL")
 		private String url;
 	}
-
 
 }

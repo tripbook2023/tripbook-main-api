@@ -1,7 +1,6 @@
 package com.tripbook.main.article.service;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.entity.ArticleBookmark;
 import com.tripbook.main.article.entity.ArticleComment;
 import com.tripbook.main.article.entity.ArticleHeart;
-import com.tripbook.main.article.entity.ArticleTag;
 import com.tripbook.main.article.enums.ArticleCommentStatus;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleBookmarkRepository;
@@ -26,9 +24,11 @@ import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.article.repository.ArticleTagRepository;
 import com.tripbook.main.global.entity.Image;
+import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.repository.ImageRepository;
+import com.tripbook.main.global.repository.LocationRepository;
 import com.tripbook.main.global.service.UploadService;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.service.MemberService;
@@ -49,6 +49,7 @@ public class ArticleServiceImpl implements ArticleService {
 	private final ArticleCommentRepository articleCommentRepository;
 	private final ArticleBookmarkRepository articleBookmarkRepository;
 	private final ArticleHeartRepository articleHeartRepository;
+	private final LocationRepository locationRepository;
 
 	@Override
 	@Transactional
@@ -56,7 +57,7 @@ public class ArticleServiceImpl implements ArticleService {
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 		Article article;
-		String test="";
+		String test = "";
 		if (loginMember == null) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
@@ -67,12 +68,9 @@ public class ArticleServiceImpl implements ArticleService {
 				targetArticle.updateArticle(requestDto, status);
 				imageRefIdMapping(requestDto.getFileIds(), targetArticle.getId());
 				//태그 저장
-				if (requestDto.getTagList() != null) {
-					List<ArticleTag> tagList = requestDto.getTagList().stream()
-						.map(tag -> articleTagRepository.save(
-							ArticleTag.builder().name(tag).article(targetArticle).build()))
-						.toList();
-				}
+				// initTagList(requestDto, targetArticle);
+				//위치 장소 저장
+				initLocation(requestDto, targetArticle);
 			}, () -> {
 				//Empty
 				throw new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
@@ -94,11 +92,10 @@ public class ArticleServiceImpl implements ArticleService {
 				.build());
 			imageRefIdMapping(requestDto.getFileIds(), article.getId());
 			//태그 저장
-			if (requestDto.getTagList() != null) {
-				List<ArticleTag> tagList = requestDto.getTagList().stream()
-					.map(tag -> articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build()))
-					.toList();
-			}
+			// initTagList(requestDto, article);
+			//위치 장소 저장
+			initLocation(requestDto, article);
+
 			return ArticleResponseDto.ArticleResponse.builder()
 				.id(article.getId())
 				.title(article.getTitle())
@@ -107,10 +104,41 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 	}
 
+	private void initLocation(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
+		if (requestDto.getLocationList().size() < 1)
+			return;
+		//기존 여행장소 리스트 제거
+		deleteLocationList(article);
+		requestDto.getLocationList().forEach(locationItem -> {
+			if (locationItem.getLocationX() != null && locationItem.getLocationY() != null
+				&& locationItem.getName() != null) {
+				locationRepository.save(Location.builder()
+					.x(locationItem.getLocationX())
+					.y(locationItem.getLocationY())
+					.name(locationItem.getName())
+					.article(article)
+					.build()
+				);
+			}
+		});
+	}
+
+	private void deleteLocationList(Article article) {
+		locationRepository.deleteByArticle(article);
+	}
+
+	private void initTagList(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
+		// if (requestDto.getTagList() != null) {
+		// 	articleTagRepository.deleteAllByArticle(article);
+		// 	requestDto.getTagList().forEach(tag -> {
+		// 		articleTagRepository.save(ArticleTag.builder().name(tag).article(article).build());
+		// 	});
+		// }
+	}
+
 	private void deleteArticleImagesAndArticleTags(ArticleRequestDto.ArticleSaveRequest requestDto) {
 		//기존 이미지, 태그 삭제
 		articleImageRepository.deleteAllByArticleId(requestDto.getArticleId());
-		articleTagRepository.deleteAllByArticleId(requestDto.getArticleId());
 	}
 
 	@Override

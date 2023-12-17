@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tripbook.main.global.dto.LocationDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class ArticleRequestDto {
-
 	@Getter
 	@NoArgsConstructor
 	@AllArgsConstructor
@@ -36,19 +36,19 @@ public class ArticleRequestDto {
 		private long[] fileIds;
 		@Schema(description = "썸네일 ImageURL")
 		private String thumbnail;
+		// @Schema(description = "테그 리스트")
+		// private List<String> tagList;
+		@Schema(description = "위치태그 리스트")
+		private List<LocationDto.LocationSimpleDto> locationList;
 
-		@Schema(description = "테그 리스트")
-		private List<String> tagList;
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 		@JsonIgnore
 		private Boolean imageAccept = true;
 
-
-
-		public void setTagList(List<String> tagList) {
-			this.tagList = tagList;
-		}
+		// public void setTagList(List<String> tagList) {
+		// 	this.tagList = tagList;
+		// }
 
 		public void isImageFileValid(List<MultipartFile> imageFileList) {
 			imageFileList.forEach(imageFile -> {
