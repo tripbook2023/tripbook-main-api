@@ -33,7 +33,7 @@ public class Image extends BasicEntity {
 	private String name;
 
 	@Column
-	private long refId;
+	private Long refId;
 
 	@Column
 	private String refType;
