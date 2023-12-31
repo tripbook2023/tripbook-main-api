@@ -1,5 +1,6 @@
 package com.tripbook.main.article.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +95,23 @@ public class Article extends BasicEntity {
 		this.bookmarkList = bookmarkList;
 		this.commentList = commentList;
 		this.thumbnailUrl = thumbnailUrl;
+	}
+
+	public Article(long id, long bookmarkNum, long commentNum, String content, LocalDateTime createdAt, long heartNum,
+		boolean isEnable, ArticleStatus status, String thumbnailUrl, String title, LocalDateTime updatedAt,
+		Member member) {
+		this.id = id;
+		this.bookmarkNum = bookmarkNum;
+		this.commentNum = commentNum;
+		this.content = content;
+		this.createdAt = createdAt;
+		this.heartNum = heartNum;
+		this.isEnable = isEnable;
+		this.status = status;
+		this.thumbnailUrl = thumbnailUrl;
+		this.title = title;
+		this.updatedAt = updatedAt;
+		this.member = member;
 	}
 
 	public void updateArticle(ArticleRequestDto.ArticleSaveRequest articleSaveRequest, ArticleStatus status) {
