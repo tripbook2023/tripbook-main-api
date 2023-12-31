@@ -152,10 +152,12 @@ public class ArticleServiceImpl implements ArticleService {
 				.findAllByStatus(ArticleStatus.ACTIVE, pageable)
 				.map(article -> article.toDto(loginMember));
 		}
-
+		//
 		return articleRepository
-			.findAllByTitleContainingOrContentContainingAndStatus(word, word, ArticleStatus.ACTIVE, pageable)
+			.getAllByTitleContainingOrContentContainingAndStatusAndLocationName(word, word, ArticleStatus.ACTIVE,
+				pageable)
 			.map(article -> article.toDto(loginMember));
+
 	}
 
 	@Override
