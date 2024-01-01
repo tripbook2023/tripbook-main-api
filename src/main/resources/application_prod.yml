@@ -1,6 +1,6 @@
 ---
 domain:
-  name: https://dev.tripbook.link
+  name: https://tripbook.link
 server.port: 9000
 spring:
   servlet:
@@ -27,7 +27,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://tripbook-dev.czriggtksvqu.ap-northeast-2.rds.amazonaws.com:3306/tripbook_main?createDatabaseIfNotExist=true
+    url: jdbc:mysql://tripbook-dev.czriggtksvqu.ap-northeast-2.rds.amazonaws.com:3306/tripbook_prod?createDatabaseIfNotExist=true
     username: tripbook
     password: Tripbookteam07*
   security:
