@@ -105,7 +105,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private void initLocation(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
-		if (requestDto.getLocationList().size() < 1)
+		if (requestDto.getLocationList()==null || requestDto.getLocationList().isEmpty())
 			return;
 		//기존 여행장소 리스트 제거
 		deleteLocationList(article);
