@@ -40,3 +40,9 @@ spring:
       on-profile: dev
     import: classpath:/application_dev.yml
 ---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: classpath:/application_prod.yml
+---
