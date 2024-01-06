@@ -1,4 +1,7 @@
 ---
+springdoc:
+  api-docs:
+    enabled: false
 domain:
   name: https://tripbook.link
 server.port: 9000
