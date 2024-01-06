@@ -21,11 +21,11 @@ public abstract class BasicEntity implements Serializable {
 
 	@CreatedDate
 	@Column(nullable = false, length = 20, updatable = false)
-	private LocalDateTime createdAt;
+	protected LocalDateTime createdAt;
 
 	@LastModifiedDate
 	@Column(length = 20)
-	private LocalDateTime updatedAt;
+	protected LocalDateTime updatedAt;
 
 	// @CreatedBy
 	// @Column(updatable = false)
@@ -37,6 +37,6 @@ public abstract class BasicEntity implements Serializable {
 	@Setter
 	@Column(nullable = false)
 	@Builder.Default
-	private Boolean isEnable = true;
+	protected Boolean isEnable = true;
 
 }

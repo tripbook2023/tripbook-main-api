@@ -7,8 +7,11 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tripbook.main.member.enums.Gender;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -28,7 +31,10 @@ public class RequestMember {
 
 	@Getter
 	@Setter
+	@ApiModel(description = "MemberReqInfo")
 	public static class MemberReqInfo {
+		@JsonIgnore
+		private Boolean imageAccept = true;
 		@NotBlank(message = "name is required")
 		@Size(min = 1, max = 9, message = "이름은 1 ~ 9자 이여야 합니다!")
 		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
@@ -59,7 +65,64 @@ public class RequestMember {
 		@Schema(title = "생일", description = "yyyy-mm-dd", type = "LocalDate", example = "1996-07-13")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
 		private LocalDate birth;
-		private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+		// 확장자 검사
+		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
+
+		public void setImageFile(MultipartFile imageFile) {
+			this.imageFile = imageFile;
+			//이미지파일 유효성 검사
+			if (!isImageFileValid(imageFile)) {
+				this.imageAccept = false;
+			}
+
+		}
+
+		public boolean isImageFileValid(MultipartFile imageFile) {
+
+			String fileExtension = getFileExtension(imageFile.getOriginalFilename());
+			if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {
+				return false;
+			}
+
+			return true;
+		}
+
+		private String getFileExtension(String filename) {
+			int dotIndex = filename.lastIndexOf(".");
+			if (dotIndex > -1 && dotIndex < filename.length() - 1) {
+				return filename.substring(dotIndex + 1);
+			}
+			return null;
+		}
+	}
+
+	@Getter
+	@Setter
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class UpdateProfile {
+		@Size(min = 1, max = 9, message = "이름은 1 ~ 9자 이여야 합니다!")
+		@Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "Nickname cannot contain special characters")
+		@Schema(title = "닉네임")
+		private String name;
+		@Schema(title = "이미지 파일", example = "가능확장자 : jpg, jpeg, png, gif \n\n 파일용량 : 5MB")
+		@Nullable
+		private MultipartFile imageFile;
+		@Schema(title = "프로필 이미지 URL")
+		private String profile;
+		@Schema(title = "서비스 이용 약관 동의 여부")
+		private Boolean termsOfService;
+		@Schema(title = "개인정보 수집 및 이용 동의 여부")
+		private Boolean termsOfPrivacy;
+		@Schema(title = "위치정보 수집 및 이용 동의 여부")
+		private Boolean termsOfLocation;
+		@Schema(title = "마케팅 수신 허용여부")
+		private Boolean marketingConsent;
+		@Schema(title = "성별")
+		private Gender gender;
+		@Schema(title = "생일", description = "yyyy-mm-dd", type = "LocalDate", example = "1996-07-13")
+		@DateTimeFormat(pattern = "yyyy-MM-dd")
+		private LocalDate birth;
 		// 확장자 검사
 		private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 
@@ -76,9 +139,6 @@ public class RequestMember {
 				return false;
 			}
 
-			if (imageFile.getSize() > MAX_FILE_SIZE) {
-				return false;
-			}
 
 			String fileExtension = getFileExtension(imageFile.getOriginalFilename());
 			if (fileExtension == null || !ALLOWED_EXTENSIONS.contains(fileExtension.toLowerCase())) {

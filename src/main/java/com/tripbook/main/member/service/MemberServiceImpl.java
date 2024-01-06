@@ -1,16 +1,31 @@
 package com.tripbook.main.member.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tripbook.main.file.service.UploadService;
+import com.tripbook.main.article.dto.ArticleResponseDto;
+import com.tripbook.main.article.entity.Article;
+import com.tripbook.main.article.enums.ArticleSort;
+import com.tripbook.main.article.enums.ArticleStatus;
+import com.tripbook.main.article.repository.ArticleRepository;
+import com.tripbook.main.global.dto.ResponseImage;
+import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.enums.ErrorCode;
+import com.tripbook.main.global.enums.ImageCategory;
 import com.tripbook.main.global.exception.CustomException;
+import com.tripbook.main.global.repository.ImageRepository;
+import com.tripbook.main.global.service.UploadService;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
-import com.tripbook.main.member.dto.RequestMember;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.enums.MemberStatus;
@@ -27,29 +42,61 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
+	private final ArticleRepository articleRepository;
+	private final ImageRepository imageRepository;
+	@Qualifier("jwtService")
 	private final JwtService jwtService;
 	private final UploadService uploadService;
-	@Value("${file.upload_path.signup}")
-	private String path;
 
 	@Override
 	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
-		//중복가입 검사
+		// Member deleteMember = withdrawalMemberUpdate(member);
+		// if(deleteMember!=null){
+		// 	targetMember=deleteMember;
+		// 	targetMember.updateStatus(MemberStatus.STATUS_NORMAL);
+		// 	TokenInfo tokenInfo = jwtService.saveToken(deleteMember, deviceValue);
+		// }
+		ResponseImage.ImageInfo imageInfo;
 		if (!memberValidation(member)) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
 		}
-		//프로필 이미지 저장
 		if (member.getImageFile() != null) {
-			String profileURL = uploadService.imageUpload(member.getImageFile(), path);
-			member.setProfile(profileURL);
+			imageInfo = uploadService.imageUpload(member.getImageFile(),
+				ImageCategory.MEMBER.toString());
+
+			member.setProfile(imageInfo.getUrl());
+		} else {
+			imageInfo = null;
 		}
-		Member saveMember = memberRepository.save(new Member(member));
-		TokenInfo tokenInfo = jwtService.saveToken(saveMember, deviceValue);
+		Member resultMember = memberRepository.save(new Member(member));
+		//이미지  <-> 멤버 연결
+		if (imageInfo != null) {
+			imageRefIdMapping(imageInfo, resultMember.getId());
+		}
+
+		//토큰 응답
+		TokenInfo tokenInfo = jwtService.saveToken(resultMember, deviceValue);
 		return ResponseMember.Info.builder()
 			.message("success")
 			.refreshToken(tokenInfo.getRefreshToken())
 			.accessToken(tokenInfo.getAccessToken()).build();
+	}
+
+	private void imageRefIdMapping(ResponseImage.ImageInfo imageInfo, Long refId) {
+		Optional<Image> targetImage = imageRepository.findById(imageInfo.getId());
+		targetImage.ifPresent(image -> image.updateRefId(refId));
+	}
+
+	private Member withdrawalMemberUpdate(MemberVO member) {
+		Member rstMember = memberRepository.findByEmail(member.getEmail());
+		if (rstMember == null) {
+			return null;
+		}
+		if (rstMember.getStatus().equals(MemberStatus.STATUS_WITHDRAWAL)) {
+			return rstMember;
+		}
+		return null;
 	}
 
 	@Override
@@ -58,28 +105,72 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public List<ArticleResponseDto.ArticleResponse> memberTempArticleList(String email) {
+		Member loginMember = getLoginMemberByEmail(email);
+		List<ArticleResponseDto.ArticleResponse> resultList = articleRepository.findAllByStatusAndMemberEmail(
+				ArticleStatus.TEMP, email)
+			.stream().map(article -> article.toDto(loginMember))
+			.collect(Collectors.toList());
+
+		return resultList;
+	}
+
+	@Override
+	public Page<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email,Integer page,Integer size) {
+		Member loginMember = getLoginMemberByEmail(email);
+		Sort pageSort = Sort.by("createdAt").descending();
+		Pageable pageable = PageRequest.of(page, size, pageSort);
+		return articleRepository.findAllByStatusAndMemberEmail(
+				ArticleStatus.ACTIVE, email, pageable).map(article -> article.toDto(loginMember));
+	}
+
+	@Override
 	public boolean memberNameValidation(MemberVO member) {
 		return memberRepository.findByName(member.getName()) != null;
 	}
 
 	@Override
+	@Transactional
 	public void memberUpdate(MemberVO updateMember) {
-		if (memberRepository.findByName(updateMember.getName()) != null) {
-			log.error("Already Exis Nickname");
-			throw new CustomException(ErrorCode.MEMBER_NAME_ERROR.getErrorCode(), ErrorCode.MEMBER_NAME_ERROR);
-		} else {
-			new Member(updateMember);
+		if (updateMember.getName() != null) {
+			if (memberRepository.findByName(updateMember.getName()) != null) {
+				log.error("Already Exist Nickname");
+				throw new CustomException.MemberNameAlreadyException(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
+					ErrorCode.MEMBER_NAME_ERROR);
+			}
 		}
+		Member byEmail = memberRepository.findByEmail(updateMember.getEmail());
+		if (byEmail != null) {
+			//Prfile Default Set
+			if (updateMember.getProfile() != null) {
+				if (updateMember.getProfile().isEmpty()) {
+					updateMember.setProfile(null);
+				}
+			}
+			//Profile Save.
+			if (updateMember.getImageFile() != null) {
+				ResponseImage.ImageInfo imageInfo = uploadService.imageUpload(updateMember.getImageFile(),
+					ImageCategory.MEMBER.name());
+
+				updateMember.setProfile(imageInfo.getUrl());
+				//이미지  <-> 멤버 연결
+				imageRefIdMapping(imageInfo, byEmail.getId());
+
+			}
+			byEmail.updateMember(updateMember);
+		}
+
 	}
 
 	@Override
 	@Transactional
 	public void memberDelete(MemberVO bindMemberVo) {
-		/*
-		 임시 Delete Member Service
-		 @TODO - 후에는 실제 삭제가 아닌 MemberStatus 탈퇴처리 진행 (현재는 편의상 실제 DB데이터삭제)
-		 */
-		memberRepository.deleteByEmail(bindMemberVo.getEmail());
+		Member rstMember = memberRepository.findByEmail(bindMemberVo.getEmail());
+		if (rstMember == null) {
+			log.error("MemberNotFound::{}", bindMemberVo.getEmail());
+			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
+		}
+		rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
 	}
 
 	@Override
@@ -88,21 +179,8 @@ public class MemberServiceImpl implements MemberService {
 		return new ResponseMember.MemberInfo(member);
 	}
 
-	@Transactional
-	public void updateMember(RequestMember.MemberReqInfo signupMember, Member findMember) {
-		if (signupMember.getImageFile() != null) {
-			String profileURL = uploadService.imageUpload(signupMember.getImageFile(), path);
-			findMember.updateProfile(profileURL);
-
-		}
-		findMember.updateStatus(MemberStatus.STATUS_NORMAL);
-		findMember.updateMarketingConsent(signupMember.getMarketingConsent());
-		findMember.updateName(signupMember.getName());
-		// findMember.updateBirth(signupMember.getBirth());
-		memberRepository.save(findMember);
-	}
-
 	private boolean memberValidation(MemberVO member) {
+
 		if (memberRepository.findByEmail(member.getEmail()) != null) {
 			throw new CustomException.EmailDuplicateException(ErrorCode.EMAIL_DUPLICATION.getMessage(),
 				ErrorCode.EMAIL_DUPLICATION);
@@ -119,4 +197,5 @@ public class MemberServiceImpl implements MemberService {
 	public Member getLoginMemberByEmail(String email) {
 		return memberRepository.findByEmail(email);
 	}
+
 }

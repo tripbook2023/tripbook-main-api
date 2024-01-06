@@ -34,7 +34,7 @@ public class MemberVO {
 	@Builder
 	public MemberVO(String name, MemberRole role, String email, Boolean termsOfService, Boolean termsOfPrivacy,
 		Boolean termsOfLocation,
-		Boolean marketingContent, Gender gender, MultipartFile imageFile, LocalDate birth, MemberStatus status) {
+		Boolean marketingContent, Gender gender, MultipartFile imageFile, LocalDate birth, MemberStatus status,String profile) {
 		this.name = name;
 		this.status = status;
 		this.role = role;
@@ -46,5 +46,6 @@ public class MemberVO {
 		this.gender = gender;
 		this.imageFile = imageFile;
 		this.birth = birth;
+		this.profile = profile;
 	}
 }

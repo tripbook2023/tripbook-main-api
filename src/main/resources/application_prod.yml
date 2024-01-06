@@ -1,0 +1,53 @@
+---
+springdoc:
+  api-docs:
+    enabled: false
+domain:
+  name: https://tripbook.link
+server.port: 9000
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate.hbm2ddl.auto: update
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+  logging:
+    level:
+      org:
+        hibernate:
+          type:
+            descriptor:
+              sql: trace
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://tripbook-dev.czriggtksvqu.ap-northeast-2.rds.amazonaws.com:3306/tripbook_prod?createDatabaseIfNotExist=true
+    username: tripbook
+    password: Tripbookteam07*
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-id: UZ7PYWQdxTw85EY1wjUvUXAhNvzJrJER
+            client-secret: vEH4FzhtYbMsqDNIfmm1PjCRs2AEtuwJUcq8v1ifsjF5YCE-mzq_2dRsR4FF4F9T
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://dev-af65lj2887m1kztj.us.auth0.com/
+            token-uri: https://dev-z2b4bazfo6o536tj.us.auth0.com/userinfo/
+---

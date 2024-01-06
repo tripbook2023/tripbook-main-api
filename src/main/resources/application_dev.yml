@@ -1,7 +1,16 @@
 ---
+domain:
+  name: https://dev.tripbook.link
 server.port: 9000
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate.hbm2ddl.auto: update
       hibernate:

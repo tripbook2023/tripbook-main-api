@@ -1,8 +1,21 @@
 ---
+
+springdoc:
+  swagger-ui:
+    use-root-path: true
+domain:
+  name: http://127.0.0.1:${server.port}
 server.port: 9000
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   security.debug: false
   jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     #    generate-ddl: false
     properties:
       hibernate.hbm2ddl.auto: update
@@ -22,7 +35,7 @@ spring:
       enabled: true
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:tripbook
+    url: jdbc:h2:mem://localhost/~/tripbook
     username: sa
     password:
   security:

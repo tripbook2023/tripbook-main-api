@@ -1,6 +1,8 @@
 package com.tripbook.main.swagger.config;
 
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,13 +12,16 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
+import java.util.Arrays;
+
 @OpenAPIDefinition(
 	info = @Info(title = "트립북  API 명세서",
 		description = "알맞는 명세서를 선택하세요.",
 		version = "v1"))
 @Configuration
 public class SwaggerConfig {
-
+	@Value("${domain.name}")
+	private String domainName;
 	@Bean
 	public GroupedOpenApi MemberGroup() {
 		return GroupedOpenApi.builder()
@@ -35,8 +40,19 @@ public class SwaggerConfig {
 	}
 
 	@Bean
+	public GroupedOpenApi CommonGroup() {
+		return GroupedOpenApi.builder()
+			.group("공통API")
+			.packagesToScan("com.tripbook.main.global.controller")
+			.build();
+	}
+
+	@Bean
 	public OpenAPI JwtOpenAPI() {
 		return new OpenAPI()
+			.servers(Arrays.asList(
+					new Server().url(domainName).description("HTTPS Server"))
+			)
 			.components(new Components()
 				.addSecuritySchemes("JWT",
 					new SecurityScheme()

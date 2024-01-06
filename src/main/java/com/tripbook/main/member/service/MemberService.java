@@ -1,9 +1,12 @@
 package com.tripbook.main.member.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import com.tripbook.main.global.enums.ErrorCode;
-import com.tripbook.main.global.exception.CustomException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
+
+import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.member.dto.PrincipalMemberDto;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.entity.Member;
@@ -14,6 +17,10 @@ public interface MemberService {
 
 	// public Integer memberUpdate()
 	public Optional<Member> memberCertification(MemberVO memberVO);
+
+	public List<ArticleResponseDto.ArticleResponse> memberTempArticleList(String email);
+
+	public Page<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email,Integer page,Integer size);
 
 	public boolean memberNameValidation(MemberVO memberVO);
 

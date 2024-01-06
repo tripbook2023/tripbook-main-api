@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	}
 
 	// 권한이 필요한 URI 패턴
-	private static final Pattern AUTH_REQUIRED_URI_PATTERN = Pattern.compile("^/member/.*$");
+	private static final Pattern AUTH_REQUIRED_URI_PATTERN = Pattern.compile("^/member.*|^/common/image.*|^/articles.*$");
 
 	// 권한이 필요한 URI 패턴인지 확인하는 메소드
 	private boolean requiresAuthentication(String requestURI) {
