@@ -91,5 +91,14 @@ public class ArticleRequestDto {
 		@NotNull(message = "parentId is required")
 		private long parentId;
 	}
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class ReportRequest {
 
+		@Schema(description = "신고 여행소식 ID")
+		@NotNull(message = "ArticleId is required")
+		private Long articleId;
+	}
 }

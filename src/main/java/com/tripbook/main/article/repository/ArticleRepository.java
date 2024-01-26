@@ -18,7 +18,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 	List<Article> findAllByStatusAndMemberEmail(ArticleStatus status, String email);
 
 	Page<Article> findAllByStatusAndMemberEmail(ArticleStatus status, String email, Pageable pageable);
-
 	Long deleteArticleById(Long id);
 
 	Slice<Article> findAllByTitleContainingOrContentContainingAndStatus(String title, String content,

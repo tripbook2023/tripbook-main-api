@@ -50,7 +50,8 @@ public class Article extends BasicEntity {
 
 	@Column(nullable = false)
 	private String title;
-
+	@Column
+	private Long reportCount;
 	@Lob()
 	private String content;
 
@@ -141,7 +142,9 @@ public class Article extends BasicEntity {
 		this.title = request.getTitle();
 		this.content = request.getContent();
 	}
-
+	public void updateReportCount(){
+		this.reportCount++;
+	}
 	public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
 		return ArticleResponseDto.ArticleResponse.builder()

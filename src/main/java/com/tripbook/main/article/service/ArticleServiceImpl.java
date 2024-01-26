@@ -322,6 +322,21 @@ public class ArticleServiceImpl implements ArticleService {
 			.build();
 	}
 
+	@Override
+	public ArticleResponseDto.ArticleResponse reportArticle(ArticleRequestDto.ReportRequest requestDto,
+		ArticleStatus articleStatus, OAuth2User principal) {
+		Optional<Article> article = articleRepository.findById(requestDto.getArticleId());
+		if(article.isPresent()){
+
+		}
+		article.ifPresent(Article::updateReportCount);
+		return ArticleResponseDto.ArticleResponse.builder()
+			.id(article..getId())
+			.bookmarkNum(article.getBookmarkNum())
+			.isBookmark(false)
+			.build();
+	}
+
 	private Member getLoginMemberByPrincipal(OAuth2User principal) {
 		String email = principal.getName();
 

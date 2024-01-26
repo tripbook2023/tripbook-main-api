@@ -16,4 +16,6 @@ public interface ArticleService {
     void deleteArticleComment(long commentId, OAuth2User principal);
     ArticleResponseDto.ArticleResponse likeArticle(long articleId, OAuth2User principal);
     ArticleResponseDto.ArticleResponse bookmarkArticle(long articleId, OAuth2User principal);
+
+    ArticleResponseDto.ArticleResponse reportArticle(ArticleRequestDto.ReportRequest requestDto, ArticleStatus articleStatus, OAuth2User principal);
 }
