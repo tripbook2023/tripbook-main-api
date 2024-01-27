@@ -15,12 +15,14 @@ import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.entity.ArticleBookmark;
 import com.tripbook.main.article.entity.ArticleComment;
 import com.tripbook.main.article.entity.ArticleHeart;
+import com.tripbook.main.article.entity.ArticleReport;
 import com.tripbook.main.article.enums.ArticleCommentStatus;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleBookmarkRepository;
 import com.tripbook.main.article.repository.ArticleCommentRepository;
 import com.tripbook.main.article.repository.ArticleHeartRepository;
 import com.tripbook.main.article.repository.ArticleImageRepository;
+import com.tripbook.main.article.repository.ArticleReportRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.article.repository.ArticleTagRepository;
 import com.tripbook.main.global.entity.Image;
@@ -49,6 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
 	private final ArticleCommentRepository articleCommentRepository;
 	private final ArticleBookmarkRepository articleBookmarkRepository;
 	private final ArticleHeartRepository articleHeartRepository;
+	private final ArticleReportRepository articleReportRepository;
 	private final LocationRepository locationRepository;
 
 	@Override
@@ -105,7 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	private void initLocation(ArticleRequestDto.ArticleSaveRequest requestDto, Article article) {
-		if (requestDto.getLocationList()==null || requestDto.getLocationList().isEmpty())
+		if (requestDto.getLocationList() == null || requestDto.getLocationList().isEmpty())
 			return;
 		//기존 여행장소 리스트 제거
 		deleteLocationList(article);
@@ -163,10 +166,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	@Transactional(readOnly = true)
 	public ArticleResponseDto.ArticleResponse getArticleDetail(long articleId, OAuth2User principal) {
-		Article article = articleRepository.findById(articleId).orElseThrow(
-			() -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
-				ErrorCode.ARTICLE_NOT_FOUND)
-		);
+		Article article = getArticle(articleId);
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
@@ -178,13 +178,18 @@ public class ArticleServiceImpl implements ArticleService {
 		return article.toDto(loginMember);
 	}
 
-	@Override
-	@Transactional
-	public void deleteArticle(long articleId, OAuth2User principal) {
+	private Article getArticle(long articleId) {
 		Article article = articleRepository.findById(articleId).orElseThrow(
 			() -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
 				ErrorCode.ARTICLE_NOT_FOUND)
 		);
+		return article;
+	}
+
+	@Override
+	@Transactional
+	public void deleteArticle(long articleId, OAuth2User principal) {
+		Article article = getArticle(articleId);
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
@@ -204,10 +209,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Transactional
 	public ArticleResponseDto.ArticleResponse saveArticleComment(long articleId,
 		ArticleRequestDto.CommentSaveRequest requestDto, OAuth2User principal) {
-		Article article = articleRepository.findById(articleId).orElseThrow(
-			() -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
-				ErrorCode.ARTICLE_NOT_FOUND)
-		);
+		Article article = getArticle(articleId);
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
@@ -256,10 +258,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	@Transactional
 	public ArticleResponseDto.ArticleResponse likeArticle(long articleId, OAuth2User principal) {
-		Article article = articleRepository.findById(articleId).orElseThrow(
-			() -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
-				ErrorCode.ARTICLE_NOT_FOUND)
-		);
+		Article article = getArticle(articleId);
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
@@ -290,10 +289,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	@Transactional
 	public ArticleResponseDto.ArticleResponse bookmarkArticle(long articleId, OAuth2User principal) {
-		Article article = articleRepository.findById(articleId).orElseThrow(
-			() -> new CustomException.ArticleNotFoundException(ErrorCode.ARTICLE_NOT_FOUND.getMessage(),
-				ErrorCode.ARTICLE_NOT_FOUND)
-		);
+		Article article = getArticle(articleId);
 
 		Member loginMember = getLoginMemberByPrincipal(principal);
 
@@ -323,18 +319,33 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	@Override
+	@Transactional
 	public ArticleResponseDto.ArticleResponse reportArticle(ArticleRequestDto.ReportRequest requestDto,
-		ArticleStatus articleStatus, OAuth2User principal) {
-		Optional<Article> article = articleRepository.findById(requestDto.getArticleId());
-		if(article.isPresent()){
+		OAuth2User principal) {
+		Member loginMember = getLoginMemberByPrincipal(principal);
+		Article article = getArticle(requestDto.getArticleId());
 
-		}
-		article.ifPresent(Article::updateReportCount);
+		// 해당 Member가 Article Report 이력이 있다면, count
+		Optional<ArticleReport> articleReport = articleReportRepository.findByAndArticleAndMember(
+			article, loginMember);
+		articleReport.ifPresentOrElse(targetArticleReport -> {
+			//이미 신고한 이력이 있는 회원
+			throw new CustomException.ArticleInternalException(ErrorCode.ARTICLE_INTERNAL.getMessage(),
+				ErrorCode.ARTICLE_INTERNAL);
+		}, () -> {
+			// articleReport Save
+			articleReportRepository.save(ArticleReport.builder()
+				.article(article)
+				.member(loginMember)
+				.content(requestDto.getContent())
+				.build());
+
+		});
 		return ArticleResponseDto.ArticleResponse.builder()
-			.id(article..getId())
-			.bookmarkNum(article.getBookmarkNum())
-			.isBookmark(false)
+			.id(article.getId())
+			.title(article.getTitle())
 			.build();
+
 	}
 
 	private Member getLoginMemberByPrincipal(OAuth2User principal) {

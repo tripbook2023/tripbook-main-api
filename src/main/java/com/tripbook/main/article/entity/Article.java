@@ -50,8 +50,7 @@ public class Article extends BasicEntity {
 
 	@Column(nullable = false)
 	private String title;
-	@Column
-	private Long reportCount;
+
 	@Lob()
 	private String content;
 
@@ -72,12 +71,13 @@ public class Article extends BasicEntity {
 	@OneToMany(mappedBy = "article")
 	private List<ArticleComment> commentList = new ArrayList<>();
 	@OneToMany(mappedBy = "article")
+	private List<ArticleReport> reportLIst = new ArrayList<>();
+	@OneToMany(mappedBy = "article")
 	private List<Location> locationList;
 	@Column
 	private String thumbnailUrl;
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
 	private long heartNum;
-
 	@Formula("(select count(*) from TB_ARTICLE_BOOKMARK b where b.article_id = id)")
 	private long bookmarkNum;
 
@@ -142,9 +142,7 @@ public class Article extends BasicEntity {
 		this.title = request.getTitle();
 		this.content = request.getContent();
 	}
-	public void updateReportCount(){
-		this.reportCount++;
-	}
+
 	public ArticleResponseDto.ArticleResponse toDto(Member member) {
 
 		return ArticleResponseDto.ArticleResponse.builder()
@@ -158,6 +156,8 @@ public class Article extends BasicEntity {
 			.bookmarkNum(this.bookmarkNum)
 			.isBookmark(this.bookmarkList != null
 				&& this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+			.isReport(this.reportLIst != null
+				&& this.reportLIst.stream().filter(h -> h.getMember() == member).toList().size() > 0)
 			.commentList(
 				this.commentList == null ? new ArrayList<>() :
 					this.commentList.stream().map(ArticleComment::toDto).toList())
@@ -167,6 +167,7 @@ public class Article extends BasicEntity {
 			.createdAt(this.getCreatedAt())
 			.updatedAt(this.getUpdatedAt())
 			.thumbnailUrl(this.thumbnailUrl)
+			.reportCount(this.reportLIst.size())
 			// .tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
 			.build();
 
