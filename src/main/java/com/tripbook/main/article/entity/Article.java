@@ -16,6 +16,7 @@ import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.member.entity.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,7 +45,7 @@ public class Article extends BasicEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
@@ -58,7 +59,7 @@ public class Article extends BasicEntity {
 	@Enumerated(EnumType.STRING)
 	private ArticleStatus status;
 
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleTag> tagList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "article")
@@ -68,11 +69,11 @@ public class Article extends BasicEntity {
 	private List<ArticleBookmark> bookmarkList = new ArrayList<>();
 
 	@Where(clause = "status != 'DELETED'")
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleComment> commentList = new ArrayList<>();
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleReport> reportLIst = new ArrayList<>();
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<Location> locationList;
 	@Column
 	private String thumbnailUrl;

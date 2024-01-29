@@ -177,7 +177,9 @@ public class MemberServiceImpl implements MemberService {
 			log.error("MemberNotFound::{}", bindMemberVo.getEmail());
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
-		rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
+		// rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
+		articleRepository.deleteArticleByMember(rstMember);
+		memberRepository.delete(rstMember);
 	}
 
 	@Override
