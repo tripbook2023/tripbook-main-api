@@ -60,7 +60,6 @@ public class ArticleServiceImpl implements ArticleService {
 		ArticleStatus status, OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
 		Article article;
-		String test = "";
 		if (loginMember == null) {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
