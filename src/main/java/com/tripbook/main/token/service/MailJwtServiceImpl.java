@@ -38,11 +38,6 @@ public class MailJwtServiceImpl implements JwtService {
 		return null;
 	}
 
-	@Override
-	public long deleteRefreshToken(Member member) {
-		return 0;
-	}
-
 	@Transactional
 	@Override
 	public TokenInfo saveToken(Member member, String deviceType) {

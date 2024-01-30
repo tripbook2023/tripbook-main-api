@@ -88,8 +88,5 @@ public class JwtServiceImpl implements JwtService {
 	private TokenInfo jwtGenerateToken(Member member, String deviceType) {
 		return jwtProvider.generateToken(member, deviceType);
 	}
-	@Override
-	public long deleteRefreshToken(Member member){
-		return jwtRepository.deleteByMemberId(member);
-	}
+
 }
