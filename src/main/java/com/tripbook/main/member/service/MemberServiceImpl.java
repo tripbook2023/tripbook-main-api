@@ -178,11 +178,13 @@ public class MemberServiceImpl implements MemberService {
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
 		// rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
+		preDeleteMember(rstMember);
+	}
+
+	private void preDeleteMember(Member rstMember) {
 		articleRepository.deleteArticleByMember(rstMember);
 		memberRepository.delete(rstMember);
-		if(jwtService.deleteRefreshToken(rstMember)>0){
-			throw new CustomException.IllegalArgumentException(ErrorCode.COMMON_RUNTIME_ERROR.getMessage(),ErrorCode.COMMON_RUNTIME_ERROR);
-		}
+		jwtService.deleteRefreshToken(rstMember);
 	}
 
 	@Override
