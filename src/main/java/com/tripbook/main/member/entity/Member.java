@@ -2,6 +2,7 @@ package com.tripbook.main.member.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -13,7 +14,9 @@ import com.tripbook.main.member.enums.Gender;
 import com.tripbook.main.member.enums.MemberRole;
 import com.tripbook.main.member.enums.MemberStatus;
 import com.tripbook.main.member.vo.MemberVO;
+import com.tripbook.main.token.entity.JwtToken;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,6 +24,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,7 +46,8 @@ public class Member extends BasicEntity implements Serializable {
 	private String email;
 	@Column(nullable = false, unique = true)
 	private String name;
-
+	@OneToMany(mappedBy = "memberId",cascade = CascadeType.REMOVE)
+	private List<JwtToken> token;
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Gender gender;

@@ -184,7 +184,6 @@ public class MemberServiceImpl implements MemberService {
 	private void preDeleteMember(Member rstMember) {
 		articleRepository.deleteArticleByMember(rstMember);
 		memberRepository.delete(rstMember);
-		jwtService.deleteRefreshToken(rstMember);
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package com.tripbook.main.token.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.token.enums.DeviceValue;
@@ -23,6 +26,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "TB_JWTTK")
 @Getter
 @Builder
+@DynamicInsert
+@DynamicUpdate
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class JwtToken extends BasicEntity {
@@ -35,8 +40,8 @@ public class JwtToken extends BasicEntity {
 
 	@Column(nullable = false)
 	private DeviceValue device;
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "member_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "member_id")
 	private Member memberId;
 
 	public void updateToken(String token) {
