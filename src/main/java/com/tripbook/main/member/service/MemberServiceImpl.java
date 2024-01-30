@@ -180,6 +180,9 @@ public class MemberServiceImpl implements MemberService {
 		// rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
 		articleRepository.deleteArticleByMember(rstMember);
 		memberRepository.delete(rstMember);
+		if(jwtService.deleteRefreshToken(rstMember)>0){
+			throw new CustomException.IllegalArgumentException(ErrorCode.COMMON_RUNTIME_ERROR.getMessage(),ErrorCode.COMMON_RUNTIME_ERROR);
+		}
 	}
 
 	@Override

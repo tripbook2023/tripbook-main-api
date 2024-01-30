@@ -10,4 +10,5 @@ public interface JwtService {
 	public TokenInfo saveToken(Member member, String deviceType);
 
 	public TokenInfo tokenIssue(String token, String device);
+	public long deleteRefreshToken(Member member);
 }
