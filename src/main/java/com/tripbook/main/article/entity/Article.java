@@ -62,10 +62,10 @@ public class Article extends BasicEntity {
 	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleTag> tagList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleHeart> heartList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleBookmark> bookmarkList = new ArrayList<>();
 
 	@Where(clause = "status != 'DELETED'")
