@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.tripbook.main.article.entity.Article;
 import com.tripbook.main.article.enums.ArticleStatus;
+import com.tripbook.main.member.entity.Member;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 	Slice<Article> findAllByStatus(ArticleStatus status, Pageable pageable);
@@ -18,8 +19,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 	List<Article> findAllByStatusAndMemberEmail(ArticleStatus status, String email);
 
 	Page<Article> findAllByStatusAndMemberEmail(ArticleStatus status, String email, Pageable pageable);
-
-	Long deleteArticleById(Long id);
+	Long deleteArticleByMember(Member member);
 
 	Slice<Article> findAllByTitleContainingOrContentContainingAndStatus(String title, String content,
 		ArticleStatus status, Pageable pageable);

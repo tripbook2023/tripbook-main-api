@@ -50,13 +50,18 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public ResponseMember.Info memberSave(MemberVO member, String deviceValue) {
-		// Member deleteMember = withdrawalMemberUpdate(member);
-		// if(deleteMember!=null){
-		// 	targetMember=deleteMember;
-		// 	targetMember.updateStatus(MemberStatus.STATUS_NORMAL);
-		// 	TokenInfo tokenInfo = jwtService.saveToken(deleteMember, deviceValue);
-		// }
+		Member deleteMember = withdrawalMemberUpdate(member);
+		TokenInfo tokenInfo = null;
 		ResponseImage.ImageInfo imageInfo;
+
+		if(deleteMember!=null){
+			deleteMember.updateStatus(MemberStatus.STATUS_NORMAL);
+			tokenInfo=jwtService.saveToken(deleteMember, deviceValue);
+			return ResponseMember.Info.builder()
+				.message("success")
+				.refreshToken(tokenInfo.getRefreshToken())
+				.accessToken(tokenInfo.getAccessToken()).build();
+		}
 		if (!memberValidation(member)) {
 			throw new CustomException.MemberAlreadyExist(ErrorCode.MEMBER_NAME_ERROR.getMessage(),
 				ErrorCode.MEMBER_NAME_ERROR);
@@ -76,7 +81,9 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		//토큰 응답
-		TokenInfo tokenInfo = jwtService.saveToken(resultMember, deviceValue);
+		if(tokenInfo==null){
+			tokenInfo = jwtService.saveToken(resultMember, deviceValue);
+		}
 		return ResponseMember.Info.builder()
 			.message("success")
 			.refreshToken(tokenInfo.getRefreshToken())
@@ -170,7 +177,13 @@ public class MemberServiceImpl implements MemberService {
 			log.error("MemberNotFound::{}", bindMemberVo.getEmail());
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
-		rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
+		// rstMember.updateStatus(MemberStatus.STATUS_WITHDRAWAL);
+		preDeleteMember(rstMember);
+	}
+
+	private void preDeleteMember(Member rstMember) {
+		articleRepository.deleteArticleByMember(rstMember);
+		memberRepository.delete(rstMember);
 	}
 
 	@Override

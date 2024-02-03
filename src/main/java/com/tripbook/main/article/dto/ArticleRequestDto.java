@@ -10,6 +10,7 @@ import com.tripbook.main.global.dto.LocationDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -92,4 +93,18 @@ public class ArticleRequestDto {
 		private long parentId;
 	}
 
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public static class ReportRequest {
+
+		@Schema(description = "신고 여행소식 ID")
+		@NotNull(message = "ArticleId is required")
+		private Long articleId;
+		@Schema(description = "신고 여행소식 내용")
+		@NotNull(message = "content is required")
+		@Size(max = 30, message = "30자를 넘을 수 없습니다.")
+		private String content;
+	}
 }

@@ -56,6 +56,8 @@ public class ArticleResponseDto {
 
 		@Schema(description = "좋아요 여부")
 		private boolean isHeart;
+		@Schema(description = "신고 여부")
+		private boolean isReport;
 
 		@Schema(description = "북마크 수")
 		private long bookmarkNum;
@@ -67,7 +69,8 @@ public class ArticleResponseDto {
 
 		@Schema(description = "댓글 목록")
 		private List<CommentResponse> commentList;
-
+		@Schema(description = "신고 누적횟수")
+		private int reportCount;
 		@Schema(description = "생성일")
 		private LocalDateTime createdAt;
 

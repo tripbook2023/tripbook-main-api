@@ -16,6 +16,7 @@ import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.member.entity.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,7 +45,7 @@ public class Article extends BasicEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
@@ -58,25 +59,26 @@ public class Article extends BasicEntity {
 	@Enumerated(EnumType.STRING)
 	private ArticleStatus status;
 
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleTag> tagList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleHeart> heartList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleBookmark> bookmarkList = new ArrayList<>();
 
 	@Where(clause = "status != 'DELETED'")
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<ArticleComment> commentList = new ArrayList<>();
-	@OneToMany(mappedBy = "article")
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	private List<ArticleReport> reportLIst = new ArrayList<>();
+	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
 	private List<Location> locationList;
 	@Column
 	private String thumbnailUrl;
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
 	private long heartNum;
-
 	@Formula("(select count(*) from TB_ARTICLE_BOOKMARK b where b.article_id = id)")
 	private long bookmarkNum;
 
@@ -155,6 +157,8 @@ public class Article extends BasicEntity {
 			.bookmarkNum(this.bookmarkNum)
 			.isBookmark(this.bookmarkList != null
 				&& this.bookmarkList.stream().filter(h -> h.getMember() == member).toList().size() > 0)
+			.isReport(this.reportLIst != null
+				&& this.reportLIst.stream().filter(h -> h.getMember() == member).toList().size() > 0)
 			.commentList(
 				this.commentList == null ? new ArrayList<>() :
 					this.commentList.stream().map(ArticleComment::toDto).toList())
@@ -164,6 +168,7 @@ public class Article extends BasicEntity {
 			.createdAt(this.getCreatedAt())
 			.updatedAt(this.getUpdatedAt())
 			.thumbnailUrl(this.thumbnailUrl)
+			.reportCount(this.reportLIst.size())
 			// .tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
 			.build();
 

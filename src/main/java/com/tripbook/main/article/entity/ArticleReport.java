@@ -1,13 +1,11 @@
-package com.tripbook.main.token.entity;
+package com.tripbook.main.article.entity;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.entity.Member;
-import com.tripbook.main.token.enums.DeviceValue;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,39 +15,34 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "TB_JWTTK")
+@Table(name = "TB_ARTICLE_REPORT")
 @Getter
-@Builder
 @DynamicInsert
 @DynamicUpdate
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class JwtToken extends BasicEntity {
+public class ArticleReport extends BasicEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "report_id")
 	private Long id;
-
-	@Column(nullable = false)
-	private String token;
-
-	@Column(nullable = false)
-	private DeviceValue device;
+	@ManyToOne
+	@JoinColumn(name = "article_id")
+	private Article article;
 	@ManyToOne
 	@JoinColumn(name = "member_id")
-	private Member memberId;
+	private Member member;
+	@Column
+	private String content;
 
-	public void updateToken(String token) {
-		this.token = token;
+	@Builder
+	public ArticleReport(Article article, Member member, String content) {
+		this.article = article;
+		this.member = member;
+		this.content = content;
 	}
-
-	public JwtToken(String token) {
-		this.token = token;
-	}
-
 }

@@ -52,6 +52,20 @@ public class ArticleController {
 
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
+		summary = "여행소식 신고", description = "여행소식을 신고합니다.", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+		@ApiResponse(responseCode = "500", description = "서버에러 관리자 문의요망", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+	})
+	@PostMapping("/report")
+	public ResponseEntity<?> reportArticle(@Valid @RequestBody ArticleRequestDto.ReportRequest requestDto,
+		Authentication authentication) {
+		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(articleService.reportArticle(requestDto, principal));
+	}
+
+	@Operation(security = {
+		@SecurityRequirement(name = "JWT")},
 		summary = "여행소식 저장", description = "여행소식을 저장합니다.", responses = {
 		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ArticleResponseDto.ArticleResponse.class))),
 		@ApiResponse(responseCode = "401", description = "권한 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),

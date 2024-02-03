@@ -12,7 +12,7 @@ import com.tripbook.main.token.enums.DeviceValue;
 
 public interface JwtRepository extends JpaRepository<JwtToken, Long> {
 	public Long deleteByDeviceAndMemberId(DeviceValue deviceValue, Member memberId);
-
+	public long deleteByMemberId(Member member);
 	public List<JwtToken> findByDeviceAndMemberId(DeviceValue deviceValue, Member memberId);
 
 	@Query("select tm  from JwtToken jwt JOIN Member tm WHERE tm.email = :email and tm.isEnable=true and jwt.device=:device")
