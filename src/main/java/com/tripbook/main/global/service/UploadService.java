@@ -6,4 +6,6 @@ import com.tripbook.main.global.dto.ResponseImage;
 
 public interface UploadService {
 	public ResponseImage.ImageInfo imageUpload(MultipartFile file, String path);
+
+	public void imageDelete(Long refId, String refType);
 }

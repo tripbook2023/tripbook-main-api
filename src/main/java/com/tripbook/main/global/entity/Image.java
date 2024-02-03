@@ -28,7 +28,9 @@ public class Image extends BasicEntity {
 
 	@Column(nullable = false, length = 1000)
 	private String url;
-
+	//S3 Bucket in name
+	@Column(nullable = false)
+	private String keyName;
 	@Column(nullable = false)
 	private String name;
 
@@ -37,12 +39,14 @@ public class Image extends BasicEntity {
 
 	@Column
 	private String refType;
+
 	@Builder
-	public Image(String url, String name, long refId, String refType) {
+	public Image(String url, String name, long refId, String refType, String keyName) {
 		this.url = url;
 		this.name = name;
 		this.refId = refId;
 		this.refType = refType;
+		this.keyName = keyName;
 	}
 
 	@Builder
@@ -50,7 +54,8 @@ public class Image extends BasicEntity {
 		this.url = url;
 		this.name = name;
 	}
-	public void updateRefId(Long refId){
-		this.refId=refId;
+
+	public void updateRefId(Long refId) {
+		this.refId = refId;
 	}
 }

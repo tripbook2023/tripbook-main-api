@@ -1,6 +1,8 @@
 package com.tripbook.main.global.service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,9 +20,11 @@ import com.tripbook.main.global.util.BasicUploader;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UploadServiceImpl implements UploadService {
 	@Qualifier("s3Uploader")
 	private final BasicUploader s3Uploader;
@@ -34,25 +38,27 @@ public class UploadServiceImpl implements UploadService {
 	@Override
 	@SneakyThrows
 	public ResponseImage.ImageInfo imageUpload(MultipartFile file, String category) {
-		String s3Url = "";
+		// String s3Url = "";
+		List<String> s3ResultList = null;
 		if (ImageCategory.BOARD_A.toString().equals(category.toUpperCase())) {
 			try {
-				s3Url = s3Uploader.uploadFile(file, articlePath);
+				s3ResultList = s3Uploader.uploadFile(file, articlePath);
 			} catch (IOException e) {
 				throw new CustomException.CommonRuntimeException(ErrorCode.COMMON_RUNTIME_ERROR.getMessage(),
 					ErrorCode.COMMON_RUNTIME_ERROR);
 			}
 		} else if (ImageCategory.MEMBER.toString().equals(category.toUpperCase())) {
 			try {
-				s3Url = s3Uploader.uploadFile(file, memberPath);
+				s3ResultList = s3Uploader.uploadFile(file, memberPath);
 			} catch (IOException e) {
 				throw new CustomException.CommonRuntimeException(ErrorCode.COMMON_RUNTIME_ERROR.getMessage(),
 					ErrorCode.COMMON_RUNTIME_ERROR);
 			}
 		}
-		if (!s3Url.isEmpty()) {
+		if (s3ResultList != null && !s3ResultList.isEmpty()) {
 			Image image = Image.builder()
-				.url(s3Url)
+				.url(s3ResultList.get(1))
+				.keyName(s3ResultList.get(0))
 				.name(file.getOriginalFilename())
 				.refType(category)
 				.build();
@@ -62,5 +68,19 @@ public class UploadServiceImpl implements UploadService {
 			throw new CustomException.CommonUnSupportedException(ErrorCode.COMMON_UNSUPPORTED_ERROR.getMessage(),
 				ErrorCode.COMMON_UNSUPPORTED_ERROR);
 		}
+	}
+
+	@Override
+	@SneakyThrows
+	public void imageDelete(Long refId, String refType) {
+		Optional<List<Image>> targetImage = imageRepository.findByRefIdAndRefType(refId, refType);
+		targetImage.ifPresent(item -> {
+			item.forEach(deleteItem -> {
+				log.info("ImageDelete_keyName:::{}", deleteItem.getKeyName());
+				s3Uploader.deleteFile(deleteItem.getKeyName());
+			});
+			imageRepository.deleteAll(targetImage.get());
+		});
+
 	}
 }
