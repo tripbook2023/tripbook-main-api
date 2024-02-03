@@ -8,14 +8,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
-import com.tripbook.main.article.entity.Article;
-import com.tripbook.main.article.enums.ArticleSort;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.article.repository.ArticleRepository;
 import com.tripbook.main.global.dto.ResponseImage;
@@ -54,9 +51,9 @@ public class MemberServiceImpl implements MemberService {
 		TokenInfo tokenInfo = null;
 		ResponseImage.ImageInfo imageInfo;
 
-		if(deleteMember!=null){
+		if (deleteMember != null) {
 			deleteMember.updateStatus(MemberStatus.STATUS_NORMAL);
-			tokenInfo=jwtService.saveToken(deleteMember, deviceValue);
+			tokenInfo = jwtService.saveToken(deleteMember, deviceValue);
 			return ResponseMember.Info.builder()
 				.message("success")
 				.refreshToken(tokenInfo.getRefreshToken())
@@ -69,7 +66,6 @@ public class MemberServiceImpl implements MemberService {
 		if (member.getImageFile() != null) {
 			imageInfo = uploadService.imageUpload(member.getImageFile(),
 				ImageCategory.MEMBER.toString());
-
 			member.setProfile(imageInfo.getUrl());
 		} else {
 			imageInfo = null;
@@ -81,9 +77,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		//토큰 응답
-		if(tokenInfo==null){
-			tokenInfo = jwtService.saveToken(resultMember, deviceValue);
-		}
+		tokenInfo = jwtService.saveToken(resultMember, deviceValue);
 		return ResponseMember.Info.builder()
 			.message("success")
 			.refreshToken(tokenInfo.getRefreshToken())
@@ -123,12 +117,12 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Page<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email,Integer page,Integer size) {
+	public Page<ArticleResponseDto.ArticleResponse> memberRecentArticleList(String email, Integer page, Integer size) {
 		Member loginMember = getLoginMemberByEmail(email);
 		Sort pageSort = Sort.by("createdAt").descending();
 		Pageable pageable = PageRequest.of(page, size, pageSort);
 		return articleRepository.findAllByStatusAndMemberEmail(
-				ArticleStatus.ACTIVE, email, pageable).map(article -> article.toDto(loginMember));
+			ArticleStatus.ACTIVE, email, pageable).map(article -> article.toDto(loginMember));
 	}
 
 	@Override
@@ -156,6 +150,11 @@ public class MemberServiceImpl implements MemberService {
 			}
 			//Profile Save.
 			if (updateMember.getImageFile() != null) {
+				if (byEmail.getProfile() != null) {
+					//Old Profile Image Delete
+					//S3 Image Delete
+					uploadService.imageDelete(byEmail.getId(), ImageCategory.MEMBER.toString());
+				}
 				ResponseImage.ImageInfo imageInfo = uploadService.imageUpload(updateMember.getImageFile(),
 					ImageCategory.MEMBER.name());
 
