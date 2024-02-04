@@ -1,6 +1,6 @@
 package com.tripbook.main.article.controller;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.domain.PageRequest;
@@ -143,7 +143,7 @@ public class ArticleController {
 		OAuth2User principal = (OAuth2User)authentication.getPrincipal();
 		articleService.deleteArticle(articleId, principal);
 		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
+			.message(List.of("success"))
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
@@ -178,7 +178,7 @@ public class ArticleController {
 
 		articleService.deleteArticleComment(commentId, principal);
 		ArticleResponseDto.ResultInfo result = ArticleResponseDto.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
+			.message(List.of("success"))
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}

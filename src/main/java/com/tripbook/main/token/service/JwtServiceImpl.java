@@ -55,7 +55,7 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public TokenInfo saveToken(Member member, String deviceType) {
 		TokenInfo tokenInfo = jwtGenerateToken(member, deviceType);
-		if (deviceType.equals("APP")) {
+		if ("APP".equals(deviceType)) {
 			List<JwtToken> tokens = jwtRepository.findByDeviceAndMemberId(DeviceValue.valueOf(deviceType),
 				member);
 			JwtToken jwtToken = null;
