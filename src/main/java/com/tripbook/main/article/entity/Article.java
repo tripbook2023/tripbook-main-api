@@ -13,6 +13,7 @@ import com.tripbook.main.article.dto.ArticleRequestDto;
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.article.enums.ArticleStatus;
 import com.tripbook.main.global.common.BasicEntity;
+import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.member.entity.Member;
 
@@ -59,22 +60,25 @@ public class Article extends BasicEntity {
 	@Enumerated(EnumType.STRING)
 	private ArticleStatus status;
 
-	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<ArticleTag> tagList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<ArticleHeart> heartList = new ArrayList<>();
 
-	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<ArticleBookmark> bookmarkList = new ArrayList<>();
 
 	@Where(clause = "status != 'DELETED'")
-	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<ArticleComment> commentList = new ArrayList<>();
-	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<ArticleReport> reportLIst = new ArrayList<>();
-	@OneToMany(mappedBy = "article",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
 	private List<Location> locationList;
+	@OneToMany(mappedBy = "refId")
+	@Where(clause = "refType = 'BOARD_A'")
+	private List<Image> images;
 	@Column
 	private String thumbnailUrl;
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
@@ -84,6 +88,9 @@ public class Article extends BasicEntity {
 
 	@Formula("(select count(*) from TB_ARTICLE_COMMENT c where c.article_id = id)")
 	private long commentNum;
+	// @Formula("(select * from TB_IMAGE I where I.refId = id)")
+	// @OneToMany
+	// private List<Image> fileIds;
 
 	@Builder
 	public Article(String title, String content, ArticleStatus status, Member member,
@@ -165,6 +172,7 @@ public class Article extends BasicEntity {
 			.location(
 				this.locationList == null ? null : this.locationList.stream().map(Location::toDto).toList()
 			)
+			.fileIds(this.images == null ? null : this.images.stream().map(Image::getId).toList())
 			.createdAt(this.getCreatedAt())
 			.updatedAt(this.getUpdatedAt())
 			.thumbnailUrl(this.thumbnailUrl)
