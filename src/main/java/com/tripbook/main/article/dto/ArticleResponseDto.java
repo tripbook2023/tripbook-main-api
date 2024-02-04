@@ -58,7 +58,8 @@ public class ArticleResponseDto {
 		private boolean isHeart;
 		@Schema(description = "신고 여부")
 		private boolean isReport;
-
+		@Schema(description = "이미지 ID리스트")
+		private List<Long> fileIds;
 		@Schema(description = "북마크 수")
 		private long bookmarkNum;
 
