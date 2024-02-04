@@ -1,9 +1,9 @@
 package com.tripbook.main.member.controller;
 
 import java.beans.PropertyEditorSupport;
-import java.util.Arrays;
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -36,7 +36,6 @@ import com.tripbook.main.member.service.MemberService;
 import com.tripbook.main.member.vo.MemberVO;
 import com.tripbook.main.token.service.JwtService;
 
-import io.micrometer.common.lang.Nullable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -88,12 +87,18 @@ public class MemberController {
 	@GetMapping("/select/articles/temp")
 	public ResponseEntity<Object> selectTempArticles(Authentication authentication) {
 		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
+		String email = checkMemberEmail(authUser);
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberTempArticleList(email));
+	}
+
+	@NotNull
+	private static String checkMemberEmail(OAuth2User authUser) {
 		String email = (String)authUser.getAttribute("email");
 		if (email == null || email.isEmpty()) {
+			log.error("MEMBER_NOTFOUND");
 			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
 		}
-		List<ArticleResponseDto.ArticleResponse> resultList = memberService.memberTempArticleList(email);
-		return ResponseEntity.status(HttpStatus.OK).body(resultList);
+		return email;
 	}
 
 	@Operation(security = {
@@ -113,13 +118,9 @@ public class MemberController {
 		@RequestParam Integer page,
 		@RequestParam Integer size) {
 		OAuth2User authUser = (OAuth2User)authentication.getPrincipal();
-		String email = (String)authUser.getAttribute("email");
-		if (email == null || email.isEmpty()) {
-			throw new CustomException.MemberNotFound(ErrorCode.MEMBER_NOTFOUND.getMessage(), ErrorCode.MEMBER_NOTFOUND);
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberRecentArticleList(email,page,size));
+		String email = checkMemberEmail(authUser);
+		return ResponseEntity.status(HttpStatus.OK).body(memberService.memberRecentArticleList(email, page, size));
 	}
-
 
 	@Operation(
 		summary = "회원가입", description = "프로필 정보를 입력한다.\n\n birth:yyyy-mm-dd", responses = {
@@ -137,7 +138,7 @@ public class MemberController {
 		MemberVO memberVO = bindMemberVo(requestMember);
 		String deviceValue = CheckDevice.checkDevice(request);
 		ResponseMember.Info info = memberService.memberSave(memberVO, deviceValue);
-		log.info("Email::" + memberVO.getEmail());
+		log.info("SignUp_Email::" + memberVO.getEmail());
 		return ResponseEntity.status(HttpStatus.OK).body(info);
 	}
 
@@ -161,7 +162,7 @@ public class MemberController {
 		// notNull 필드 가져오기
 		memberService.memberUpdate(bindMemberVo(updateMember, authUser));
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
+			.message(List.of("success"))
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
@@ -182,7 +183,7 @@ public class MemberController {
 		}
 		memberService.memberDelete(MemberVO.builder().email(email).build());
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
+			.message(List.of("success"))
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 
@@ -205,7 +206,7 @@ public class MemberController {
 		}
 
 		ResponseMember.ResultInfo result = ResponseMember.ResultInfo.builder().status(HttpStatus.OK)
-			.message(Arrays.asList("success"))
+			.message(List.of("success"))
 			.build();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}

@@ -1,6 +1,7 @@
 package com.tripbook.main.article.service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
@@ -24,14 +25,12 @@ import com.tripbook.main.article.repository.ArticleHeartRepository;
 import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleReportRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
-import com.tripbook.main.article.repository.ArticleTagRepository;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.exception.CustomException;
 import com.tripbook.main.global.repository.ImageRepository;
 import com.tripbook.main.global.repository.LocationRepository;
-import com.tripbook.main.global.service.UploadService;
 import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.service.MemberService;
 
@@ -43,11 +42,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
 	private final MemberService memberService;
-	private final UploadService uploadService;
 	private final ArticleRepository articleRepository;
 	private final ImageRepository imageRepository;
 	private final ArticleImageRepository articleImageRepository;
-	private final ArticleTagRepository articleTagRepository;
 	private final ArticleCommentRepository articleCommentRepository;
 	private final ArticleBookmarkRepository articleBookmarkRepository;
 	private final ArticleHeartRepository articleHeartRepository;
@@ -111,18 +108,28 @@ public class ArticleServiceImpl implements ArticleService {
 			return;
 		//기존 여행장소 리스트 제거
 		deleteLocationList(article);
-		requestDto.getLocationList().forEach(locationItem -> {
-			if (locationItem.getLocationX() != null && locationItem.getLocationY() != null
-				&& locationItem.getName() != null) {
-				locationRepository.save(Location.builder()
-					.x(locationItem.getLocationX())
-					.y(locationItem.getLocationY())
-					.name(locationItem.getName())
-					.article(article)
-					.build()
-				);
-			}
-		});
+		if (requestDto.getLocationList() != null) {
+			List<Location> locationList = requestDto.getLocationList().stream().map(locationItem -> Location.builder()
+				.x(locationItem.getLocationX())
+				.y(locationItem.getLocationY())
+				.name(locationItem.getName())
+				.article(article)
+				.build()).toList();
+			locationRepository.saveAll(locationList);
+		}
+		// locationRepository.saveAll(requestDto.getLocationList());
+		// requestDto.getLocationList().forEach(locationItem -> {
+		// 	if (locationItem.getLocationX() != null && locationItem.getLocationY() != null
+		// 		&& locationItem.getName() != null) {
+		// 		locationRepository.save(Location.builder()
+		// 			.x(locationItem.getLocationX())
+		// 			.y(locationItem.getLocationY())
+		// 			.name(locationItem.getName())
+		// 			.article(article)
+		// 			.build()
+		// 		);
+		// 	}
+		// });
 	}
 
 	private void deleteLocationList(Article article) {
