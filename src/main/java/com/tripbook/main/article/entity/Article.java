@@ -81,6 +81,8 @@ public class Article extends BasicEntity {
 	private List<Image> images;
 	@Column
 	private String thumbnailUrl;
+	@Formula("(select id from TB_IMAGE TI where TI.url = thumbnailUrl)")
+	private Long thumbnailId;
 	@Formula("(select count(*) from TB_ARTICLE_HEART h where h.article_id = id)")
 	private long heartNum;
 	@Formula("(select count(*) from TB_ARTICLE_BOOKMARK b where b.article_id = id)")
@@ -177,6 +179,7 @@ public class Article extends BasicEntity {
 			.updatedAt(this.getUpdatedAt())
 			.thumbnailUrl(this.thumbnailUrl)
 			.reportCount(this.reportLIst.size())
+			.thumbnailId(this.thumbnailId)
 			// .tagList(this.tagList == null ? new ArrayList<>() : this.tagList.stream().map(ArticleTag::getName).toList())
 			.build();
 

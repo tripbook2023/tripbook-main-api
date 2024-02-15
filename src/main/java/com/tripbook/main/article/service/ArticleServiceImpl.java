@@ -364,9 +364,8 @@ public class ArticleServiceImpl implements ArticleService {
 		if (imageArr == null) {
 			return;
 		}
-
 		// 기존 이미지 연결 끊기 isEnable=false
-		imageRepository.updateByRefIdReset(refId);
+		// imageRepository.updateByRefIdReset(refId);
 		// 새로운 이미지 refId Update
 		Arrays.stream(imageArr).forEach(targetId -> {
 			Optional<Image> image = imageRepository.findById(targetId);

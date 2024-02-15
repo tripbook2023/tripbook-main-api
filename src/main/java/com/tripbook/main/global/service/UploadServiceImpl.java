@@ -81,6 +81,15 @@ public class UploadServiceImpl implements UploadService {
 			});
 			imageRepository.deleteAll(targetImage.get());
 		});
-
+	}
+	@Override
+	@SneakyThrows
+	public void imageDelete(List<Long>fileIds) {
+		List<Image> resultImages = imageRepository.findAllById(fileIds);
+		resultImages.forEach(image->{
+			log.info("ImageDelete_keyName:::{}",image.getKeyName());
+			s3Uploader.deleteFile(image.getKeyName());
+		});
+		imageRepository.deleteAll(resultImages);
 	}
 }
