@@ -48,6 +48,9 @@ public class ArticleResponseDto {
 		@Schema(description = "썸네일이미지")
 		private String thumbnailUrl;
 
+		@Schema(description = "썸네일ID")
+		private Long thumbnailId;
+
 		@Schema(description = "태그 목록")
 		private List<String> tagList;
 

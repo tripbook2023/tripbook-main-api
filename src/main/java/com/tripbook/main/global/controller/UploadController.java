@@ -65,7 +65,7 @@ public class UploadController {
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "S3이미지삭제", description = "S3내 이미지 삭제\n 삭제할 Image Id배열 ", responses = {
-		@ApiResponse(responseCode = "200", description = "성공_URL정보", content = @Content(schema = @Schema(implementation = String.class))),
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = String.class))),
 		@ApiResponse(responseCode = "400", description = "잘못된 요청, 파라미터 값 확인", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "403", description = "권한없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "500", description = "서버에러, 관리자 문의요망", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
