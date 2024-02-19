@@ -2,6 +2,7 @@ package com.tripbook.main.global.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tripbook.main.article.dto.ArticleResponseDto;
 import com.tripbook.main.global.common.ErrorResponse;
+import com.tripbook.main.global.dto.RequestImage;
 import com.tripbook.main.global.dto.ResponseImage;
 import com.tripbook.main.global.enums.ErrorCode;
 import com.tripbook.main.global.enums.ImageCategory;
@@ -65,19 +68,19 @@ public class UploadController {
 	@Operation(security = {
 		@SecurityRequirement(name = "JWT")},
 		summary = "S3이미지삭제", description = "S3내 이미지 삭제\n 삭제할 Image Id배열 ", responses = {
-		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = String.class))),
+		@ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = ResponseImage.ResultInfo.class))),
 		@ApiResponse(responseCode = "400", description = "잘못된 요청, 파라미터 값 확인", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "403", description = "권한없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 		@ApiResponse(responseCode = "500", description = "서버에러, 관리자 문의요망", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
 	@PostMapping(value = "/delete", consumes = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<?> imageS3Delete(Authentication authentication,@RequestParam List<Long> fileIds) {
+	public ResponseEntity<?> imageS3Delete(Authentication authentication,@RequestBody RequestImage.ImageInfo imageInfo) {
 		if(authentication==null){
 			//토큰없음
 			throw new CustomException.CommonNotPermittedException(ErrorCode.COMMON_NOT_PERMITTED.getMessage(),ErrorCode.COMMON_NOT_PERMITTED);
 		}
-		uploadService.imageDelete(fileIds);
-		return ResponseEntity.ok().build();
+		;
+		return ResponseEntity.ok(uploadService.imageDelete(imageInfo));
 	}
 
 }

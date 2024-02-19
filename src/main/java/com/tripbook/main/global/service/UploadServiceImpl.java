@@ -6,9 +6,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tripbook.main.global.dto.RequestImage;
 import com.tripbook.main.global.dto.ResponseImage;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.enums.ErrorCode;
@@ -84,12 +86,19 @@ public class UploadServiceImpl implements UploadService {
 	}
 	@Override
 	@SneakyThrows
-	public void imageDelete(List<Long>fileIds) {
-		List<Image> resultImages = imageRepository.findAllById(fileIds);
+	public ResponseImage.ResultInfo imageDelete(RequestImage.ImageInfo imageInfo) {
+		if(imageInfo.getFileIds().size()<=0){
+			throw new CustomException.ParameterNotFoundException(ErrorCode.PARAMETER_NOTFOUND.getMessage(),ErrorCode.PARAMETER_NOTFOUND);
+		}
+		List<Image> resultImages = imageRepository.findAllById(imageInfo.getFileIds());
+
+		if(resultImages.isEmpty()) throw new CustomException.BadRequestException(ErrorCode.BAD_REQUEST.getMessage(), ErrorCode.BAD_REQUEST);
 		resultImages.forEach(image->{
 			log.info("ImageDelete_keyName:::{}",image.getKeyName());
 			s3Uploader.deleteFile(image.getKeyName());
 		});
 		imageRepository.deleteAll(resultImages);
+		return ResponseImage.ResultInfo.builder().message(List.of("SUCCESS")).status(HttpStatus.OK).build();
+
 	}
 }
