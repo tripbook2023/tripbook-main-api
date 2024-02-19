@@ -164,5 +164,15 @@ public class CustomException extends RuntimeException {
 			super(message, errorCode);
 		}
 	}
+	public static class ParameterNotFoundException extends CustomException {
+		public ParameterNotFoundException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
+	public static class BadRequestException extends CustomException {
+		public BadRequestException(String message, ErrorCode errorCode) {
+			super(message, errorCode);
+		}
+	}
 
 }

@@ -193,5 +193,19 @@ public class CustomExceptionHandler {
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
+	@ExceptionHandler(CustomException.BadRequestException.class)
+	@DiscordAlarm
+	public ResponseEntity<ErrorResponse> handleBadRequestException(CustomException.BadRequestException ex) {
+		log.info("BadRequestException", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+	@ExceptionHandler(CustomException.ParameterNotFoundException.class)
+	@DiscordAlarm
+	public ResponseEntity<ErrorResponse> handleParameterNotFoundException(CustomException.ParameterNotFoundException ex) {
+		log.info("ParameterNotFoundException", ex);
+		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
 
 }
