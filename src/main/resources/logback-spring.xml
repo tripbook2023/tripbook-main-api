@@ -5,6 +5,23 @@
             <Pattern>%d{HH:mm:ss.SSS} [%-5level] - %msg%n</Pattern>
         </layout>
     </appender>
+    <springProfile name="prod">
+        <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <!-- 개발 서버용 설정 -->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>/home/ec2-user/app/tripbook/logs/logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <!-- 7일까지 보관 -->
+                <maxHistory>30</maxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <!-- or whenever the file size reaches 100MB -->
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
     <!-- 서버 환경 변수 기반으로 appender 선택 -->
     <springProfile name="dev">
         <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
