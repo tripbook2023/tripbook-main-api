@@ -60,7 +60,7 @@ public class RequestMember {
 		@NotNull(message = "marketingConsent is required")
 		private Boolean marketingConsent;
 		@Schema(title = "성별")
-		@NotNull(message = "gender is required")
+		// @NotNull(message = "gender is required")
 		private Gender gender;
 		@Schema(title = "생일", description = "yyyy-mm-dd", type = "LocalDate", example = "1996-07-13")
 		@DateTimeFormat(pattern = "yyyy-MM-dd")
