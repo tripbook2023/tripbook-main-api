@@ -17,7 +17,7 @@ import com.tripbook.main.global.util.discord.DiscordAlarm;
 
 import lombok.extern.slf4j.Slf4j;
 
-//@TODO - 가독성 향상을 위한 Handler 도메인 별 관리
+// 가독성 향상을 위한 Handler 도메인 별 관리
 @Slf4j
 @RestControllerAdvice
 public class CustomExceptionHandler {
@@ -28,6 +28,14 @@ public class CustomExceptionHandler {
 		log.error("SecurityException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+	}
+
+	@DiscordAlarm
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+		log.error("IllegalStateException", ex);
+		ErrorResponse response = new ErrorResponse(ErrorCode.ILLEGAL_STATE_EXCEPTION, ex.getMessage());
+		return new ResponseEntity<>(response, HttpStatus.valueOf(ErrorCode.ILLEGAL_STATE_EXCEPTION.getStatus()));
 	}
 
 	@DiscordAlarm
@@ -193,6 +201,7 @@ public class CustomExceptionHandler {
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
+
 	@ExceptionHandler(CustomException.BadRequestException.class)
 	@DiscordAlarm
 	public ResponseEntity<ErrorResponse> handleBadRequestException(CustomException.BadRequestException ex) {
@@ -200,9 +209,11 @@ public class CustomExceptionHandler {
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
 	}
+
 	@ExceptionHandler(CustomException.ParameterNotFoundException.class)
 	@DiscordAlarm
-	public ResponseEntity<ErrorResponse> handleParameterNotFoundException(CustomException.ParameterNotFoundException ex) {
+	public ResponseEntity<ErrorResponse> handleParameterNotFoundException(
+		CustomException.ParameterNotFoundException ex) {
 		log.info("ParameterNotFoundException", ex);
 		ErrorResponse response = new ErrorResponse(ex.getErrorCode());
 		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
