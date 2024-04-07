@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.http.util.Asserts;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -187,8 +188,16 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public ResponseMember.MemberInfo memberSelect(PrincipalMemberDto principalMemberDto) {
-		Member member = memberRepository.findByEmail(principalMemberDto.getEmail());
-		return new ResponseMember.MemberInfo(member);
+		Member byEmail = memberRepository.findByEmail(principalMemberDto.getEmail());
+		Asserts.notNull(byEmail, "MemberIsNull");
+		return new ResponseMember.MemberInfo(byEmail);
+	}
+
+	@Override
+	public MemberVO memberVoSelect(PrincipalMemberDto principalMemberDto) {
+		Member byEmail = memberRepository.findByEmail(principalMemberDto.getEmail());
+		Asserts.notNull(byEmail, "MemberIsNull");
+		return new MemberVO(byEmail);
 	}
 
 	private boolean memberValidation(MemberVO member) {

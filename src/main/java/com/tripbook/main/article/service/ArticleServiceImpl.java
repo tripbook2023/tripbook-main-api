@@ -3,6 +3,7 @@ package com.tripbook.main.article.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,6 +26,7 @@ import com.tripbook.main.article.repository.ArticleHeartRepository;
 import com.tripbook.main.article.repository.ArticleImageRepository;
 import com.tripbook.main.article.repository.ArticleReportRepository;
 import com.tripbook.main.article.repository.ArticleRepository;
+import com.tripbook.main.block.entity.Block;
 import com.tripbook.main.global.entity.Image;
 import com.tripbook.main.global.entity.Location;
 import com.tripbook.main.global.enums.ErrorCode;
@@ -155,15 +157,21 @@ public class ArticleServiceImpl implements ArticleService {
 	public Slice<ArticleResponseDto.ArticleResponse> searchArticle(String word, Pageable pageable,
 		OAuth2User principal) {
 		Member loginMember = getLoginMemberByPrincipal(principal);
-
+		List<Long> targetIds = loginMember.getBlocks().stream().map(Block::getTargetId).collect(Collectors.toList());
 		if (word == null || word.equals("")) {
+			if (targetIds.size() == 0) {
+				return articleRepository
+					.findAllByStatus(ArticleStatus.ACTIVE, pageable)
+					.map(article -> article.toDto(loginMember));
+			}
 			return articleRepository
-				.findAllByStatus(ArticleStatus.ACTIVE, pageable)
+				.findAllByStatusAndMemberIdNotIn(ArticleStatus.ACTIVE, targetIds, pageable)
 				.map(article -> article.toDto(loginMember));
 		}
 		//
 		return articleRepository
-			.getAllByTitleContainingOrContentContainingAndStatusAndLocationName(word, word, ArticleStatus.ACTIVE,
+			.getAllByTitleContainingOrContentContainingAndStatusAndLocationNameAndNotContainBlockIds(word, word,
+				ArticleStatus.ACTIVE, targetIds,
 				pageable)
 			.map(article -> article.toDto(loginMember));
 

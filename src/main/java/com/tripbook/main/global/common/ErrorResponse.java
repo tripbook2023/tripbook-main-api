@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ErrorResponse {
 	@Schema(title = "HTTP 상태값")
 	private int status;
+
 	@Schema(title = "String 배열형태의 에러메시지들입니다.")
 	private List<String> message = new ArrayList<>();
 	@Schema(title = "HTTP 상태코드")

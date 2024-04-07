@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.tripbook.main.block.entity.Block;
 import com.tripbook.main.global.common.BasicEntity;
 import com.tripbook.main.member.dto.ResponseMember;
 import com.tripbook.main.member.enums.Gender;
@@ -46,8 +47,10 @@ public class Member extends BasicEntity implements Serializable {
 	private String email;
 	@Column(nullable = false, unique = true)
 	private String name;
-	@OneToMany(mappedBy = "memberId",cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "memberId", cascade = CascadeType.REMOVE)
 	private List<JwtToken> token;
+	@OneToMany(mappedBy = "memberId", cascade = CascadeType.REMOVE)
+	private List<Block> blocks;
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
