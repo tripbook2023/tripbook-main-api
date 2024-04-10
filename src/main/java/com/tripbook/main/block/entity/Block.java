@@ -7,9 +7,8 @@ import com.tripbook.main.member.entity.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,15 +22,15 @@ import lombok.NoArgsConstructor;
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@IdClass(BlockId.class)
 public class Block {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	//차단 요청자
+	@Id
 	@ManyToOne
 	@JoinColumn(name = "memberId", updatable = false)
 	private Member memberId;
-	@Column(nullable = false, unique = true)
+	@Id
+	@Column(nullable = false)
 	//차단 대상자
 	private Long targetId;
 
