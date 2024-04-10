@@ -50,7 +50,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 		+ "        or a1_0.content like :content escape '\\' \n"
 		+ "        or l1_0.name like :content escape '\\') \n"
 		+ "        and a1_0.status=:status \n"
-		+ "        and :#{#blockIds.size()} = 0 or a1_0.member.id not in :blockIds \n"
+		+ "        and (:#{#blockIds.size()} = 0 or a1_0.member.id not in :blockIds) \n"
 	)
 	Slice<Article> getAllByTitleContainingOrContentContainingAndStatusAndLocationNameAndNotContainBlockIds(
 		@Param("title") String title,
