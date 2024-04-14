@@ -56,6 +56,7 @@ public class BlockController {
 		@SecurityRequirement(name = "JWT")},
 		summary = "차단사용자 저장", description = "차단사용자저장.\n\n birth:yyyy-mm-dd", responses = {
 		@ApiResponse(responseCode = "200", description = "완료", content = @Content(schema = @Schema(implementation = ResponseBlock.ResultInfo.class))),
+		@ApiResponse(responseCode = "400", description = "이미 차단된 사용자입니다.", content = @Content(schema = @Schema(implementation = ResponseBlock.ResultInfo.class))),
 		@ApiResponse(responseCode = "500", description = "관리자문의", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
 	})
 	@PostMapping("")
