@@ -11,6 +11,8 @@ public interface BlockRepository extends JpaRepository<Block, Long> {
 	// 차단 사용자 조회
 	List<Block> findBlockByMemberId(Member memberId);
 
+	Long countByMemberIdAndTargetId(Member memberId, Long targetId);
+
 	// 차단해제
 	Long deleteAllByTargetIdInAndMemberId(List<Long> targetId, Member memberId);
 }
