@@ -33,6 +33,9 @@ public class ArticleRequestDto {
 		@Schema(description = "내용")
 		@NotNull(message = "Content is required")
 		private String content;
+		@Schema(description = "내용(본문)")
+		@NotNull(message = "ContentOrigin is required")
+		private String contentOrigin;
 		@Schema(description = "이미지 ID리스트")
 		private long[] fileIds;
 		@Schema(description = "썸네일 ImageURL")

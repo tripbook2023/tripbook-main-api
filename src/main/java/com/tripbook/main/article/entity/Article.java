@@ -55,6 +55,8 @@ public class Article extends BasicEntity {
 
 	@Lob()
 	private String content;
+	@Lob()
+	private String contentOrigin;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -97,9 +99,10 @@ public class Article extends BasicEntity {
 	@Builder
 	public Article(String title, String content, ArticleStatus status, Member member,
 		List<ArticleHeart> heartList, List<ArticleBookmark> bookmarkList,
-		List<ArticleComment> commentList, String thumbnailUrl) {
+		List<ArticleComment> commentList, String thumbnailUrl,String contentOrigin) {
 		this.title = title;
 		this.content = content;
+		this.contentOrigin = contentOrigin;
 		this.status = status;
 		this.member = member;
 		this.heartList = heartList;
@@ -128,6 +131,7 @@ public class Article extends BasicEntity {
 	public void updateArticle(ArticleRequestDto.ArticleSaveRequest articleSaveRequest, ArticleStatus status) {
 		this.title = articleSaveRequest.getTitle();
 		this.content = articleSaveRequest.getContent();
+		this.contentOrigin = articleSaveRequest.getContentOrigin();
 		this.thumbnailUrl = articleSaveRequest.getThumbnail();
 		this.status = status;
 	}

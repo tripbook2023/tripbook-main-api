@@ -47,7 +47,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 		+ "        Location l1_0 \n"
 		+ "    where\n"
 		+ "        (a1_0.title like :title escape '\\' \n"
-		+ "        or a1_0.content like :content escape '\\' \n"
+		+ "        or a1_0.contentOrigin like :content escape '\\' \n"
 		+ "        or l1_0.name like :content escape '\\') \n"
 		+ "        and a1_0.status=:status \n"
 		+ "        and (:#{#blockIds.size()} = 0 or a1_0.member.id not in :blockIds) \n"
