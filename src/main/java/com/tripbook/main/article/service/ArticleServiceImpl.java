@@ -87,6 +87,7 @@ public class ArticleServiceImpl implements ArticleService {
 			article = articleRepository.save(Article.builder()
 				.title(requestDto.getTitle())
 				.content(requestDto.getContent())
+				.contentOrigin(requestDto.getContentOrigin())
 				.member(loginMember)
 				.thumbnailUrl(requestDto.getThumbnail())
 				.status(status)
