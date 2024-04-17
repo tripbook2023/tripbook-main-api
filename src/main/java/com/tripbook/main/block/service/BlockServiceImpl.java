@@ -19,8 +19,10 @@ import com.tripbook.main.member.entity.Member;
 import com.tripbook.main.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class BlockServiceImpl implements BlockService {
 	private final BlockRepository blockRepository;
@@ -33,6 +35,14 @@ public class BlockServiceImpl implements BlockService {
 		//자기자신은 차단할 수 없음
 		Asserts.check(!requestBlock.getTargetIdList().contains(requestBlock.getMember().getId()), "ContainsMemberId");
 		List<Block> blocks = bindingBlockList(requestBlock);
+		for (Block block : blocks) {
+			if (blockRepository.countByMemberIdAndTargetId(block.getMemberId(), block.getTargetId()) > 0) {
+				return ResponseBlock.ResultInfo.builder()
+					.message(List.of("already block is member::" + block.getTargetId()))
+					.status(HttpStatus.BAD_REQUEST)
+					.build();
+			}
+		}
 		List<Block> resultBlock = blockRepository.saveAll(blocks);
 		//blocks 사이즈와 결과 Block의 사이즈는 항상같음
 		Asserts.check(blocks.size() == resultBlock.size(), "DeleteBlock_IsNothingDelete");
